@@ -1,0 +1,6 @@
+{
+  "name": "InsideMe",
+  "description": "Comprehensive psychological tests, personality assessments, and astrology charts delivering deep personalized insights and actionable self-improvement advice.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
