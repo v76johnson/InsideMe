@@ -21,9 +21,10 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # Rule 2 Patch: Enforces Groovy-only properties by stripping out conflicting leftover files automatically
+    # Rule 2 & Rule 4 Patch: Cleans out rogue root-level and app-level Kotlin DSL scripts to enforce Groovy compliance
     - name: Remove Conflicting Kotlin Build Scripts
       run: |
+        rm -f build.gradle.kts
         rm -f settings.gradle.kts
         rm -f app/build.gradle.kts
 
