@@ -1,5 +1,4 @@
-// Rule 4: Root-level configuration file remains empty of application code.
-// All plugins, dependencies, and signing configurations are handled strictly within app/build.gradle.
+// Rule 3 & 4: Root-level configuration file contains explicit clean repository paths for headless CI
 buildscript {
     repositories {
         google()
@@ -10,4 +9,11 @@ buildscript {
 plugins {
     id 'com.android.application' version '9.1.1' apply false
     id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
