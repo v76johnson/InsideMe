@@ -21,12 +21,11 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # Rule 2 & Rule 4 Patch: Cleans out rogue root-level and app-level Kotlin DSL scripts to enforce Groovy compliance
-    - name: Remove Conflicting Kotlin Build Scripts
+    # Rule 2 & Rule 4 Patch: Removes only the explicit conflicting Kotlin DSL scripts while maintaining structural integrity
+    - name: Clean Conflicting Kotlin Files
       run: |
-        rm -f build.gradle.kts
         rm -f settings.gradle.kts
-        rm -f app/build.gradle.kts
+        rm -f build.gradle.kts
 
     # Rule 1: Pre-generate a local debug.keystore using keytool before executing gradle
     - name: Pre-generate Local Debug Keystore
@@ -34,12 +33,13 @@ jobs:
         mkdir -p ~/.android
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
-    # Automated Build Runner: Configured with version 9.3.1 to satisfy the Android Application plugin requirements
+    # Automated Build Runner: Configured with version 9.3.1 and pointed directly to your Groovy configuration paths
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: 9.3.1
-        arguments: assembleDebug
+        build-root-directory: .
+        arguments: :app:assembleDebug
 
     - name: Upload InsideMe APK Artifact
       uses: actions/upload-artifact@v4
