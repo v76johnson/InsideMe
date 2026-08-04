@@ -22,8 +22,10 @@ jobs:
         cache: gradle
 
     # Rule 2 Patch: Enforces Groovy-only properties by stripping out conflicting leftover files automatically
-    - name: Remove Conflicting Kotlin Settings Script
-      run: rm -f settings.gradle.kts
+    - name: Remove Conflicting Kotlin Build Scripts
+      run: |
+        rm -f settings.gradle.kts
+        rm -f app/build.gradle.kts
 
     # Rule 1: Pre-generate a local debug.keystore using keytool before executing gradle
     - name: Pre-generate Local Debug Keystore
