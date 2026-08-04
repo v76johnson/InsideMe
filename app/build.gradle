@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    // Duplicate Kotlin plugin application removed here to prevent the extension collision error in Gradle 9.3+
 }
 
 android {
