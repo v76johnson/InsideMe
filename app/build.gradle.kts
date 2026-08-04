@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android' // Allowed for InsideMe, only banned for SquishPop
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
