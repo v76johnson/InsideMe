@@ -21,13 +21,17 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    # Rule 2 Patch: Enforces Groovy-only properties by stripping out conflicting leftover files automatically
+    - name: Remove Conflicting Kotlin Settings Script
+      run: rm -f settings.gradle.kts
+
     # Rule 1: Pre-generate a local debug.keystore using keytool before executing gradle
     - name: Pre-generate Local Debug Keystore
       run: |
         mkdir -p ~/.android
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
-    # Automated Build Runner: Updated to version 9.3.1 to satisfy the Android Application plugin requirements
+    # Automated Build Runner: Configured with version 9.3.1 to satisfy the Android Application plugin requirements
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
