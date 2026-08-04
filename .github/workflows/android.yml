@@ -21,11 +21,12 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-    # Rule 2 & Rule 4 Patch: Removes only the explicit conflicting Kotlin DSL scripts while maintaining structural integrity
+    # Rule 2 Patch: Wipes out all conflicting app-level and root-level Kotlin DSL scripts to enforce pure Groovy compilation
     - name: Clean Conflicting Kotlin Files
       run: |
         rm -f settings.gradle.kts
         rm -f build.gradle.kts
+        rm -f app/build.gradle.kts
 
     # Rule 1: Pre-generate a local debug.keystore using keytool before executing gradle
     - name: Pre-generate Local Debug Keystore
@@ -33,7 +34,7 @@ jobs:
         mkdir -p ~/.android
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
-    # Automated Build Runner: Configured with version 9.3.1 and pointed directly to your Groovy configuration paths
+    # Automated Build Runner: Configured with version 9.3.1 and directed strictly to your Groovy modules
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
