@@ -1,0 +1,42 @@
+name: InsideMe Android CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    # Rule 1: Pre-generate a local debug.keystore using keytool before executing gradle
+    - name: Pre-generate Local Debug Keystore
+      run: |
+        mkdir -p ~/.android
+        keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
+    - name: Grant Execute Permission for Gradlew
+      run: chmod +x gradlew
+
+    # Rule 1: Execute the precise assembleDebug compilation step
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
+
+    - name: Upload InsideMe APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: insideme-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+
