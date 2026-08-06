@@ -1,4 +1,4 @@
-package com.v76jo.insideme.ui.screens
+package com.example
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
