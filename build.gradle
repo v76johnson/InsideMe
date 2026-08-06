@@ -1,6 +1,7 @@
-// Rule 4: Root-level configuration file remains empty of application code and repository overrides.
-// Central repository settings are safely handled exclusively inside settings.gradle.
+// Rule 4: Root-level configuration file remains empty of application code.
+// Global plugin dependencies are mapped here cleanly for the headless CI server.
 plugins {
     id 'com.android.application' version '9.1.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
+    id 'org.jetbrains.kotlin.android' version '2.0.0' apply false
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.0.0' apply false
 }
