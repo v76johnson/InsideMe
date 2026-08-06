@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 android {
@@ -49,10 +50,6 @@ android {
     // Required configuration block to natively enable Jetpack Compose rendering compilation
     buildFeatures {
         compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.8'
     }
 }
 
