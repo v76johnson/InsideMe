@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    // Explicit 'org.jetbrains.kotlin.android' plugin declaration removed to bypass the extension registration conflict in Gradle 9.3+
 }
 
 android {
