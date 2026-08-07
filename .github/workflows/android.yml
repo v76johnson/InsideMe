@@ -34,11 +34,14 @@ jobs:
         mkdir -p ~/.android
         keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
-    # Automated Build Runner: Configured with version 9.3.1 and directed strictly to your Groovy modules
+    # Automated Build Runner: Gradle 8.9 is the minimum/default for AGP 8.7.x.
+    # IMPORTANT: AGP 8.7.x is NOT compatible with Gradle 9.x. The previous config
+    # pinned gradle-version: 9.3.1, which is incompatible with AGP 8.x and caused
+    # the build to fail during project configuration.
     - name: Build with Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
-        gradle-version: 9.3.1
+        gradle-version: '8.9'
         build-root-directory: .
         arguments: :app:assembleDebug
 
