@@ -8,6 +8,8 @@ plugins {
     // This was missing previously and caused:
     //   "The Composable Compiler gradle plugin is required to compile the Compose file."
     id 'org.jetbrains.kotlin.plugin.compose'
+    // KSP is required for Room's annotation processor (room-compiler) under Kotlin 2.0+.
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -23,6 +25,12 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Expose the Gemini API key to source code via BuildConfig.GEMINI_API_KEY.
+        // In CI the key is not available, so it defaults to an empty string and the
+        // app still compiles. Locally, set GEMINI_API_KEY in gradle.properties or
+        // pass -PGEMINI_API_KEY=... on the command line.
+        buildConfigField "String", "GEMINI_API_KEY", "\"${project.findProperty('GEMINI_API_KEY') ?: ''}\""
     }
 
     signingConfigs {
@@ -64,6 +72,10 @@ android {
 
     buildFeatures {
         compose true
+        // Required so that BuildConfig.GEMINI_API_KEY (referenced by GeminiApiService
+        // and ProfessionalLocatorDialog) is generated. AGP 8.x disables BuildConfig
+        // generation by default.
+        buildConfig true
     }
 }
 
@@ -79,6 +91,11 @@ dependencies {
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
+    // Material Icons Extended — provides the extended icon set used across the app
+    // (AutoAwesome, Psychology, MedicalServices, Download, CloudUpload, Shield,
+    //  RateReview, WorkspacePremium, Bookmark, SelfImprovement, etc.). The core
+    //  material-icons dependency only ships a small subset; these were unresolved.
+    implementation 'androidx.compose.material:material-icons-extended'
     // Compose tooling (debug-only) - adds the Compose preview & layout inspector
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
@@ -89,7 +106,23 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
     implementation 'androidx.activity:activity-compose:1.9.2'
 
+    // Room database — used by data/local (AppDatabase, Daos, Entities). The
+    // compiler is processed via KSP (declared in the plugins block) for Kotlin 2.0+.
+    implementation 'androidx.room:room-runtime:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    ksp 'androidx.room:room-compiler:2.6.1'
+
+    // OkHttp — used by data/remote/GeminiApiService for HTTP requests
+    // (OkHttpClient, Request, RequestBody, MediaType.Companion.toMediaType).
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // Coroutines — used for async work in repository/viewmodel layers
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 }
+
+// KSP, Room, and other configurations are handled via the plugins block above.

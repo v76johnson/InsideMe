@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 // Rule 8: Explicit package import declaration forces resolution inside your true project namespace
-import com.v76jo.insideme.*
 
 @Composable
 fun TestTakingScreen(

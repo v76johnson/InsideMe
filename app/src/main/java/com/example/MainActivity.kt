@@ -206,32 +206,13 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                 .padding(innerPadding)
         ) {
             if (testState.activeTest != null) {
+                // TestTakingScreen is currently a lightweight stub that accepts only
+                // onNavigateBack. Exiting the test is wired here so the active-test
+                // flow still returns to the hub. (The full parameter set — testState,
+                // userSubscription, onAnswerSelected, onGenerateReportClicked, etc. —
+                // is not part of the current screen signature.)
                 TestTakingScreen(
-                    testState = testState,
-                    userSubscription = userSub,
-                    onAnswerSelected = { viewModel.answerQuestion(it) },
-                    onExitClicked = { viewModel.exitTest() },
-                    onGenerateReportClicked = {
-                        viewModel.exitTest()
-                        selectedTab = 2
-                        viewModel.generateSynthesisReport(
-                            onSuccess = {},
-                            onNeedAdOrGems = { selectedTab = 3 }
-                        )
-                    },
-                    onPurchaseSingleReport = {
-                        viewModel.exitTest()
-                        selectedTab = 2
-                        viewModel.purchaseSingleReportAndGenerate(onSuccess = {})
-                    },
-                    onSubscribeClicked = { tier ->
-                        viewModel.exitTest()
-                        selectedTab = 2
-                        viewModel.subscribeAndGenerate(tier = tier, onSuccess = {})
-                    },
-                    onOpenReviewClicked = {
-                        viewModel.openReviewModal()
-                    }
+                    onNavigateBack = { viewModel.exitTest() }
                 )
             } else {
                 when (selectedTab) {
