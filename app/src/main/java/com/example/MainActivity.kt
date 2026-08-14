@@ -149,7 +149,6 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 0),
                         onClick = { selectedTab = 0 },
                         icon = { Icon(Icons.Default.Home, contentDescription = "InsideMe") },
-                        label = { Text("InsideMe", fontWeight = FontWeight.Bold) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -162,7 +161,6 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 1),
                         onClick = { selectedTab = 1 },
                         icon = { Icon(Icons.Default.Psychology, contentDescription = "Assessments") },
-                        label = { Text("Assessments", fontWeight = FontWeight.Bold) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -175,7 +173,6 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 2),
                         onClick = { selectedTab = 2 },
                         icon = { Icon(Icons.Default.Star, contentDescription = "Astrology") },
-                        label = { Text("Astrology", fontWeight = FontWeight.Bold) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -188,7 +185,6 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 3),
                         onClick = { selectedTab = 3 },
                         icon = { Icon(Icons.Default.WorkspacePremium, contentDescription = "Premium") },
-                        label = { Text("Premium", fontWeight = FontWeight.Bold) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
