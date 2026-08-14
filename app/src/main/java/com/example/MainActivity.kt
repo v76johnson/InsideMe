@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -32,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.viewmodel.PsycheViewModel
 import com.example.ui.components.FreeAiChatDialog
@@ -148,8 +151,18 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     NavigationBarItem(
                         selected = (selectedTab == 0),
                         onClick = { selectedTab = 0 },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "InsideMe") },
-                        label = { Text("InsideMe", fontWeight = FontWeight.Bold) },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                        label = {
+                            Text(
+                                text = "InsideMe",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 10.5.sp
+                            )
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -162,7 +175,17 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 1),
                         onClick = { selectedTab = 1 },
                         icon = { Icon(Icons.Default.Psychology, contentDescription = "Assessments") },
-                        label = { Text("Assessments", fontWeight = FontWeight.Bold) },
+                        label = {
+                            Text(
+                                text = "Assessments",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 10.sp
+                            )
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -175,7 +198,17 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 2),
                         onClick = { selectedTab = 2 },
                         icon = { Icon(Icons.Default.Star, contentDescription = "Astrology") },
-                        label = { Text("Astrology", fontWeight = FontWeight.Bold) },
+                        label = {
+                            Text(
+                                text = "Astrology",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 10.5.sp
+                            )
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -188,7 +221,17 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 3),
                         onClick = { selectedTab = 3 },
                         icon = { Icon(Icons.Default.WorkspacePremium, contentDescription = "Premium") },
-                        label = { Text("Premium", fontWeight = FontWeight.Bold) },
+                        label = {
+                            Text(
+                                text = "Premium",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 10.5.sp
+                            )
+                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
                             selectedTextColor = CelestialGold,
@@ -206,13 +249,32 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                 .padding(innerPadding)
         ) {
             if (testState.activeTest != null) {
-                // TestTakingScreen is currently a lightweight stub that accepts only
-                // onNavigateBack. Exiting the test is wired here so the active-test
-                // flow still returns to the hub. (The full parameter set — testState,
-                // userSubscription, onAnswerSelected, onGenerateReportClicked, etc. —
-                // is not part of the current screen signature.)
                 TestTakingScreen(
-                    onNavigateBack = { viewModel.exitTest() }
+                    testState = testState,
+                    userSubscription = userSub,
+                    onAnswerSelected = { viewModel.answerQuestion(it) },
+                    onExitClicked = { viewModel.exitTest() },
+                    onGenerateReportClicked = {
+                        viewModel.exitTest()
+                        selectedTab = 2
+                        viewModel.generateSynthesisReport(
+                            onSuccess = {},
+                            onNeedAdOrGems = { selectedTab = 3 }
+                        )
+                    },
+                    onPurchaseSingleReport = {
+                        viewModel.exitTest()
+                        selectedTab = 2
+                        viewModel.purchaseSingleReportAndGenerate(onSuccess = {})
+                    },
+                    onSubscribeClicked = { tier ->
+                        viewModel.exitTest()
+                        selectedTab = 2
+                        viewModel.subscribeAndGenerate(tier = tier, onSuccess = {})
+                    },
+                    onOpenReviewClicked = {
+                        viewModel.openReviewModal()
+                    }
                 )
             } else {
                 when (selectedTab) {
