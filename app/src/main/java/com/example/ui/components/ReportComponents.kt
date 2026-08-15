@@ -51,6 +51,7 @@ import com.example.ui.theme.DeepSpace
 import com.example.ui.theme.MysticViolet
 import com.example.ui.theme.NebulaTeal
 import com.example.ui.theme.ShadowRose
+import com.example.ui.theme.Spacing
 
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Download
@@ -89,8 +90,8 @@ fun ReportReaderView(
         modifier = modifier
             .fillMaxSize()
             .background(DeepSpace)
-            .padding(horizontal = 20.dp),
-        contentPadding = PaddingValues(top = 20.dp, bottom = 90.dp)
+            .padding(horizontal = Spacing.pagePadding),
+        contentPadding = PaddingValues(top = Spacing.large, bottom = 90.dp)
     ) {
         item {
             Row(
@@ -138,7 +139,7 @@ fun ReportReaderView(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.large))
 
             // Report Title Card
             Card(
@@ -148,7 +149,7 @@ fun ReportReaderView(
                     .fillMaxWidth()
                     .border(1.5.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
             ) {
-                Column(modifier = Modifier.padding(24.dp)) {
+                Column(modifier = Modifier.padding(Spacing.cardContent * 2)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold)
                         Spacer(modifier = Modifier.width(8.dp))
@@ -161,7 +162,7 @@ fun ReportReaderView(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(Spacing.medium))
 
                     Text(
                         text = report.title,
@@ -170,7 +171,7 @@ fun ReportReaderView(
                         color = Color.White
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(Spacing.small))
 
                     Text(
                         text = report.archetypeSummary,
@@ -180,7 +181,7 @@ fun ReportReaderView(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(Spacing.large))
         }
 
         // Core Traits Tags
@@ -192,18 +193,18 @@ fun ReportReaderView(
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Spacing.small))
 
             Column {
                 report.coreTraits.forEach { trait ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                            .padding(vertical = Spacing.small)
                             .clip(RoundedCornerShape(12.dp))
                             .background(MysticViolet.copy(alpha = 0.25f))
                             .border(1.dp, MysticViolet.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
-                            .padding(12.dp)
+                            .padding(Spacing.cardContent)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Star, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
@@ -219,7 +220,7 @@ fun ReportReaderView(
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(Spacing.large))
         }
 
         // Detailed Breakdown
@@ -229,7 +230,7 @@ fun ReportReaderView(
                 content = report.psychologicalBreakdown,
                 accentColor = CelestialGold
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Spacing.medium))
         }
 
         // Shadow Work & Blindspots
@@ -241,7 +242,7 @@ fun ReportReaderView(
                     .fillMaxWidth()
                     .border(1.dp, ShadowRose.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
             ) {
-                Column(modifier = Modifier.padding(20.dp)) {
+                Column(modifier = Modifier.padding(Spacing.cardContent * 2)) {
                     Text(
                         text = "Shadow Work & Latent Blindspots",
                         style = MaterialTheme.typography.titleMedium,
@@ -249,261 +250,6 @@ fun ReportReaderView(
                         color = ShadowRose
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(Spacing.medium))
 
-                    report.shadowWorkInsights.forEach { item ->
-                        Row(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.Top
-                        ) {
-                            Text("• ", color = ShadowRose, fontWeight = FontWeight.Bold)
-                            Text(
-                                text = item,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // Career & Relationship Playbook
-        item {
-            ReportSectionCard(
-                title = "Career, Calling & Strategic Purpose",
-                content = report.careerAndPurposeAdvice,
-                accentColor = NebulaTeal
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ReportSectionCard(
-                title = "Relationship & Intimacy Playbook",
-                content = report.relationshipPlaybook,
-                accentColor = CelestialGold
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-        }
-
-        // 7-Day Actionable Micro-Habits Plan
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = NebulaTeal)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "7-Day Actionable Self-Improvement Roadmap",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    report.dailyActionPlan.forEachIndexed { idx, habit ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(DeepSpace)
-                                .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = habit.isCompleted,
-                                onCheckedChange = { onToggleHabit(report, idx) },
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = NebulaTeal,
-                                    uncheckedColor = Color.White.copy(alpha = 0.5f)
-                                )
-                            )
-
-                            Spacer(modifier = Modifier.width(8.dp))
-
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(
-                                        text = "Day ${habit.dayNumber}: ${habit.title}",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (habit.isCompleted) NebulaTeal else Color.White,
-                                        textDecoration = if (habit.isCompleted) TextDecoration.LineThrough else TextDecoration.None
-                                    )
-                                }
-                                Text(
-                                    text = habit.description,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White.copy(alpha = 0.7f)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-        }
-
-        // Action Buttons & Disclaimer Footer
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "Next Steps & Professional Care",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Discuss these findings with a licensed mental health professional or export your raw data records.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.8f)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        androidx.compose.material3.Button(
-                            onClick = { showCareLocatorDialog = true },
-                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = DeepSpace),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(44.dp)
-                                .testTag("report_locate_professional_button")
-                        ) {
-                            Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(15.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Care AI", fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                        }
-
-                        androidx.compose.material3.OutlinedButton(
-                            onClick = { showRawDataExportDialog = true },
-                            shape = RoundedCornerShape(12.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold),
-                            modifier = Modifier
-                                .weight(1.1f)
-                                .height(44.dp)
-                                .testTag("report_download_raw_data_button")
-                        ) {
-                            Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(15.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Raw Data (Free)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                        }
-
-                        androidx.compose.material3.Button(
-                            onClick = { showReportExportDialog = true },
-                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier
-                                .weight(1.1f)
-                                .height(44.dp)
-                                .testTag("report_export_cloud_button")
-                        ) {
-                            Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Color.Black, modifier = Modifier.size(15.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Export Report", fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(DeepSpace)
-                            .padding(12.dp)
-                    ) {
-                        Row(verticalAlignment = Alignment.Top) {
-                            Icon(Icons.Default.Shield, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "*This app is intended for entertainment and educational purposes and that results should be discussed with a professional for diagnosis and treatment.",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color.White.copy(alpha = 0.8f),
-                                fontSize = 10.sp,
-                                lineHeight = 14.sp
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-    }
-
-    if (showRawDataExportDialog) {
-        RawDataExportDialog(
-            testResults = testResults,
-            astrologyProfile = astrologyProfile,
-            onDismiss = { showRawDataExportDialog = false }
-        )
-    }
-
-    if (showReportExportDialog) {
-        ReportExportDialog(
-            reports = if (savedReports.isNotEmpty()) savedReports else listOf(report),
-            initialSelectedReport = report,
-            onDismiss = { showReportExportDialog = false }
-        )
-    }
-
-    if (showCareLocatorDialog) {
-        ProfessionalLocatorDialog(
-            onDismiss = { showCareLocatorDialog = false }
-        )
-    }
-}
-
-@Composable
-fun ReportSectionCard(title: String, content: String, accentColor: Color) {
-    Card(
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(20.dp))
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = accentColor
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = content,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.9f),
-                lineHeight = 22.sp
-            )
-        }
-    }
-}
+{
