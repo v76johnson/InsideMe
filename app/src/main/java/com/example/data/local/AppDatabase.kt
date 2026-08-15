@@ -33,7 +33,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "psyche_astrology_db"
-                ).fallbackToDestructiveMigration(dropAllTables = true).build()
+                )
+                    // Use the no-arg form — Room's API does not accept `dropAllTables = true` here.
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }
