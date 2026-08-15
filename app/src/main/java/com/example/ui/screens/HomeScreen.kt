@@ -152,7 +152,7 @@ fun HomeScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(12.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -168,13 +168,17 @@ fun HomeScreen(
                                 text = "Greetings, $userName",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.ExtraBold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = "$sunSign Sun • $moonSign Moon • $risingSign Rising",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.8f)
+                                color = Color.White.copy(alpha = 0.8f),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 
@@ -208,7 +212,7 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp)
+                        .padding(12.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -237,13 +241,17 @@ fun HomeScreen(
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = CelestialGold,
-                                    letterSpacing = 0.8.sp
+                                    letterSpacing = 0.8.sp,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = "$completedCount of $totalTestsCount Assessments Completed",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color.White.copy(alpha = 0.85f)
+                                    color = Color.White.copy(alpha = 0.85f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
@@ -283,7 +291,9 @@ fun HomeScreen(
                         else if (completedCount < totalTestsCount) "Keep completing assessments to refine your personality blueprint and AI reports."
                         else "All assessments completed! You have unlocked your full multi-test meta-analysis.",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.7f)
+                        color = Color.White.copy(alpha = 0.7f),
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -306,7 +316,7 @@ fun HomeScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -330,7 +340,9 @@ fun HomeScreen(
                                 text = "Free AI Mind Companion",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Surface(
@@ -350,7 +362,9 @@ fun HomeScreen(
                             text = "Discuss assessment scores, feelings & mental health guidance",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 11.sp
+                            fontSize = 11.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     Spacer(modifier = Modifier.width(6.dp))
@@ -386,7 +400,7 @@ fun HomeScreen(
                             .testTag("quick_link_assessments")
                     ) {
                         Row(
-                            modifier = Modifier.padding(14.dp),
+                            modifier = Modifier.padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
@@ -424,7 +438,7 @@ fun HomeScreen(
                             .testTag("quick_link_astrology")
                     ) {
                         Row(
-                            modifier = Modifier.padding(14.dp),
+                            modifier = Modifier.padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
@@ -471,7 +485,7 @@ fun HomeScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(14.dp),
+                                .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
@@ -511,7 +525,7 @@ fun HomeScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(14.dp),
+                                .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
@@ -569,7 +583,7 @@ fun HomeScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
@@ -595,14 +609,18 @@ fun HomeScreen(
                                 text = "${sunSign.displayName} (${sunSign.element.displayName} Element)",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 
                         Text(
                             text = "Sun in ${sunSign.displayName} • Moon in ${moonSign.displayName} • Rising in ${risingSign.displayName}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.8f)
+                            color = Color.White.copy(alpha = 0.8f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
@@ -642,7 +660,7 @@ fun HomeScreen(
                     .border(1.dp, MysticViolet.copy(alpha = 0.4f), RoundedCornerShape(20.dp))
                     .testTag("traits_and_growth_card")
             ) {
-                Column(modifier = Modifier.padding(18.dp)) {
+                Column(modifier = Modifier.padding(12.dp)) {
                     Text(
                         text = "PERSONAL INSIGHTS BLUEPRINT",
                         style = MaterialTheme.typography.labelSmall,
@@ -667,7 +685,7 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(6.dp))
 
-                    val trait1 = if (testResults.isNotEmpty()) "High Trait Alignment: ${testResults.first().dominantArchetype}" else "High Reflective Intelligence & Depth"
+                    val trait1 = if (testResults.isNotEmpty()) "High Trait Alignment: ${'$'}{testResults.first().dominantArchetype}" else "High Reflective Intelligence & Depth"
                     val trait2 = "Strong Empathetic Intuition (${sunSign.displayName} Placement)"
                     val trait3 = "Strategic Problem-Solving & Focus"
 
@@ -680,7 +698,9 @@ fun HomeScreen(
                             Text(
                                 text = trait,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = Color.White.copy(alpha = 0.9f),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -714,7 +734,9 @@ fun HomeScreen(
                             Text(
                                 text = growth,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = Color.White.copy(alpha = 0.9f),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
@@ -742,7 +764,9 @@ fun HomeScreen(
                         Text(
                             text = "Your completed assessment results and dominant scores",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.7f)
+                            color = Color.White.copy(alpha = 0.7f),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -761,7 +785,7 @@ fun HomeScreen(
                                 .padding(vertical = 4.dp)
                                 .border(1.dp, MysticViolet.copy(alpha = 0.35f), RoundedCornerShape(16.dp))
                         ) {
-                            Column(modifier = Modifier.padding(14.dp)) {
+                            Column(modifier = Modifier.padding(12.dp)) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -772,7 +796,9 @@ fun HomeScreen(
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White,
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f),
+                                        maxLines = 3,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                     Box(
                                         modifier = Modifier
@@ -794,7 +820,7 @@ fun HomeScreen(
                                     Icon(Icons.Default.Psychology, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "Dominant Trait: ${result.dominantArchetype}",
+                                        text = "Dominant Trait: ${'$'}{result.dominantArchetype}",
                                         style = MaterialTheme.typography.bodySmall,
                                         fontWeight = FontWeight.Bold,
                                         color = CelestialGold
@@ -856,7 +882,7 @@ fun HomeScreen(
                     shape = RoundedCornerShape(14.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .height(48.dp)
                         .testTag("link_to_assessments_tab_button")
                 ) {
                     Text(
