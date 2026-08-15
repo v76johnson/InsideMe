@@ -31,6 +31,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -345,6 +346,67 @@ fun NameMeaningReportDialog(
                                 )
 
                                 Spacer(modifier = Modifier.height(12.dp))
+                                HorizontalDivider(color = CelestialGold.copy(alpha = 0.35f), thickness = 1.dp)
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                // ALL KNOWN MEANINGS IN TOP DISPLAY BOX
+                                Text(
+                                    text = "📖 ALL KNOWN MEANINGS & ORIGINS:",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = CelestialGold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                if (report.etymologies.isNotEmpty()) {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        report.etymologies.forEach { ety ->
+                                            Surface(
+                                                shape = RoundedCornerShape(8.dp),
+                                                color = DeepSpace.copy(alpha = 0.6f),
+                                                border = androidx.compose.foundation.BorderStroke(1.dp, MysticViolet.copy(alpha = 0.6f)),
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Column(modifier = Modifier.padding(10.dp)) {
+                                                    Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Text(
+                                                            text = ety.languageOrCulture,
+                                                            style = MaterialTheme.typography.labelSmall,
+                                                            fontWeight = FontWeight.ExtraBold,
+                                                            color = NebulaTeal
+                                                        )
+                                                        Text(
+                                                            text = "• ${ety.literalMeaning}",
+                                                            style = MaterialTheme.typography.bodySmall,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = CelestialGold
+                                                        )
+                                                    }
+                                                    if (ety.historicalContext.isNotBlank()) {
+                                                        Spacer(modifier = Modifier.height(4.dp))
+                                                        Text(
+                                                            text = ety.historicalContext,
+                                                            style = MaterialTheme.typography.bodySmall,
+                                                            color = Color.White.copy(alpha = 0.85f),
+                                                            fontSize = 11.sp,
+                                                            lineHeight = 15.sp
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(14.dp))
 
                                 // Action Options for analyzed name
                                 Row(
