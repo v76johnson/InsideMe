@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -2119,10 +2120,10 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Star,
-                title = "🔢 Free Numerology & Chinese Zodiac",
+                title = "🔢 Free Numerology & Zodiac",
                 subtitle = "Calculate your Numerology Life Path number, core strengths, growth areas, and Chinese Zodiac animal element traits.",
                 tagText = "Free Service",
-                buttonText = "View Numerology & Zodiac",
+                buttonText = "Calculate Numerology",
                 onClick = { onNavigateToTab(2) },
                 testTag = "goto_numerology_service_button"
             )
@@ -2132,7 +2133,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.AutoAwesome,
-                title = "🔮 AI Cosmic Oracle & Chat",
+                title = "🔮 AI Cosmic Oracle",
                 subtitle = "Ask Gemini AI personalized astrological questions, real-time transit insights, and daily predictions.",
                 tagText = "AI Powered",
                 buttonText = "Consult AI Oracle",
@@ -2145,7 +2146,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Favorite,
-                title = "💖 Birthdate Synastry & Match",
+                title = "💖 Birthdate Synastry Match",
                 subtitle = "Calculate precise planetary compatibility and love chemistry scores between two birthdates, times & cities.",
                 tagText = "Psyche+ Premium",
                 buttonText = "Check Synastry Match",
@@ -2158,7 +2159,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Psychology,
-                title = "✨ Mind & Cosmos AI Synthesis Report",
+                title = "✨ Mind & Cosmos Synthesis",
                 subtitle = "Synthesize psychological test scores (MBTI, Enneagram) with natal astrology charts into a 7-section deep report.",
                 tagText = "$1 Report / Premium",
                 buttonText = "Generate Deep AI Report",
@@ -2311,12 +2312,19 @@ fun AstroServiceOptionCard(
                 onClick = onClick,
                 colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
                 shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .heightIn(min = 44.dp)
                     .testTag(testTag)
             ) {
-                Text(text = buttonText, fontWeight = FontWeight.Bold)
+                Text(
+                    text = buttonText,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    softWrap = false
+                )
             }
         }
     }
@@ -2435,8 +2443,14 @@ fun NumerologyAndChineseZodiacTab(
                             text = "Numerology Life Path",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = CelestialGold
+                            color = CelestialGold,
+                            modifier = Modifier.weight(1f, fill = false),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
@@ -2447,7 +2461,9 @@ fun NumerologyAndChineseZodiacTab(
                                 text = "Path #${numerology.lifePathNumber}",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = DeepSpace
+                                color = DeepSpace,
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }
@@ -2536,16 +2552,23 @@ fun NumerologyAndChineseZodiacTab(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(chineseZodiac.animalEmoji, fontSize = 28.sp)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
+                            Text(chineseZodiac.animalEmoji, fontSize = 26.sp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Chinese Zodiac Sign",
+                                text = "Chinese Zodiac",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
@@ -2557,7 +2580,9 @@ fun NumerologyAndChineseZodiacTab(
                                 text = "${chineseZodiac.birthYear} • ${chineseZodiac.animal}",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }

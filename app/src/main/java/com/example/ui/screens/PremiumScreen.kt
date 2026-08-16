@@ -158,16 +158,23 @@ fun PremiumScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
                             Icon(Icons.Default.RateReview, contentDescription = null, tint = CelestialGold)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "1 Free Report for Review",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
@@ -179,7 +186,9 @@ fun PremiumScreen(
                                 text = if (userSubscription.hasClaimedReviewBonus) "CLAIMED" else "+1 FREE REPORT",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = DeepSpace
+                                color = DeepSpace,
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }
@@ -436,7 +445,10 @@ fun PremiumScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f, fill = false)
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Cancel,
                                 contentDescription = null,
@@ -447,9 +459,13 @@ fun PremiumScreen(
                                 text = "Subscription Management",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
@@ -461,7 +477,9 @@ fun PremiumScreen(
                                 text = if (userSubscription.isPremium) userSubscription.tier.title.uppercase() else "FREE TIER",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = if (userSubscription.isPremium) Color.Black else Color.White
+                                color = if (userSubscription.isPremium) Color.Black else Color.White,
+                                maxLines = 1,
+                                softWrap = false
                             )
                         }
                     }

@@ -1,52 +1,32 @@
-name: InsideMe Android CI
+name: Android CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v3
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
 
-    # Rule 2 Patch: Wipes out all conflicting app-level and root-level Kotlin DSL scripts to enforce pure Groovy compilation
-    - name: Clean Conflicting Kotlin Files
-      run: |
-        rm -f settings.gradle.kts
-        rm -f build.gradle.kts
-        rm -f app/build.gradle.kts
-
-    # Rule 1: Pre-generate a local debug.keystore using keytool before executing gradle
-    - name: Pre-generate Local Debug Keystore
+    - name: Pre-generate local debug.keystore
       run: |
         mkdir -p ~/.android
-        keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+        keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
 
-    # Automated Build Runner: Gradle 8.9 is the minimum/default for AGP 8.7.x.
-    # IMPORTANT: AGP 8.7.x is NOT compatible with Gradle 9.x. The previous config
-    # pinned gradle-version: 9.3.1, which is incompatible with AGP 8.x and caused
-    # the build to fail during project configuration.
+    - name: Grant execute permission for gradle
+      run: chmod +x gradlew || true
+
     - name: Build with Gradle
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        gradle-version: '8.9'
-        build-root-directory: .
-        arguments: :app:assembleDebug
-
-    - name: Upload InsideMe APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: insideme-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+      run: gradle assembleDebug

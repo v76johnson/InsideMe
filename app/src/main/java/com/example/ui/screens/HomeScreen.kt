@@ -9,6 +9,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -69,6 +71,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(
     testResults: List<TestResultEntity>,
@@ -336,12 +339,18 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = "Free AI Mind Companion",
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                modifier = Modifier.weight(1f, fill = false),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Surface(
@@ -353,15 +362,19 @@ fun HomeScreen(
                                     color = Color.Black,
                                     fontWeight = FontWeight.ExtraBold,
                                     fontSize = 9.sp,
-                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "Discuss assessment scores, feelings & mental health guidance",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 11.sp
+                            fontSize = 11.sp,
+                            lineHeight = 16.sp
                         )
                     }
                     Spacer(modifier = Modifier.width(6.dp))
@@ -618,8 +631,12 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            sunSign.keywords.take(3).forEach { kw ->
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            sunSign.keywords.take(4).forEach { kw ->
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(6.dp))
@@ -630,7 +647,9 @@ fun HomeScreen(
                                         text = kw,
                                         style = MaterialTheme.typography.labelSmall,
                                         color = CelestialGold,
-                                        fontSize = 10.sp
+                                        fontSize = 10.sp,
+                                        maxLines = 1,
+                                        softWrap = false
                                     )
                                 }
                             }
@@ -684,14 +703,17 @@ fun HomeScreen(
 
                     listOf(trait1, trait2, trait3).forEach { trait ->
                         Row(
-                            modifier = Modifier.padding(vertical = 3.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 3.dp),
                             verticalAlignment = Alignment.Top
                         ) {
                             Text("✦ ", color = NebulaTeal, fontSize = 12.sp, modifier = Modifier.padding(top = 2.dp))
                             Text(
                                 text = trait,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
@@ -718,14 +740,17 @@ fun HomeScreen(
 
                     listOf(growth1, growth2, growth3).forEach { growth ->
                         Row(
-                            modifier = Modifier.padding(vertical = 3.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 3.dp),
                             verticalAlignment = Alignment.Top
                         ) {
                             Text("👉 ", fontSize = 12.sp, modifier = Modifier.padding(top = 2.dp))
                             Text(
                                 text = growth,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.9f)
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
