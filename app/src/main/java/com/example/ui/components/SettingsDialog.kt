@@ -361,24 +361,21 @@ fun SettingsDialog(
                         initialExpanded = true
                     ) {
                         Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        text = "Current Status: ${if (userSubscription.isPremium) userSubscription.tier.title else "Free User"}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                    Text(
-                                        text = "Available Gems: ${userSubscription.gemsBalance}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = CelestialGold
-                                    )
-                                }
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "Current Status: ${if (userSubscription.isPremium) userSubscription.tier.title else "Free User"}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Available Gems: ${userSubscription.gemsBalance}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = CelestialGold
+                                )
+
+                                Spacer(modifier = Modifier.height(10.dp))
 
                                 Button(
                                     onClick = {
@@ -387,9 +384,18 @@ fun SettingsDialog(
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
                                     shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier.testTag("settings_upgrade_button")
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(42.dp)
+                                        .testTag("settings_upgrade_button")
                                 ) {
-                                    Text(if (userSubscription.isPremium) "Manage Tier" else "Upgrade Tier", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                    Icon(Icons.Default.WorkspacePremium, contentDescription = null, modifier = Modifier.size(16.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        if (userSubscription.isPremium) "Manage Tier" else "Upgrade Tier",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp
+                                    )
                                 }
                             }
 
@@ -414,7 +420,7 @@ fun SettingsDialog(
                                         promoCodeFieldValue = it
                                         promoCodeMessage = null
                                     },
-                                    placeholder = { Text("Enter code (e.g. betatest)", color = Color.White.copy(alpha = 0.45f)) },
+                                    placeholder = { Text("Enter code (e.g. betatest)", color = Color.White.copy(alpha = 0.45f), fontSize = 12.sp) },
                                     singleLine = true,
                                     modifier = Modifier
                                         .weight(1f)
@@ -448,7 +454,9 @@ fun SettingsDialog(
                                     colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
                                     shape = RoundedCornerShape(12.dp),
                                     enabled = promoCodeFieldValue.text.isNotBlank(),
-                                    modifier = Modifier.testTag("settings_promo_code_submit_button")
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .testTag("settings_promo_code_submit_button")
                                 ) {
                                     Text("Redeem", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                                 }
