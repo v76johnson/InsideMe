@@ -166,18 +166,14 @@ fun SettingsDialog(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "Settings & Preferences",
-                                    style = MaterialTheme.typography.titleLarge,
+                                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    color = Color.White
                                 )
                                 Text(
                                     text = "System, Data & Care Controls",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White.copy(alpha = 0.6f),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    color = Color.White.copy(alpha = 0.6f)
                                 )
                             }
                         }

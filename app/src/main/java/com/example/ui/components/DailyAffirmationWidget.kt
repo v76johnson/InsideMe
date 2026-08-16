@@ -508,143 +508,178 @@ fun DailyAffirmationWidget(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Action Buttons Bar: Refresh, Copy, Favorite, Prompt Toggle
+            // Action Section: Elements arranged cleanly one under another
+            // 1. Sub-header with Reflection Toggle and Progress Counter
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Next Affirmation Button
-                    Button(
-                        onClick = {
-                            currentIndex = (currentIndex + 1) % affirmations.size
-                            isBookmarked = false
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = CelestialGold,
-                            contentColor = DeepSpace
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                        modifier = Modifier
-                            .height(38.dp)
-                            .testTag("next_affirmation_button")
-                    ) {
-                        Icon(
-                            Icons.Default.Refresh,
-                            contentDescription = "Next Affirmation",
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Next Quote", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    // Copy Quote Button
-                    IconButton(
-                        onClick = {
-                            val copyText = "“${currentItem.quote}”\n— ${currentItem.sourceCategory} Affirmation\nPrinciple: ${currentItem.psychologyPrinciple}"
-                            clipboardManager.setText(AnnotatedString(copyText))
-                            Toast.makeText(context, "Affirmation copied to clipboard!", Toast.LENGTH_SHORT).show()
-                        },
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MysticViolet.copy(alpha = 0.4f))
-                            .testTag("copy_affirmation_button")
-                    ) {
-                        Icon(
-                            Icons.Default.ContentCopy,
-                            contentDescription = "Copy Quote",
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    // Bookmark / Favorite Button
-                    IconButton(
-                        onClick = {
-                            isBookmarked = !isBookmarked
-                            val msg = if (isBookmarked) "Saved to favorite affirmations!" else "Removed from favorites."
-                            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                        },
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(
-                                if (isBookmarked) ShadowRose.copy(alpha = 0.3f) else MysticViolet.copy(alpha = 0.4f)
-                            )
-                            .testTag("favorite_affirmation_button")
-                    ) {
-                        Icon(
-                            if (isBookmarked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Bookmark",
-                            tint = if (isBookmarked) ShadowRose else Color.White,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                }
-
-                // Counter / Prompt Toggle Text
                 TextButton(
                     onClick = { showReflectionPrompt = !showReflectionPrompt },
-                    contentPadding = PaddingValues(4.dp)
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
+                ) {
+                    Icon(
+                        Icons.Default.SelfImprovement,
+                        contentDescription = null,
+                        tint = CelestialGold,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = if (showReflectionPrompt) "Hide Reflection" else "Reflection Prompt",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = CelestialGold,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(DeepSpace.copy(alpha = 0.6f))
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
                 ) {
                     Text(
-                        text = "${currentIndex + 1}/${affirmations.size}",
+                        text = "${currentIndex + 1} of ${affirmations.size}",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color.White.copy(alpha = 0.7f),
+                        color = Color.White.copy(alpha = 0.8f),
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            // Notice / CTA if user has not completed assessments yet
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 2. Action Buttons Row (Next Quote, Copy, Favorite)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Next Affirmation Button
+                Button(
+                    onClick = {
+                        currentIndex = (currentIndex + 1) % affirmations.size
+                        isBookmarked = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = CelestialGold,
+                        contentColor = DeepSpace
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(42.dp)
+                        .testTag("next_affirmation_button")
+                ) {
+                    Icon(
+                        Icons.Default.Refresh,
+                        contentDescription = "Next Affirmation",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Next Quote", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Copy Quote Button
+                IconButton(
+                    onClick = {
+                        val copyText = "“${currentItem.quote}”\n— ${currentItem.sourceCategory} Affirmation\nPrinciple: ${currentItem.psychologyPrinciple}"
+                        clipboardManager.setText(AnnotatedString(copyText))
+                        Toast.makeText(context, "Affirmation copied to clipboard!", Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(MysticViolet.copy(alpha = 0.4f))
+                        .testTag("copy_affirmation_button")
+                ) {
+                    Icon(
+                        Icons.Default.ContentCopy,
+                        contentDescription = "Copy Quote",
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Bookmark / Favorite Button
+                IconButton(
+                    onClick = {
+                        isBookmarked = !isBookmarked
+                        val msg = if (isBookmarked) "Saved to favorite affirmations!" else "Removed from favorites."
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    },
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            if (isBookmarked) ShadowRose.copy(alpha = 0.3f) else MysticViolet.copy(alpha = 0.4f)
+                        )
+                        .testTag("favorite_affirmation_button")
+                ) {
+                    Icon(
+                        if (isBookmarked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Bookmark",
+                        tint = if (isBookmarked) ShadowRose else Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+
+            // 3. Notice / CTA if user has not completed assessments yet (Stacked vertically)
             if (testResults.isEmpty()) {
                 Spacer(modifier = Modifier.height(14.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(MysticViolet.copy(alpha = 0.3f))
-                        .clickable { onTakeAssessmentClicked() }
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Card(
+                    shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = MysticViolet.copy(alpha = 0.3f)),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.weight(1f)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp)
                     ) {
-                        Icon(
-                            Icons.Default.Lightbulb,
-                            contentDescription = null,
-                            tint = CelestialGold,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Complete assessments to unlock quotes tailored to your MBTI, Enneagram, & Attachment profile!",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.85f),
-                            fontSize = 11.sp,
-                            lineHeight = 14.sp
-                        )
+                        Row(verticalAlignment = Alignment.Top) {
+                            Icon(
+                                Icons.Default.Lightbulb,
+                                contentDescription = null,
+                                tint = CelestialGold,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Complete assessments to unlock quotes tailored to your MBTI, Enneagram, & Attachment profile!",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.9f),
+                                lineHeight = 18.sp
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Button(
+                            onClick = onTakeAssessmentClicked,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = CelestialGold.copy(alpha = 0.2f),
+                                contentColor = CelestialGold
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(38.dp)
+                        ) {
+                            Text(
+                                text = "Take Assessment →",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Text(
-                        text = "Take Test →",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = CelestialGold,
-                        fontSize = 11.sp
-                    )
                 }
             } else {
                 Spacer(modifier = Modifier.height(10.dp))

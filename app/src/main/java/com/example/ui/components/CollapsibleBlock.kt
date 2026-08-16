@@ -82,7 +82,7 @@ fun CollapsibleBlock(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     modifier = Modifier.weight(1f)
                 ) {
                     if (icon != null) {
@@ -100,16 +100,21 @@ fun CollapsibleBlock(
                                 modifier = Modifier.size(20.dp)
                             )
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
                     }
 
                     Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = title,
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.titleMedium.copy(fontSize = 15.sp),
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color.White,
+                                lineHeight = 20.sp,
+                                modifier = Modifier.weight(1f, fill = false)
                             )
                             if (badgeText != null) {
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -131,12 +136,13 @@ fun CollapsibleBlock(
                         }
 
                         if (subtitle != null) {
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(3.dp))
                             Text(
                                 text = subtitle,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White.copy(alpha = 0.7f),
-                                fontSize = 12.sp
+                                fontSize = 12.sp,
+                                lineHeight = 16.sp
                             )
                         }
                     }

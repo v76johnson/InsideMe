@@ -71,10 +71,13 @@ fun TestCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.weight(1f)
+                ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(38.dp)
                             .clip(CircleShape)
                             .background(MysticViolet.copy(alpha = 0.25f)),
                         contentAlignment = Alignment.Center
@@ -83,7 +86,7 @@ fun TestCard(
                             imageVector = if (test.category.displayName == "Astrology") Icons.Default.Star else Icons.Default.Psychology,
                             contentDescription = null,
                             tint = CelestialGold,
-                            modifier = Modifier.size(22.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
 
@@ -119,6 +122,7 @@ fun TestCard(
                 }
 
                 if (isCompleted) {
+                    Spacer(modifier = Modifier.width(8.dp))
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))

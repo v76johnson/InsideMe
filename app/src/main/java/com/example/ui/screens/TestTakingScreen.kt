@@ -482,35 +482,27 @@ fun TestTakingScreen(
                         .testTag("review_reward_option_card")
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        // Header Row: Icon on left, Badge on right
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f, fill = true)
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                                    .background(CelestialGold.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.RateReview, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "1 Free Report for Review",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.weight(1f, fill = true),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                Icon(Icons.Default.RateReview, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(18.dp))
                             }
-
-                            Spacer(modifier = Modifier.width(8.dp))
 
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(6.dp))
                                     .background(CelestialGold)
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    .padding(horizontal = 8.dp, vertical = 3.dp)
                             ) {
                                 Text(
                                     text = if (userSubscription.hasClaimedReviewBonus) "CLAIMED" else "FREE BONUS",
@@ -523,6 +515,15 @@ fun TestTakingScreen(
                             }
                         }
 
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "1 Free Report for Review",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
@@ -531,7 +532,8 @@ fun TestTakingScreen(
                             else
                                 "Leave a quick review to instantly earn 1 Free Full AI Synthesis Report credit.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.8f)
+                            color = Color.White.copy(alpha = 0.8f),
+                            lineHeight = 18.sp
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -554,8 +556,9 @@ fun TestTakingScreen(
                             Icon(Icons.Default.RateReview, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (userSubscription.hasClaimedReviewBonus) "Review Reward Claimed ✓" else "Write a Review (+1 Free Report)",
-                                fontWeight = FontWeight.Bold
+                                text = if (userSubscription.hasClaimedReviewBonus) "Review Reward Claimed ✓" else "Write a Review",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp
                             )
                         }
                     }
@@ -572,29 +575,21 @@ fun TestTakingScreen(
                         .border(1.5.dp, NebulaTeal, RoundedCornerShape(18.dp))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        // Header Row: Icon on left, Price on right
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f, fill = true)
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                                    .background(NebulaTeal.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(20.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "One-Time Full Access",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.weight(1f, fill = true),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(18.dp))
                             }
-
-                            Spacer(modifier = Modifier.width(8.dp))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
@@ -615,6 +610,15 @@ fun TestTakingScreen(
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "One-Time Full Access",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
 
                         Spacer(modifier = Modifier.height(4.dp))
 
@@ -637,7 +641,8 @@ fun TestTakingScreen(
                         Text(
                             text = "Get one-time full report purchase with unlimited report access across all personal assessments.",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.85f)
+                            color = Color.White.copy(alpha = 0.85f),
+                            lineHeight = 18.sp
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
@@ -653,7 +658,7 @@ fun TestTakingScreen(
                         ) {
                             Icon(Icons.Default.ShoppingCart, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Buy Full Access ($4.99 - 50% OFF)", fontWeight = FontWeight.Bold)
+                            Text("Buy Full Access ($4.99)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                     }
                 }
@@ -669,29 +674,21 @@ fun TestTakingScreen(
                         .border(1.dp, CelestialGold.copy(alpha = 0.4f), RoundedCornerShape(18.dp))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+                        // Header Row: Icon on left, Price on right
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.weight(1f, fill = true)
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(CircleShape)
+                                    .background(CelestialGold.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.WorkspacePremium, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Psyche+ Subscription",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    modifier = Modifier.weight(1f, fill = true),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                Icon(Icons.Default.WorkspacePremium, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(18.dp))
                             }
-
-                            Spacer(modifier = Modifier.width(8.dp))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
@@ -712,6 +709,15 @@ fun TestTakingScreen(
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Psyche+ Subscription",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
 
                         Spacer(modifier = Modifier.height(4.dp))
 
@@ -750,7 +756,7 @@ fun TestTakingScreen(
                         ) {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Subscribe ($4.99/mo - 50% OFF)", fontWeight = FontWeight.Bold)
+                            Text("Unlock Psyche+ ($4.99/mo)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                     }
                 }

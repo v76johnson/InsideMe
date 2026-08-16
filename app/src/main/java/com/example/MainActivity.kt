@@ -159,8 +159,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 softWrap = false,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 10.5.sp
+                                fontSize = 10.sp,
+                                letterSpacing = (-0.2).sp
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
@@ -182,8 +182,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 softWrap = false,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 10.sp
+                                fontSize = 9.5.sp,
+                                letterSpacing = (-0.4).sp
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
@@ -205,8 +205,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 softWrap = false,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 10.5.sp
+                                fontSize = 10.sp,
+                                letterSpacing = (-0.2).sp
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
@@ -228,8 +228,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1,
                                 softWrap = false,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 10.5.sp
+                                fontSize = 10.sp,
+                                letterSpacing = (-0.2).sp
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(

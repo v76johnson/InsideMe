@@ -153,35 +153,32 @@ fun PremiumScreen(
                     .border(1.5.dp, CelestialGold, RoundedCornerShape(22.dp))
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
+                    // Header Row: Icon on left, Badge on right
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f, fill = true)
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(CelestialGold.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.RateReview, contentDescription = null, tint = CelestialGold)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "1 Free Report for Review",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.weight(1f, fill = true),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                            Icon(
+                                Icons.Default.RateReview,
+                                contentDescription = null,
+                                tint = CelestialGold,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(CelestialGold)
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = if (userSubscription.hasClaimedReviewBonus) "CLAIMED" else "+1 FREE REPORT",
@@ -194,7 +191,16 @@ fun PremiumScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "1 Free Report for Review",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
                         text = if (userSubscription.hasClaimedReviewBonus)
@@ -202,7 +208,8 @@ fun PremiumScreen(
                         else
                             "Leave feedback to instantly claim +1 Free Premium AI Synthesis Report Credit.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.85f)
+                        color = Color.White.copy(alpha = 0.85f),
+                        lineHeight = 18.sp
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -219,14 +226,15 @@ fun PremiumScreen(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .height(46.dp)
                             .testTag("premium_give_review_button")
                     ) {
                         Icon(Icons.Default.RateReview, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = if (userSubscription.hasClaimedReviewBonus) "Review Reward Claimed ✓" else "Leave a Review (+1 Free Report)",
-                            fontWeight = FontWeight.Bold
+                            text = if (userSubscription.hasClaimedReviewBonus) "Review Reward Claimed ✓" else "Leave a Review",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
                         )
                     }
                 }
@@ -245,29 +253,26 @@ fun PremiumScreen(
                     .border(1.5.dp, NebulaTeal, RoundedCornerShape(20.dp))
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
+                    // Header Row: Icon on left, Badge on right
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f, fill = true)
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(NebulaTeal.copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = NebulaTeal)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Single Premium Report",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.weight(1f, fill = true),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                            Icon(
+                                Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                                tint = NebulaTeal,
+                                modifier = Modifier.size(20.dp)
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
@@ -286,12 +291,22 @@ fun PremiumScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Single Premium Report",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
                         text = "Don't want a recurring subscription? Purchase a single full AI synthesis report for just $1.00.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.85f)
+                        color = Color.White.copy(alpha = 0.85f),
+                        lineHeight = 18.sp
                     )
 
                     Spacer(modifier = Modifier.height(14.dp))
@@ -305,12 +320,12 @@ fun PremiumScreen(
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp)
+                            .height(46.dp)
                             .testTag("buy_single_report_button")
                     ) {
                         Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Purchase 1 Report ($1.00)", fontWeight = FontWeight.Bold)
+                        Text("Buy 1 Report ($1.00)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
                 }
             }
@@ -442,38 +457,32 @@ fun PremiumScreen(
                     .border(1.dp, Color(0xFFEF5350).copy(alpha = 0.4f), RoundedCornerShape(20.dp))
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
+                    // Header Row: Icon on left, Badge on right
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f, fill = false)
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFEF5350).copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Cancel,
                                 contentDescription = null,
-                                tint = Color(0xFFEF5350)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Subscription Management",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                tint = Color(0xFFEF5350),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(if (userSubscription.isPremium) NebulaTeal else Color.Gray.copy(alpha = 0.3f))
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = if (userSubscription.isPremium) userSubscription.tier.title.uppercase() else "FREE TIER",
@@ -485,6 +494,15 @@ fun PremiumScreen(
                             )
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Subscription Management",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
 
                     Spacer(modifier = Modifier.height(10.dp))
 

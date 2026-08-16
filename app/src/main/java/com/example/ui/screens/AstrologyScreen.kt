@@ -2242,10 +2242,12 @@ fun AstroServiceOptionCard(
             .fillMaxWidth()
             .border(1.dp, MysticViolet, RoundedCornerShape(20.dp))
     ) {
-        Column(modifier = Modifier.padding(14.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Header Row with Icon and Category Tag Badge
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
@@ -2257,57 +2259,46 @@ fun AstroServiceOptionCard(
                     Icon(icon, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
                 }
 
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                if (tagText.isNotBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(CelestialGold.copy(alpha = 0.2f))
+                            .border(1.dp, CelestialGold.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleMedium,
+                            text = tagText,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.weight(1f, fill = false),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            color = CelestialGold,
+                            maxLines = 1,
+                            softWrap = false
                         )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(CelestialGold.copy(alpha = 0.2f))
-                                .padding(horizontal = 8.dp, vertical = 3.dp)
-                        ) {
-                            Text(
-                                text = tagText,
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = CelestialGold,
-                                maxLines = 1,
-                                softWrap = false
-                            )
-                        }
                     }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.8f),
-                        lineHeight = 18.sp,
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
-                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Full-width Title - never truncated or squished
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = 0.8f),
+                lineHeight = 18.sp
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
 
             Button(
                 onClick = onClick,
@@ -2444,25 +2435,21 @@ fun NumerologyAndChineseZodiacTab(
                             text = "Numerology Life Path",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = CelestialGold,
-                            modifier = Modifier.weight(1f, fill = false),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            color = CelestialGold
                         )
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
-                                .clip(CircleShape)
-                                .background(CelestialGold)
-                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(CelestialGold.copy(alpha = 0.2f))
+                                .border(1.dp, CelestialGold, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text(
                                 text = "Path #${numerology.lifePathNumber}",
-                                style = MaterialTheme.typography.titleSmall,
+                                style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = DeepSpace,
+                                color = CelestialGold,
                                 maxLines = 1,
                                 softWrap = false
                             )
@@ -2554,8 +2541,7 @@ fun NumerologyAndChineseZodiacTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f, fill = false)
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(chineseZodiac.animalEmoji, fontSize = 26.sp)
                             Spacer(modifier = Modifier.width(8.dp))
@@ -2563,13 +2549,9 @@ fun NumerologyAndChineseZodiacTab(
                                 text = "Chinese Zodiac",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                color = Color.White
                             )
                         }
-
-                        Spacer(modifier = Modifier.width(8.dp))
 
                         Box(
                             modifier = Modifier
