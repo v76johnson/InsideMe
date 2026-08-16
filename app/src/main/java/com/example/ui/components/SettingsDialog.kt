@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -576,10 +577,7 @@ fun SettingsDialog(
                                     checked = cosmicThemeEnabled,
                                     onCheckedChange = { cosmicThemeEnabled = it },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = DeepSpace,
-                                        checkedTrackColor = CelestialGold
-                                    )
-                                )
+                                                                    )
                             }
                         }
                     }
@@ -587,14 +585,23 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // SECTION 3: DATA EXPORT & LOCAL STORAGE
-                    CollapsibleBlock(
-                        title = "Data Export & Storage Tools",
-                        subtitle = "Export JSON Data, PDF Reports & Local Storage Management",
-                        icon = Icons.Default.Download,
-                        iconTint = CelestialGold,
-                        initialExpanded = false
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.4f)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, MysticViolet.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
                     ) {
-                        Column {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Data Export & Storage Tools", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text("Export JSON Data, PDF Reports & Local Storage Management", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -649,14 +656,23 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // SECTION 4: CONTACT, FEEDBACK & APP INFO
-                    CollapsibleBlock(
-                        title = "Contact, Feedback & Support",
-                        subtitle = "Send User Feedback, Email Support & App Information",
-                        icon = Icons.Default.Feedback,
-                        iconTint = CelestialGold,
-                        initialExpanded = false
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.4f)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, MysticViolet.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
                     ) {
-                        Column {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Feedback, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Contact, Feedback & Support", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text("Send User Feedback, Email Support & App Information", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -669,6 +685,7 @@ fun SettingsDialog(
                                         .weight(1f)
                                         .height(44.dp)
                                         .testTag("settings_send_feedback_btn")
+
                                 ) {
                                     Icon(Icons.Default.Feedback, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
