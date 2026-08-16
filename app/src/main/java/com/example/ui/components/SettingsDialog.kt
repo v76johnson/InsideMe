@@ -576,8 +576,11 @@ fun SettingsDialog(
                                 Switch(
                                     checked = cosmicThemeEnabled,
                                     onCheckedChange = { cosmicThemeEnabled = it },
-                                    colors = SwitchDefaults.colors(
-                                                                    )
+                                                                  colors = SwitchDefaults.colors(
+                                        checkedThumbColor = DeepSpace,
+                                        checkedTrackColor = CelestialGold
+                                    )
+                                )
                             }
                         }
                     }
@@ -670,6 +673,22 @@ fun SettingsDialog(
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text("Contact, Feedback & Support", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color.White)
                                     Text("Send User Feedback, Email Support & App Information", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = { showFeedbackDialog = true },
+                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(44.dp)
+                                        .testTag("settings_send_feedback_btn")
+ = 0.6f))
                                 }
                             }
                             Spacer(modifier = Modifier.height(12.dp))
