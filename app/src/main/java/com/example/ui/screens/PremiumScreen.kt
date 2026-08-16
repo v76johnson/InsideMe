@@ -160,7 +160,7 @@ fun PremiumScreen(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f, fill = false)
+                            modifier = Modifier.weight(1f, fill = true)
                         ) {
                             Icon(Icons.Default.RateReview, contentDescription = null, tint = CelestialGold)
                             Spacer(modifier = Modifier.width(8.dp))
@@ -169,6 +169,7 @@ fun PremiumScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
+                                modifier = Modifier.weight(1f, fill = true),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -251,7 +252,7 @@ fun PremiumScreen(
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.weight(1f, fill = false)
+                            modifier = Modifier.weight(1f, fill = true)
                         ) {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = NebulaTeal)
                             Spacer(modifier = Modifier.width(8.dp))
@@ -260,6 +261,7 @@ fun PremiumScreen(
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
+                                modifier = Modifier.weight(1f, fill = true),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -987,7 +989,7 @@ fun SubscriptionTierCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        modifier = Modifier.weight(1f, fill = false),
+                        modifier = Modifier.weight(1f, fill = true),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

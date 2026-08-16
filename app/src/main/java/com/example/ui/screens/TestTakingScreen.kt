@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.filled.PlayCircleFilled
@@ -486,16 +487,24 @@ fun TestTakingScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f, fill = true)
+                            ) {
                                 Icon(Icons.Default.RateReview, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "1 Free Report for Review",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = Color.White,
+                                    modifier = Modifier.weight(1f, fill = true),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
+
+                            Spacer(modifier = Modifier.width(8.dp))
 
                             Box(
                                 modifier = Modifier
@@ -507,7 +516,9 @@ fun TestTakingScreen(
                                     text = if (userSubscription.hasClaimedReviewBonus) "CLAIMED" else "FREE BONUS",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    color = DeepSpace
+                                    color = DeepSpace,
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                             }
                         }
@@ -566,29 +577,41 @@ fun TestTakingScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f, fill = true)
+                            ) {
                                 Icon(Icons.Default.ShoppingCart, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "One-Time Full Access",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = Color.White,
+                                    modifier = Modifier.weight(1f, fill = true),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
+
+                            Spacer(modifier = Modifier.width(8.dp))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "$9.99",
                                     style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
-                                    color = Color.White.copy(alpha = 0.5f)
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = "$4.99",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = NebulaTeal
+                                    color = NebulaTeal,
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                             }
                         }
@@ -651,29 +674,41 @@ fun TestTakingScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f, fill = true)
+                            ) {
                                 Icon(Icons.Default.WorkspacePremium, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "Psyche+ Subscription",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = Color.White,
+                                    modifier = Modifier.weight(1f, fill = true),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
+
+                            Spacer(modifier = Modifier.width(8.dp))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = "$9.99",
                                     style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
-                                    color = Color.White.copy(alpha = 0.5f)
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
                                     text = "$4.99/mo",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = CelestialGold
+                                    color = CelestialGold,
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                             }
                         }

@@ -64,6 +64,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -148,7 +149,10 @@ fun SettingsDialog(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Box(
                                 modifier = Modifier
                                     .size(38.dp)
@@ -159,17 +163,21 @@ fun SettingsDialog(
                                 Icon(Icons.Default.Settings, contentDescription = null, tint = CelestialGold)
                             }
                             Spacer(modifier = Modifier.width(12.dp))
-                            Column {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = "Settings & Preferences",
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = "System, Data & Care Controls",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White.copy(alpha = 0.6f)
+                                    color = Color.White.copy(alpha = 0.6f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }

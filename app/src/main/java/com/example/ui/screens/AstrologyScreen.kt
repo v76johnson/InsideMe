@@ -18,6 +18,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -208,65 +210,64 @@ fun AstrologyScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            ScrollableTabRow(
-                selectedTabIndex = activeTab,
-                containerColor = CosmicPurple,
-                contentColor = Color.White,
-                edgePadding = 8.dp,
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[activeTab]),
-                        color = CelestialGold
-                    )
-                },
+            val tabScrollState = rememberScrollState()
+
+            Row(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(1.dp, MysticViolet.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                    .fillMaxWidth()
+                    .horizontalScroll(tabScrollState)
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Tab(
-                    selected = (activeTab == 0),
-                    onClick = { activeTab = 0 },
-                    text = { Text("🌌 Home", fontWeight = FontWeight.Bold, fontSize = 11.sp) },
-                    modifier = Modifier.testTag("astro_home_tab")
+                val tabs = listOf(
+                    Triple(0, "🌌 Home", "astro_home_tab"),
+                    Triple(1, "🪐 Charts", "natal_charts_tab"),
+                    Triple(2, "🔢 Numerology", "numerology_tab"),
+                    Triple(3, "🔮 Oracle", "oracle_tab"),
+                    Triple(4, "💖 Synastry", "birthdate_match_tab"),
+                    Triple(5, "✨ Mind & Cosmos", "mind_cosmos_report_tab")
                 )
-                Tab(
-                    selected = (activeTab == 1),
-                    onClick = { activeTab = 1 },
-                    text = { Text("🪐 Charts", fontWeight = FontWeight.Bold, fontSize = 11.sp) },
-                    modifier = Modifier.testTag("natal_charts_tab")
-                )
-                Tab(
-                    selected = (activeTab == 2),
-                    onClick = { activeTab = 2 },
-                    text = { Text("🔢 Numerology", fontWeight = FontWeight.Bold, fontSize = 11.sp) },
-                    modifier = Modifier.testTag("numerology_tab")
-                )
-                Tab(
-                    selected = (activeTab == 3),
-                    onClick = { activeTab = 3 },
-                    text = { Text("🔮 Oracle", fontWeight = FontWeight.Bold, fontSize = 11.sp) },
-                    modifier = Modifier.testTag("oracle_tab")
-                )
-                Tab(
-                    selected = (activeTab == 4),
-                    onClick = { activeTab = 4 },
-                    text = {
+
+                tabs.forEach { (index, title, testTag) ->
+                    val isSelected = (activeTab == index)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(
+                                if (isSelected) CelestialGold else CosmicPurple
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = if (isSelected) CelestialGold else MysticViolet.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable { activeTab = index }
+                            .padding(horizontal = 14.dp, vertical = 9.dp)
+                            .testTag(testTag),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("💖 Synastry", fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                            if (!isPremium) {
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isSelected) DeepSpace else Color.White,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                            if (index == 4 && !isPremium) {
                                 Spacer(modifier = Modifier.width(4.dp))
-                                Icon(Icons.Default.Lock, contentDescription = "Locked", tint = CelestialGold, modifier = Modifier.size(12.dp))
+                                Icon(
+                                    Icons.Default.Lock,
+                                    contentDescription = "Locked",
+                                    tint = if (isSelected) DeepSpace else CelestialGold,
+                                    modifier = Modifier.size(12.dp)
+                                )
                             }
                         }
-                    },
-                    modifier = Modifier.testTag("birthdate_match_tab")
-                )
-                Tab(
-                    selected = (activeTab == 5),
-                    onClick = { activeTab = 5 },
-                    text = { Text("✨ Mind & Cosmos", fontWeight = FontWeight.Bold, fontSize = 11.sp) },
-                    modifier = Modifier.testTag("mind_cosmos_report_tab")
-                )
+                    }
+                }
             }
         }
 
