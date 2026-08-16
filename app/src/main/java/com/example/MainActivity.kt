@@ -151,21 +151,9 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     NavigationBarItem(
                         selected = (selectedTab == 0),
                         onClick = { selectedTab = 0 },
-                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                        label = {
-                            Text(
-                                text = "InsideMe",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                softWrap = false,
-                                fontSize = 10.sp,
-                                letterSpacing = (-0.2).sp
-                            )
-                        },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "InsideMe Home") },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
-                            selectedTextColor = CelestialGold,
                             indicatorColor = MysticViolet
                         ),
                         modifier = Modifier.testTag("nav_tab_insideme")
@@ -175,20 +163,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 1),
                         onClick = { selectedTab = 1 },
                         icon = { Icon(Icons.Default.Psychology, contentDescription = "Assessments") },
-                        label = {
-                            Text(
-                                text = "Assessments",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                softWrap = false,
-                                fontSize = 9.5.sp,
-                                letterSpacing = (-0.4).sp
-                            )
-                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
-                            selectedTextColor = CelestialGold,
                             indicatorColor = MysticViolet
                         ),
                         modifier = Modifier.testTag("nav_tab_assessments")
@@ -198,20 +174,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 2),
                         onClick = { selectedTab = 2 },
                         icon = { Icon(Icons.Default.Star, contentDescription = "Astrology") },
-                        label = {
-                            Text(
-                                text = "Astrology",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                softWrap = false,
-                                fontSize = 10.sp,
-                                letterSpacing = (-0.2).sp
-                            )
-                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
-                            selectedTextColor = CelestialGold,
                             indicatorColor = MysticViolet
                         ),
                         modifier = Modifier.testTag("nav_tab_astrology")
@@ -221,20 +185,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selected = (selectedTab == 3),
                         onClick = { selectedTab = 3 },
                         icon = { Icon(Icons.Default.WorkspacePremium, contentDescription = "Premium") },
-                        label = {
-                            Text(
-                                text = "Premium",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                softWrap = false,
-                                fontSize = 10.sp,
-                                letterSpacing = (-0.2).sp
-                            )
-                        },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
-                            selectedTextColor = CelestialGold,
                             indicatorColor = MysticViolet
                         ),
                         modifier = Modifier.testTag("nav_tab_premium")
