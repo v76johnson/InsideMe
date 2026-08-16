@@ -24,7 +24,8 @@ data class AstrologyProfileEntity(
     val moonSignName: String,
     val risingSignName: String,
     val userName: String = "",
-    val savedNameAdditionsJson: String = ""
+    val savedNameAdditionsJson: String = "",
+    val isProfileConfigured: Boolean = false
 )
 
 @Entity(tableName = "saved_reports")

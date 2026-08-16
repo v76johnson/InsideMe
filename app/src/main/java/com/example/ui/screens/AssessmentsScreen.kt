@@ -18,24 +18,27 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,13 +54,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.local.TestResultEntity
+import com.example.data.model.AstrologyProfile
 import com.example.data.model.DeepSynthesisReport
 import com.example.data.model.PsychologyTest
 import com.example.data.model.TestCategory
 import com.example.data.repository.TestCatalog
+import com.example.ui.components.ProfessionalLocatorDialog
+import com.example.ui.components.ReportExportDialog
 import com.example.ui.components.ReportReaderView
 import com.example.ui.components.TestCard
 import com.example.ui.theme.CelestialGold
@@ -65,17 +72,6 @@ import com.example.ui.theme.CosmicPurple
 import com.example.ui.theme.DeepSpace
 import com.example.ui.theme.MysticViolet
 import com.example.ui.theme.NebulaTeal
-
-import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MedicalServices
-import com.example.data.model.AstrologyProfile
-import com.example.ui.components.CollapsibleBlock
-import com.example.ui.components.ProfessionalLocatorDialog
-import com.example.ui.components.RawDataExportDialog
-import com.example.ui.components.ReportExportDialog
 
 @Composable
 fun AssessmentsScreen(
@@ -94,7 +90,6 @@ fun AssessmentsScreen(
     onOpenFreeMindChat: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var showRawDataExportDialog by remember { mutableStateOf(false) }
     var showReportExportDialog by remember { mutableStateOf(false) }
     var reportToExport by remember { mutableStateOf<DeepSynthesisReport?>(null) }
     var showCareLocatorDialog by remember { mutableStateOf(false) }
@@ -111,7 +106,6 @@ fun AssessmentsScreen(
             modifier = modifier
         )
     } else {
-        var selectedCategory by remember { mutableStateOf<TestCategory?>(null) }
         var collapsedCategories by remember { mutableStateOf(TestCategory.entries.toSet()) }
 
         val configuration = LocalConfiguration.current
@@ -121,18 +115,23 @@ fun AssessmentsScreen(
             testResults.map { it.testId }.toSet()
         }
 
+        val totalTestsCount = TestCatalog.allTests.size
+        val completedCount = testResults.size
+        val completionPercentage = if (totalTestsCount > 0) ((completedCount.toFloat() / totalTestsCount) * 100).toInt() else 0
+        val progressFraction = if (totalTestsCount > 0) (completedCount.toFloat() / totalTestsCount) else 0f
+
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
                 .background(DeepSpace),
             contentPadding = PaddingValues(bottom = 90.dp)
         ) {
-            // Header Banner
+            // Header Section: Title, Free AI Chat, Care Locator, Assessment Progress Box
             item {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 20.dp)
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -162,7 +161,7 @@ fun AssessmentsScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     Text(
                         text = "Psychological Assessment Groups",
@@ -177,9 +176,9 @@ fun AssessmentsScreen(
                         color = Color.White.copy(alpha = 0.8f)
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
-                    // Free AI Mind & Feelings Chat Banner
+                    // 1. Free AI Mind & Feelings Chat Banner (Top)
                     Card(
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = CosmicPurple),
@@ -240,54 +239,175 @@ fun AssessmentsScreen(
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 2. Care Locator Banner (Under Free AI Chat, Above Progress Box)
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, NebulaTeal.copy(alpha = 0.45f), RoundedCornerShape(16.dp))
+                            .clickable { showCareLocatorDialog = true }
+                            .testTag("assessments_care_locator_banner")
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(NebulaTeal.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.MedicalServices,
+                                    contentDescription = null,
+                                    tint = NebulaTeal,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Care Locator & Support AI",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "Find licensed local therapists, clinics & free crisis hotlines",
+                                    color = Color.White.copy(alpha = 0.8f),
+                                    fontSize = 11.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Button(
+                                onClick = { showCareLocatorDialog = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = DeepSpace),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                modifier = Modifier.testTag("assessments_open_care_locator_btn")
+                            ) {
+                                Text("Find Care", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 3. Assessment Progress Box (Under Care Locator)
+                    Card(
+                        shape = RoundedCornerShape(18.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, CelestialGold.copy(alpha = 0.45f), RoundedCornerShape(18.dp))
+                            .testTag("assessments_progress_meter_card")
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(34.dp)
+                                            .clip(CircleShape)
+                                            .background(CelestialGold.copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Default.BarChart,
+                                            contentDescription = null,
+                                            tint = CelestialGold,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = "ASSESSMENT PROGRESS METER",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = CelestialGold,
+                                            letterSpacing = 0.8.sp,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        Text(
+                                            text = "$completedCount of $totalTestsCount Completed",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = Color.White.copy(alpha = 0.85f),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(MysticViolet)
+                                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                                ) {
+                                    Text(
+                                        text = "$completionPercentage%",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = CelestialGold,
+                                        maxLines = 1,
+                                        softWrap = false
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            LinearProgressIndicator(
+                                progress = { progressFraction },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(8.dp)
+                                    .clip(RoundedCornerShape(4.dp)),
+                                color = NebulaTeal,
+                                trackColor = MysticViolet.copy(alpha = 0.35f),
+                            )
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Text(
+                                text = if (completedCount == 0) "Complete your first assessment below to reveal your psychological score profile!"
+                                else if (completedCount < totalTestsCount) "Keep completing assessments to refine your personality blueprint and AI reports."
+                                else "All assessments completed! You have unlocked your full multi-test meta-analysis.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.7f),
+                                fontSize = 11.sp
+                            )
+                        }
+                    }
                 }
             }
 
-            // Category Filter Chips
-            item {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    item {
-                        FilterChip(
-                            selected = (selectedCategory == null),
-                            onClick = { selectedCategory = null },
-                            label = { Text("All Groups (${TestCategory.entries.size})") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MysticViolet,
-                                selectedLabelColor = Color.White,
-                                containerColor = CosmicPurple,
-                                labelColor = Color.White.copy(alpha = 0.8f)
-                            )
-                        )
-                    }
-
-                    items(TestCategory.entries) { category ->
-                        FilterChip(
-                            selected = (selectedCategory == category),
-                            onClick = {
-                                selectedCategory = category
-                                collapsedCategories = collapsedCategories - category
-                            },
-                            label = { Text(category.displayName) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MysticViolet,
-                                selectedLabelColor = Color.White,
-                                containerColor = CosmicPurple,
-                                labelColor = Color.White.copy(alpha = 0.8f)
-                            )
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            // Render Grouped Categories & Test Cards
-            val categoriesToDisplay = if (selectedCategory != null) listOf(selectedCategory!!) else TestCategory.entries
-
-            categoriesToDisplay.forEach { category ->
+            // Grouped Assessment Categories (without horizontal scrolling filter)
+            TestCategory.entries.forEach { category ->
                 val categoryTests = TestCatalog.allTests.filter { it.category == category }
                 if (categoryTests.isNotEmpty()) {
                     val isCollapsed = collapsedCategories.contains(category)
@@ -300,7 +420,7 @@ fun AssessmentsScreen(
                             colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.6f)),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 20.dp, vertical = 8.dp)
+                                .padding(horizontal = 20.dp, vertical = 6.dp)
                                 .border(1.dp, CelestialGold.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
                                 .clickable {
                                     collapsedCategories = if (isCollapsed) {
@@ -333,7 +453,7 @@ fun AssessmentsScreen(
                                         )
                                     }
                                     Spacer(modifier = Modifier.width(10.dp))
-                                     Column {
+                                    Column {
                                         Text(
                                             text = category.displayName,
                                             style = MaterialTheme.typography.titleMedium,
@@ -414,7 +534,7 @@ fun AssessmentsScreen(
                     }
 
                     item(key = "group_spacer_${category.name}") {
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -474,7 +594,6 @@ fun AssessmentsScreen(
                                 Text("Cross-analyzing all personal reports...", color = NebulaTeal, fontWeight = FontWeight.Bold)
                             }
                         } else {
-                            val canGenerate = isPremium || gemsBalance >= 10
                             Button(
                                 onClick = onGenerateMetaReportClicked,
                                 colors = ButtonDefaults.buttonColors(
@@ -611,56 +730,7 @@ fun AssessmentsScreen(
                     }
                 }
             }
-
-            // Quick Care Locator & Data Export Banner
-            item(key = "care_and_data_banner") {
-                Spacer(modifier = Modifier.height(16.dp))
-                CollapsibleBlock(
-                    title = "Care Locator & Raw Data",
-                    subtitle = "Find local mental health support or download raw assessment scores",
-                    icon = Icons.Default.MedicalServices,
-                    iconTint = NebulaTeal,
-                    initialExpanded = false,
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Button(
-                            onClick = { showCareLocatorDialog = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = DeepSpace),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Find Care AI", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                        }
-
-                        Button(
-                            onClick = { showRawDataExportDialog = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
-                            shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(Icons.Default.Download, contentDescription = null, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Raw Data (Free)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                        }
-                    }
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-            }
         }
-    }
-
-    if (showRawDataExportDialog) {
-        RawDataExportDialog(
-            testResults = testResults,
-            astrologyProfile = astrologyProfile,
-            onDismiss = { showRawDataExportDialog = false }
-        )
     }
 
     if (showReportExportDialog) {
@@ -680,4 +750,3 @@ fun AssessmentsScreen(
         )
     }
 }
-

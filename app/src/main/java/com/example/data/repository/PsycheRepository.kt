@@ -98,17 +98,24 @@ class PsycheRepository(private val database: AppDatabase) {
                 birthDateMillis = entity.birthDateMillis,
                 birthTime = entity.birthTime,
                 birthCity = entity.birthCity,
-                sunSign = ZodiacSign.valueOf(entity.sunSignName),
-                moonSign = ZodiacSign.valueOf(entity.moonSignName),
-                risingSign = ZodiacSign.valueOf(entity.risingSignName),
+                sunSign = try { ZodiacSign.valueOf(entity.sunSignName) } catch (e: Exception) { ZodiacSign.SCORPIO },
+                moonSign = try { ZodiacSign.valueOf(entity.moonSignName) } catch (e: Exception) { ZodiacSign.PISCES },
+                risingSign = try { ZodiacSign.valueOf(entity.risingSignName) } catch (e: Exception) { ZodiacSign.CANCER },
                 userName = entity.userName,
-                savedNameAdditions = savedAdditions
+                savedNameAdditions = savedAdditions,
+                isProfileConfigured = entity.isProfileConfigured
             )
         } else {
             AstrologyProfile(
+                birthDateMillis = 0L,
+                birthTime = "12:00",
+                birthCity = "",
                 sunSign = ZodiacSign.SCORPIO,
                 moonSign = ZodiacSign.PISCES,
-                risingSign = ZodiacSign.CANCER
+                risingSign = ZodiacSign.CANCER,
+                userName = "",
+                savedNameAdditions = emptyList(),
+                isProfileConfigured = false
             )
         }
     }
@@ -206,7 +213,8 @@ class PsycheRepository(private val database: AppDatabase) {
             moonSignName = profile.moonSign.name,
             risingSignName = profile.risingSign.name,
             userName = profile.userName,
-            savedNameAdditionsJson = profile.savedNameAdditions.distinct().joinToString(",")
+            savedNameAdditionsJson = profile.savedNameAdditions.distinct().joinToString(","),
+            isProfileConfigured = profile.isConfigured
         )
         database.astrologyProfileDao().saveAstrologyProfile(entity)
     }

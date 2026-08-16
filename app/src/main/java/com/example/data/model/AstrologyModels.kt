@@ -37,15 +37,19 @@ enum class ZodiacSign(
 }
 
 data class AstrologyProfile(
-    val birthDateMillis: Long = System.currentTimeMillis(),
+    val birthDateMillis: Long = 0L,
     val birthTime: String = "12:00",
-    val birthCity: String = "New York, USA",
+    val birthCity: String = "",
     val sunSign: ZodiacSign = ZodiacSign.SCORPIO,
     val moonSign: ZodiacSign = ZodiacSign.PISCES,
     val risingSign: ZodiacSign = ZodiacSign.CANCER,
     val userName: String = "",
-    val savedNameAdditions: List<String> = emptyList()
-)
+    val savedNameAdditions: List<String> = emptyList(),
+    val isProfileConfigured: Boolean = false
+) {
+    val isConfigured: Boolean
+        get() = isProfileConfigured || (userName.isNotBlank() && birthDateMillis > 0L)
+}
 
 data class SynastryMatch(
     val sign1: ZodiacSign,

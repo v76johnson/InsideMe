@@ -248,9 +248,45 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun updateAstrologyProfile(dateMillis: Long, timeStr: String, cityStr: String) {
-        val newProfile = AstrologyEngine.calculateProfileFromDate(dateMillis, timeStr, cityStr)
+        val calculated = AstrologyEngine.calculateProfileFromDate(dateMillis, timeStr, cityStr)
+        val current = astrologyProfile.value ?: AstrologyProfile()
+        val newProfile = calculated.copy(
+            userName = current.userName,
+            savedNameAdditions = current.savedNameAdditions,
+            isProfileConfigured = true
+        )
         viewModelScope.launch {
             repository.saveAstrologyProfile(newProfile)
+        }
+    }
+
+    fun updateFullProfile(
+        name: String,
+        birthDateMillis: Long,
+        birthTime: String = "12:00",
+        birthCity: String = ""
+    ) {
+        val calculated = AstrologyEngine.calculateProfileFromDate(
+            if (birthDateMillis > 0L) birthDateMillis else System.currentTimeMillis(),
+            birthTime,
+            birthCity
+        )
+        val trimmedName = name.trim()
+        val current = astrologyProfile.value ?: AstrologyProfile()
+        val updatedList = current.savedNameAdditions.toMutableList()
+        if (trimmedName.isNotBlank() && !updatedList.contains(trimmedName)) {
+            updatedList.add(0, trimmedName)
+        }
+        val fullProfile = calculated.copy(
+            userName = trimmedName,
+            birthDateMillis = birthDateMillis,
+            birthTime = birthTime,
+            birthCity = birthCity,
+            savedNameAdditions = updatedList,
+            isProfileConfigured = (trimmedName.isNotBlank() || birthDateMillis > 0L)
+        )
+        viewModelScope.launch {
+            repository.saveAstrologyProfile(fullProfile)
         }
     }
 

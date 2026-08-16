@@ -82,6 +82,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
     var selectedTab by remember { mutableIntStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showFreeMindChatDialog by remember { mutableStateOf(false) }
+    var showProfileSetupDialog by remember { mutableStateOf(false) }
     var hasDismissedFirstInstallOnboarding by remember { mutableStateOf(false) }
 
     val testResults by viewModel.testResults.collectAsStateWithLifecycle()
@@ -113,7 +114,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     title = {
                         Text(
                             text = when (selectedTab) {
-                                0 -> "InsideMe AI"
+                                0 -> "InsideMe"
                                 1 -> "Assessments Vault"
                                 2 -> "Astrology & Oracle"
                                 3 -> "Premium & Gems"
@@ -245,7 +246,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         },
                         onUpgradeClicked = { selectedTab = 3 },
                         onOpenFreeMindChat = { showFreeMindChatDialog = true },
-                        onGenerateNameReport = { viewModel.generateNameMeaningReport(it) }
+                        onGenerateNameReport = { viewModel.generateNameMeaningReport(it) },
+                        onOpenProfileSetup = { showProfileSetupDialog = true }
                     )
 
                     1 -> AssessmentsScreen(
@@ -340,17 +342,27 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                 )
             }
 
-            // First Install Name Onboarding Modal overlay
-            val isFirstInstallPrompt = astroProfile != null && (astroProfile?.userName.isNullOrBlank()) && !hasDismissedFirstInstallOnboarding
-            if (isFirstInstallPrompt) {
+            // First Install / Profile Setup Modal overlay
+            val isFirstInstallPrompt = (astroProfile != null && !astroProfile!!.isConfigured && !hasDismissedFirstInstallOnboarding)
+            if (isFirstInstallPrompt || showProfileSetupDialog) {
                 FirstInstallNameDialog(
-                    initialName = astroProfile?.userName ?: "",
+                    initialName = astroProfile?.userName?.takeIf { it != "Seeker" } ?: "",
+                    initialBirthDateMillis = astroProfile?.birthDateMillis ?: 0L,
+                    initialBirthTime = astroProfile?.birthTime ?: "12:00 PM",
+                    initialBirthCity = astroProfile?.birthCity ?: "",
+                    onSaveProfile = { name, dobMillis, timeStr, cityStr ->
+                        viewModel.updateFullProfile(name, dobMillis, timeStr, cityStr)
+                        hasDismissedFirstInstallOnboarding = true
+                        showProfileSetupDialog = false
+                    },
                     onSaveName = { name ->
                         viewModel.updateUserName(name)
                         hasDismissedFirstInstallOnboarding = true
+                        showProfileSetupDialog = false
                     },
                     onSkip = {
                         hasDismissedFirstInstallOnboarding = true
+                        showProfileSetupDialog = false
                     }
                 )
             }

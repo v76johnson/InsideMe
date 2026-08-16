@@ -1932,13 +1932,13 @@ fun AstroHomepageTab(
                                     letterSpacing = 1.sp
                                 )
                                 Text(
-                                    text = profile?.birthCity ?: "Personal Profile",
+                                    text = if (profile?.isConfigured == true) (profile.birthCity.ifBlank { "Personal Profile" }) else "Set Up Your Birth Details",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
                                 )
                                 Text(
-                                    text = "$dobFormatted at ${profile?.birthTime ?: "12:00 PM"}",
+                                    text = if (profile?.isConfigured == true && profile.birthDateMillis > 0L) "$dobFormatted at ${profile.birthTime.ifBlank { "12:00 PM" }}" else "Tap to enter birthdate & unlock chart",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.White.copy(alpha = 0.7f)
                                 )
@@ -1953,7 +1953,7 @@ fun AstroHomepageTab(
                         ) {
                             Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(14.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Edit", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            Text(if (profile?.isConfigured == true) "Edit" else "Set Date", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 
