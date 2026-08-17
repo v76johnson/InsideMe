@@ -1,10 +1,14 @@
 package com.example.data.repository
 
 import com.example.data.model.AstrologyProfile
+import com.example.data.model.DailyHoroscope
 import com.example.data.model.SynastryMatch
 import com.example.data.model.ZodiacElement
 import com.example.data.model.ZodiacSign
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 data class NumerologyInfo(
     val lifePathNumber: Int,
@@ -375,6 +379,248 @@ object AstrologyEngine {
             luckyColors = luckyColors,
             bestMatches = bestMatches,
             elementMeaning = elementDesc
+        )
+    }
+
+    fun generateDailyHoroscope(sign: ZodiacSign, dateMillis: Long = System.currentTimeMillis()): DailyHoroscope {
+        val cal = Calendar.getInstance().apply { timeInMillis = dateMillis }
+        val dayOfYear = cal.get(Calendar.DAY_OF_YEAR)
+        val year = cal.get(Calendar.YEAR)
+        val dateFormat = SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault())
+        val dateString = dateFormat.format(cal.time)
+
+        // Seeded pseudo-randomness based on date and sign ordinal for consistent daily results
+        val seed = (dayOfYear * 31 + year * 7 + sign.ordinal * 13)
+        val cycleIndex = Math.abs(seed % 5)
+
+        val headlines = when (sign) {
+            ZodiacSign.ARIES -> listOf(
+                "Dynamic Momentum & Fearless Initiative",
+                "Decisive Clarity: Charge Toward Your Goals",
+                "Pioneering Energy Sparks Breakthroughs",
+                "Channel Passion into Purposeful Action",
+                "Unstoppable Drive & Creative Spark"
+            )
+            ZodiacSign.TAURUS -> listOf(
+                "Grounded Abundance & Sensual Harmony",
+                "Patience Yields Tangible Rewards",
+                "Steadfast Focus Solidifies Your Foundations",
+                "Embrace Inner Peace & Comfort",
+                "Practical Wisdom & Financial Harmony"
+            )
+            ZodiacSign.GEMINI -> listOf(
+                "Electric Curiosity & Sparkling Wit",
+                "Brilliant Ideas Flow Seamlessly",
+                "Meaningful Connections & Inspiring Dialogue",
+                "Adaptive Intellect Opens New Portals",
+                "Express Your Authentic Truth Today"
+            )
+            ZodiacSign.CANCER -> listOf(
+                "Deep Intuition & Emotional Sanctuary",
+                "Trust the Subtle Whispers of Your Soul",
+                "Nurturing Your Heart Heals Old Patterns",
+                "Cosmic Protection Around Your Inner Circle",
+                "Creative Flow & Emotional Strength"
+            )
+            ZodiacSign.LEO -> listOf(
+                "Radiant Charisma & Creative Power",
+                "Step Confidently into the Spotlight",
+                "Generosity of Spirit Attracts Miracles",
+                "Your Warmth Inspires Everyone Around You",
+                "Authentic Self-Expression Magnified"
+            )
+            ZodiacSign.VIRGO -> listOf(
+                "Meticulous Clarity & Healing Grace",
+                "Strategic Order Brings Deep Satisfaction",
+                "Small Daily Tweaks Yield Monumental Shifts",
+                "Discerning Insight Solves Complex Riddles",
+                "Mind-Body Alignment & Restorative Flow"
+            )
+            ZodiacSign.LIBRA -> listOf(
+                "Harmonious Equilibrium & Aesthetic Flow",
+                "Graceful Diplomacy Resolves Lingering Tension",
+                "Beauty Inspires Your Heart & Thoughts",
+                "Equal Partnerships Flourish in Truth",
+                "Inner Peace Radiates Outward"
+            )
+            ZodiacSign.SCORPIO -> listOf(
+                "Transformative Power & Laser Intuition",
+                "Unmasking Hidden Depths & Truths",
+                "Shedding Old Layers to Rise Anew",
+                "Magnetic Presence & Unshakeable Focus",
+                "Profound Emotional Breakthroughs"
+            )
+            ZodiacSign.SAGITTARIUS -> listOf(
+                "Expansive Horizons & Cosmic Optimism",
+                "Adventure Beckons Beyond Your Comfort Zone",
+                "Philosophical Clarity Illumination",
+                "Enthusiastic Faith Attracts Synchronicity",
+                "Freedom to Expand Your Mind"
+            )
+            ZodiacSign.CAPRICORN -> listOf(
+                "Masterful Ambition & Sovereign Discipline",
+                "Climbing Steady Toward Your Long-Term Summit",
+                "Quiet Authority & Practical Excellence",
+                "Building Enduring Legacy with Patience",
+                "Grounding Your Highest Aspirations"
+            )
+            ZodiacSign.AQUARIUS -> listOf(
+                "Visionary Innovation & Universal Insight",
+                "Break Free from Conventional Boxes",
+                "Humanitarian Sparks & Community Resonance",
+                "Inventive Problem-Solving at its Peak",
+                "Authentic Individuality Celebrated"
+            )
+            ZodiacSign.PISCES -> listOf(
+                "Mystical Inspiration & Compassionate Waves",
+                "Dreams Hold Potent Keys to Reality",
+                "Artistic Muse Whispers directly to Your Heart",
+                "Spiritual Flow & Healing Serenity",
+                "Boundless Love & Intuitive Attunement"
+            )
+        }
+
+        val overviews = when (sign) {
+            ZodiacSign.ARIES -> listOf(
+                "Mars aligns favorably today, supercharging your motivation and cutting through lingering mental fog. Take bold, direct action on projects you've placed on the back burner.",
+                "Your instincts are exceptionally sharp. Trust your initial impulses rather than overthinking every turn. A courageous move will command respect and open fresh doors.",
+                "High energy demands constructive direction. Tackle high-friction tasks before noon to ride the wave of momentum straight to victory.",
+                "An exciting opportunity requires quick thinking. Your fiery determination gives you the decisive edge over sluggish competition.",
+                "Embrace leadership today. When others hesitate, your confidence will serve as the guiding beacon."
+            )
+            ZodiacSign.TAURUS -> listOf(
+                "Venus bathes your day in tranquil, grounding energy. Focus on quality over quantity in both your craft and personal conversations.",
+                "Steady perseverance is your superpower today. While others rush and stumble, your deliberate pace guarantees impeccable craftsmanship and lasting security.",
+                "A gentle financial or material blessing is within reach. Trust the investments you've cultivated over time; root yourself in gratitude.",
+                "Take time to nourish all five senses. Good food, calming surroundings, and physical comfort replenish your internal reservoir of strength.",
+                "Stay true to your core values today. Stability is found within, not in external turbulence."
+            )
+            ZodiacSign.GEMINI -> listOf(
+                "Mercury amplifies your wit and communicative gifts. Conversations carry serendipitous sparks that could ignite a promising new chapter.",
+                "Your mental agility is firing on all cylinders. Synthesis between disparate ideas comes naturally—write down every epiphany immediately.",
+                "A social connection or unexpected message brings uplifting perspective. Keep your mind open to diverse viewpoints.",
+                "Multitasking comes easily today, but directing your focus toward a single high-impact priority will yield remarkable breakthroughs.",
+                "Playfulness and curiosity are your greatest allies. Approach challenges as stimulating puzzles rather than burdens."
+            )
+            ZodiacSign.CANCER -> listOf(
+                "The Moon gently reflects upon your deep emotional intelligence. Prioritize creating a safe, peaceful environment where your spirit can breathe and restore.",
+                "Your intuitive radar is operating at maximum sensitivity. Pay close attention to subtle vibes and body language; your instincts are spot-on.",
+                "Nurture both yourself and those you hold dear. A heartfelt conversation will heal a subtle rift and deepen mutual loyalty.",
+                "Creative waters run deep today. Expressing feelings through writing, art, or thoughtful gestures unlocks immense serenity.",
+                "Release what no longer serves your emotional sanctuary. Protecting your inner peace is a sacred priority."
+            )
+            ZodiacSign.LEO -> listOf(
+                "The Sun infuses your presence with magnetic warmth and optimism. Step boldly into the spotlight; your authentic expression inspires those around you.",
+                "Creative projects receive a massive boost of vitality. Lead with generosity and celebrate the talents of your collaborators.",
+                "Confidence is your natural state today. Use this energetic crest to pitch ideas, express romantic affection, or embark on a passionate quest.",
+                "Your innate nobility shines brightly. When you lead from the heart, you naturally attract loyalty and enthusiastic support.",
+                "Radiate joy without restraint. Your infectious spirit has the power to uplift the entire room."
+            )
+            ZodiacSign.VIRGO -> listOf(
+                "Mercury grants you laser-like analytical precision. You will effortlessly spot details and optimizations that others overlook.",
+                "Organizing your environment or streamlining a complex process brings immense inner satisfaction and mental clarity today.",
+                "Remember that perfection is the enemy of completion. Celebrate your tangible progress and offer yourself compassionate grace.",
+                "Health and wellness take center stage. Gentle stretches, mindful hydration, and wholesome nourishment restore your vitality.",
+                "Your practical counsel is invaluable to someone seeking direction. Share your wisdom with gentle tact."
+            )
+            ZodiacSign.LIBRA -> listOf(
+                "Venus wraps your day in harmonious balance and aesthetic charm. You have an exceptional talent for facilitating understanding between opposing views.",
+                "Seek beauty in your surroundings and in your relationships. A peaceful environment elevates your mental acuity and emotional well-being.",
+                "Decisions become easier when you weigh them against your long-term inner peace rather than short-term approval.",
+                "Collaborative ventures are blessed with smooth synchronization today. Mutual respect brings effortless progress.",
+                "Treat yourself with the same courtesy and consideration you so freely extend to others."
+            )
+            ZodiacSign.SCORPIO -> listOf(
+                "Your inner radar is piercing and profoundly perceptive today. You see right through illusions to the fundamental truth of every situation.",
+                "Channel your intense emotional focus into a meaningful breakthrough or transformative creative pursuit. Nothing is out of reach.",
+                "A moment of vulnerability with someone you trust will forge an unbreakable bond. Release the armor where it's safe to do so.",
+                "Old emotional weights are ready to be transmuted into wisdom. Step forward into your sovereign personal power.",
+                "Trust your inner knowing. The universe is aligning puzzle pieces quietly behind the scenes."
+            )
+            ZodiacSign.SAGITTARIUS -> listOf(
+                "Jupiter expands your vision and fills your sails with infectious enthusiasm. Dare to dream bigger and explore concepts beyond the everyday horizon.",
+                "Your optimism is a magnetic force today. An adventurous mindset will turn ordinary routines into thrilling learning experiences.",
+                "Seek the deeper meaning behind recent events. Philosophical reflection yields clarity and renews your sense of adventure.",
+                "Share your jokes, stories, and visionary ideas. Your authentic joy is a potent catalyst for collective upliftment.",
+                "Trust the journey. Every twist and detour is equipping you with valuable wisdom."
+            )
+            ZodiacSign.CAPRICORN -> listOf(
+                "Saturn grounds your ambitious vision with relentless focus and methodical strategy. Brick by brick, your empire is taking shape.",
+                "Your dedication to excellence does not go unnoticed. High-level discipline today will yield lasting security and respect.",
+                "Balance hard work with conscious pacing. Sustainable progress requires honoring your physical and emotional reserves.",
+                "Take pride in how far you've climbed. Ground yourself in quiet self-assurance and keep moving steadily forward.",
+                "Practical solutions arise effortlessly when you trust your hard-won experience."
+            )
+            ZodiacSign.AQUARIUS -> listOf(
+                "Uranus electrifies your mind with unconventional insights and visionary concepts. Don't be afraid to think differently—your uniqueness is your magic.",
+                "Community connection and shared ideals bring deep inspiration. You are a catalyst for positive progressive change.",
+                "Break free from outdated expectations. When you honor your authentic eccentricities, you magnetize your true tribe.",
+                "A collaborative brainstorm sparks an innovative solution to an old impasse. Trust your progressive vision.",
+                "Observe situations from a high vantage point to see the grand cosmic tapestry unfold."
+            )
+            ZodiacSign.PISCES -> listOf(
+                "Neptune invites you into a realm of rich imagination and spiritual grace. Your dreams and creative musings carry potent messages today.",
+                "Compassion flows naturally from your heart. Be sure to establish gentle energetic boundaries so you don't absorb outside stress.",
+                "Immerse yourself in music, art, or quiet reflection near water. Soulful activities replenish your boundless creative spirit.",
+                "Synchronicities abound today. Keep your eyes open for meaningful signs, numbers, and serendipitous encounters.",
+                "Trust your heart's wisdom. It knows the path forward even when logic cannot yet explain it."
+            )
+        }
+
+        val focusThemes = listOf(
+            "Inner Alignment & Manifestation",
+            "Courageous Action & Truth",
+            "Harmonious Collaboration",
+            "Transformative Healing",
+            "Creative Expansion & Joy"
+        )
+
+        val loveVibes = listOf(
+            "Sparks of deep mutual understanding; great day for honest romantic expression.",
+            "Magnetic chemistry and gentle warmth; prioritize quality one-on-one time.",
+            "Healing conversations dissolve past distance; trust is blossoming.",
+            "Playful banter and spontaneous affection bring delightful joy.",
+            "Unconditional acceptance creates a peaceful, sanctuary-like connection."
+        )
+
+        val careerVibes = listOf(
+            "Strategic focus and high productivity; your proposals carry strong weight.",
+            "Smooth teamwork and creative problem-solving overcome any obstacles.",
+            "An unexpected breakthrough or recognition for your consistent hard work.",
+            "Great time to refine strategies, organize plans, and set ambitious goals.",
+            "Intuitive insights guide smart decisions and high-value opportunities."
+        )
+
+        val cosmicAdvices = listOf(
+            "Breathe deeply before making major decisions; your core intuition already knows the answer.",
+            "Honor your physical energy levels today—rest is an essential part of sustainable mastery.",
+            "Speak your authentic truth with kindness; the universe responds generously to clarity.",
+            "Celebrate how much you have grown over the past season. You are exactly where you need to be.",
+            "Embrace the beauty of the present moment without rushing ahead into tomorrow."
+        )
+
+        val luckyColors = listOf(
+            "Celestial Gold", "Nebula Teal", "Mystic Violet", "Cosmic Amber", "Deep Azure", "Ruby Fire", "Emerald Green", "Silver Moonlight"
+        )
+
+        val luckyNumber = ((seed * 7 + 3) % 99) + 1
+        val energyRating = 78 + (Math.abs(seed) % 21) // 78% to 98%
+        val allSigns = ZodiacSign.values()
+        val compatibleSign = allSigns[(sign.ordinal + 4 + (dayOfYear % 3)) % allSigns.size]
+
+        return DailyHoroscope(
+            sign = sign,
+            dateString = dateString,
+            headline = headlines[cycleIndex % headlines.size],
+            overview = overviews[cycleIndex % overviews.size],
+            focusTheme = focusThemes[cycleIndex % focusThemes.size],
+            energyRating = energyRating,
+            loveVibe = loveVibes[cycleIndex % loveVibes.size],
+            careerVibe = careerVibes[cycleIndex % careerVibes.size],
+            cosmicAdvice = cosmicAdvices[cycleIndex % cosmicAdvices.size],
+            luckyNumber = luckyNumber,
+            luckyColor = luckyColors[Math.abs(seed) % luckyColors.size],
+            compatibleSignToday = compatibleSign
         )
     }
 }

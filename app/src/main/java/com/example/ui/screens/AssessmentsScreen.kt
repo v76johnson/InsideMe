@@ -1,5 +1,8 @@
 package com.example.ui.screens
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import android.content.res.Configuration
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.background
@@ -26,11 +29,13 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -93,6 +98,8 @@ fun AssessmentsScreen(
     var showReportExportDialog by remember { mutableStateOf(false) }
     var reportToExport by remember { mutableStateOf<DeepSynthesisReport?>(null) }
     var showCareLocatorDialog by remember { mutableStateOf(false) }
+
+    var isCrisisExpanded by remember { mutableStateOf(false) }
 
     if (selectedReport != null) {
         ReportReaderView(
@@ -242,59 +249,243 @@ fun AssessmentsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // 2. Care Locator Banner (Under Free AI Chat, Above Progress Box)
+                    // 2. Find Care AI Locator Box (Stacked under Free AI Chat)
+                    val context = LocalContext.current
                     Card(
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = CosmicPurple),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, NebulaTeal.copy(alpha = 0.45f), RoundedCornerShape(16.dp))
-                            .clickable { showCareLocatorDialog = true }
-                            .testTag("assessments_care_locator_banner")
+                            .border(1.dp, NebulaTeal.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
+                            .testTag("assessments_care_locator_card")
                     ) {
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(14.dp)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(NebulaTeal.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    Icons.Default.MedicalServices,
-                                    contentDescription = null,
-                                    tint = NebulaTeal,
-                                    modifier = Modifier.size(20.dp)
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(NebulaTeal.copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Default.MedicalServices,
+                                            contentDescription = null,
+                                            tint = NebulaTeal,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = "Find Care AI & Therapist Locator",
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp,
+                                            color = Color.White
+                                        )
+                                        Text(
+                                            text = "Search licensed therapists, psychologists & clinics near you",
+                                            color = Color.White.copy(alpha = 0.8f),
+                                            fontSize = 11.sp
+                                        )
+                                    }
+                                }
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Care Locator & Support AI",
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    color = Color.White
-                                )
-                                Text(
-                                    text = "Find licensed local therapists, clinics & free crisis hotlines",
-                                    color = Color.White.copy(alpha = 0.8f),
-                                    fontSize = 11.sp
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(6.dp))
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
                             Button(
                                 onClick = { showCareLocatorDialog = true },
                                 colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = DeepSpace),
                                 shape = RoundedCornerShape(10.dp),
-                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                                modifier = Modifier.testTag("assessments_open_care_locator_btn")
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .testTag("assessments_open_care_locator_btn")
                             ) {
-                                Text("Find Care", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(15.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Find Care AI Locator", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // 3. 24/7 Crisis & Immediate Support Box (Collapsible, stacked above Progress Box)
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, Color(0xFFFF5252).copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+                            .testTag("assessments_crisis_card")
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { isCrisisExpanded = !isCrisisExpanded },
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(CircleShape)
+                                            .background(Color(0xFFFF5252).copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Warning,
+                                            contentDescription = null,
+                                            tint = Color(0xFFFF5252),
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(
+                                                text = "24/7 Crisis & Immediate Help",
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 13.sp,
+                                                color = Color.White
+                                            )
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Surface(
+                                                color = Color(0xFFFF5252),
+                                                shape = RoundedCornerShape(6.dp)
+                                            ) {
+                                                Text(
+                                                    text = "24/7 HELP",
+                                                    color = Color.White,
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 9.sp,
+                                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                                                )
+                                            }
+                                        }
+                                        Text(
+                                            text = if (isCrisisExpanded) "Tap to collapse crisis hotlines" else "Free, confidential crisis lifelines • Tap to expand",
+                                            color = Color.White.copy(alpha = 0.75f),
+                                            fontSize = 11.sp
+                                        )
+                                    }
+                                }
+
+                                IconButton(
+                                    onClick = { isCrisisExpanded = !isCrisisExpanded },
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = if (isCrisisExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                        contentDescription = if (isCrisisExpanded) "Collapse" else "Expand",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+
+                            if (isCrisisExpanded) {
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                Surface(
+                                    color = DeepSpace.copy(alpha = 0.6f),
+                                    shape = RoundedCornerShape(10.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = "• 988 Suicide & Crisis Lifeline: Call or text 988 (Available 24/7, free & confidential)",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            fontSize = 11.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "• Crisis Text Line: Text HOME to 741741 to connect with a crisis counselor 24/7",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            fontSize = 11.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "• SAMHSA National Helpline: 1-800-662-4357 for 24/7 mental health support",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            fontSize = 11.sp
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Button(
+                                        onClick = {
+                                            try {
+                                                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:988"))
+                                                context.startActivity(intent)
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252), contentColor = Color.White),
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(40.dp)
+                                            .testTag("assessments_call_988_btn")
+                                    ) {
+                                        Icon(Icons.Default.Call, contentDescription = null, modifier = Modifier.size(14.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Call 988 Lifeline", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                    }
+
+                                    Button(
+                                        onClick = {
+                                            try {
+                                                val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:741741")).apply {
+                                                    putExtra("sms_body", "HOME")
+                                                }
+                                                context.startActivity(intent)
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                                        shape = RoundedCornerShape(10.dp),
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(40.dp)
+                                            .testTag("assessments_text_741741_btn")
+                                    ) {
+                                        Text("Text 741741", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                    }
+                                }
                             }
                         }
                     }

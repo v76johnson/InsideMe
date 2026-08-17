@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.data.model.SubscriptionTier
 import com.example.data.viewmodel.PsycheViewModel
 import com.example.ui.components.FreeAiChatDialog
 import com.example.ui.components.ReviewDialog
@@ -246,7 +247,6 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         },
                         onUpgradeClicked = { selectedTab = 3 },
                         onOpenFreeMindChat = { showFreeMindChatDialog = true },
-                        onGenerateNameReport = { viewModel.generateNameMeaningReport(it) },
                         onOpenProfileSetup = { showProfileSetupDialog = true }
                     )
 
@@ -355,11 +355,6 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         hasDismissedFirstInstallOnboarding = true
                         showProfileSetupDialog = false
                     },
-                    onSaveName = { name ->
-                        viewModel.updateUserName(name)
-                        hasDismissedFirstInstallOnboarding = true
-                        showProfileSetupDialog = false
-                    },
                     onSkip = {
                         hasDismissedFirstInstallOnboarding = true
                         showProfileSetupDialog = false
@@ -376,27 +371,13 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     savedReports = savedReports,
                     onDismiss = { showSettingsDialog = false },
                     onNavigateToUpgrade = { selectedTab = 3 },
+                    onCancelSubscription = { viewModel.setSubscriptionTier(SubscriptionTier.FREE) },
                     onOpenReviewModal = { viewModel.openReviewModal() },
                     onResetData = { viewModel.clearAllTestResults() },
                     onUpdateUserName = { viewModel.updateUserName(it) },
-                    onGenerateNameReport = { viewModel.generateNameMeaningReport(it) },
                     onRemoveSavedName = { viewModel.removeSavedNameAddition(it) },
                     onAddSavedName = { viewModel.addSavedNameAddition(it) },
                     onRedeemPromoCode = { viewModel.redeemPromoCode(it) }
-                )
-            }
-
-            // Name Meaning & Intent Report overlay
-            if (nameMeaningReport != null || isGeneratingNameReport) {
-                NameMeaningReportDialog(
-                    report = nameMeaningReport,
-                    isGenerating = isGeneratingNameReport,
-                    currentMainName = astroProfile?.userName ?: "",
-                    savedNames = astroProfile?.savedNameAdditions ?: emptyList(),
-                    onAnalyzeName = { viewModel.generateNameMeaningReport(it) },
-                    onSetMainName = { viewModel.updateUserName(it) },
-                    onSaveNameAddition = { viewModel.addSavedNameAddition(it) },
-                    onDismiss = { viewModel.dismissNameMeaningReport() }
                 )
             }
         }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -97,6 +98,7 @@ fun SettingsDialog(
     onOpenReviewModal: () -> Unit = {},
     onResetData: () -> Unit = {},
     onUpdateUserName: (String) -> Unit = {},
+    onGenerateNameReport: (String) -> Unit = {},
     onRemoveSavedName: (String) -> Unit = {},
     onAddSavedName: (String) -> Unit = {},
     onRedeemPromoCode: (String) -> Boolean = { false }
@@ -178,12 +180,16 @@ fun SettingsDialog(
                                     text = "Settings & Preferences",
                                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
                                     text = "System, Account & Support Controls",
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = Color.White.copy(alpha = 0.6f)
+                                    color = Color.White.copy(alpha = 0.6f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }
@@ -251,12 +257,30 @@ fun SettingsDialog(
                                 }
                             }
 
-                            // SAVED NAME ADDITIONS / COMPANION NAMES
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            OutlinedButton(
+                                onClick = {
+                                    if (userNameFieldValue.text.isNotBlank()) onUpdateUserName(userNameFieldValue.text)
+                                    onGenerateNameReport(userNameFieldValue.text.ifBlank { "Seeker" })
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("settings_generate_name_report_button"),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = CelestialGold),
+                                border = BorderStroke(1.dp, CelestialGold),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Icon(Icons.Default.Star, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("📜 View Name Meaning & Intent Report", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+
                             val savedAdditions = astrologyProfile?.savedNameAdditions ?: emptyList()
                             if (savedAdditions.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(14.dp))
                                 Text(
-                                    text = "SAVED COMPANION NAMES",
+                                    text = "SAVED NAME ADDITIONS & COMPANIONS",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = CelestialGold,
@@ -296,7 +320,10 @@ fun SettingsDialog(
                                                         text = nameItem,
                                                         style = MaterialTheme.typography.bodySmall,
                                                         fontWeight = FontWeight.Bold,
-                                                        color = Color.White
+                                                        color = Color.White,
+                                                        modifier = Modifier.weight(1f),
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis
                                                     )
                                                 }
 
@@ -304,6 +331,13 @@ fun SettingsDialog(
                                                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
+                                                    TextButton(
+                                                        onClick = { onGenerateNameReport(nameItem) },
+                                                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
+                                                    ) {
+                                                        Text("Report", color = CelestialGold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                                    }
+
                                                     if (!nameItem.equals(userNameFieldValue.text, ignoreCase = true)) {
                                                         TextButton(
                                                             onClick = {
@@ -348,12 +382,14 @@ fun SettingsDialog(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Column {
+                                    Column(modifier = Modifier.weight(1f)) {
                                         Text(
                                             text = "Status: ${if (userSubscription.isPremium) userSubscription.tier.title else "Free Tier"}",
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
-                                            color = Color.White
+                                            color = Color.White,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                         Text(
                                             text = if (userSubscription.isPremium)
@@ -361,7 +397,9 @@ fun SettingsDialog(
                                             else
                                                 "Gems: ${userSubscription.gemsBalance} • Standard Access",
                                             style = MaterialTheme.typography.bodySmall,
-                                            color = CelestialGold
+                                            color = CelestialGold,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
 
@@ -407,20 +445,21 @@ fun SettingsDialog(
                                         )
                                     }
 
-                                    OutlinedButton(
-                                        onClick = { showCancelSubscriptionConfirm = true },
-                                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF6B6B)),
-                                        border = BorderStroke(1.dp, if (userSubscription.isPremium) Color(0xFFFF6B6B) else Color.Gray.copy(alpha = 0.5f)),
-                                        shape = RoundedCornerShape(12.dp),
-                                        enabled = userSubscription.isPremium,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp)
-                                            .testTag("settings_cancel_subscription_button")
-                                    ) {
-                                        Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(16.dp), tint = if (userSubscription.isPremium) Color(0xFFFF6B6B) else Color.Gray)
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Cancel Subscription", fontWeight = FontWeight.Bold, fontSize = 11.sp, maxLines = 1)
+                                    if (userSubscription.isPremium) {
+                                        OutlinedButton(
+                                            onClick = { showCancelSubscriptionConfirm = true },
+                                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF6B6B)),
+                                            border = BorderStroke(1.dp, Color(0xFFFF6B6B)),
+                                            shape = RoundedCornerShape(12.dp),
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .height(44.dp)
+                                                .testTag("settings_cancel_subscription_button")
+                                        ) {
+                                            Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color(0xFFFF6B6B))
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text("Cancel Plan", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                        }
                                     }
                                 }
                             }
@@ -428,7 +467,7 @@ fun SettingsDialog(
                             Spacer(modifier = Modifier.height(14.dp))
 
                             Text(
-                                text = "PROMO CODE",
+                                text = "PROMO CODE / BETA ACCESS",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = CelestialGold,
@@ -446,7 +485,7 @@ fun SettingsDialog(
                                         promoCodeFieldValue = it
                                         promoCodeMessage = null
                                     },
-                                    placeholder = { Text("Enter promo code", color = Color.White.copy(alpha = 0.45f), fontSize = 12.sp) },
+                                    placeholder = { Text("Enter code (e.g. betatest)", color = Color.White.copy(alpha = 0.45f), fontSize = 12.sp) },
                                     singleLine = true,
                                     modifier = Modifier
                                         .weight(1f)
@@ -469,7 +508,7 @@ fun SettingsDialog(
                                             val success = onRedeemPromoCode(code)
                                             if (success) {
                                                 promoCodeSuccess = true
-                                                promoCodeMessage = "🎉 Promo code accepted! All features & premium unlocked!"
+                                                promoCodeMessage = "🎉 Beta test code accepted! All features & premium unlocked!"
                                                 promoCodeFieldValue = TextFieldValue("")
                                             } else {
                                                 promoCodeSuccess = false
@@ -517,10 +556,10 @@ fun SettingsDialog(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                                     Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
                                     Spacer(modifier = Modifier.width(10.dp))
-                                    Text("Daily Insights & Affirmations", color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                                    Text("Daily Insights & Affirmations", color = Color.White, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                 }
                                 Switch(
                                     checked = dailyNotificationsEnabled,
@@ -539,10 +578,10 @@ fun SettingsDialog(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                                     Icon(Icons.Default.Palette, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
                                     Spacer(modifier = Modifier.width(10.dp))
-                                    Text("Deep Cosmic Palette", color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                                    Text("Deep Cosmic Palette", color = Color.White, style = MaterialTheme.typography.bodyMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                                 }
                                 Switch(
                                     checked = cosmicThemeEnabled,
@@ -559,14 +598,23 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // SECTION 3: DATA EXPORT & LOCAL STORAGE
-                    CollapsibleBlock(
-                        title = "Data Export & Storage Tools",
-                        subtitle = "Export JSON Data, PDF Reports & Local Storage Management",
-                        icon = Icons.Default.Download,
-                        iconTint = CelestialGold,
-                        initialExpanded = false
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.4f)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, MysticViolet.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
                     ) {
-                        Column {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Data Export & Storage Tools", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text("Export JSON Data, PDF Reports & Local Storage Management", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -621,14 +669,23 @@ fun SettingsDialog(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     // SECTION 4: CONTACT, FEEDBACK & APP INFO
-                    CollapsibleBlock(
-                        title = "Contact, Feedback & Support",
-                        subtitle = "Send User Feedback, Email Support & App Information",
-                        icon = Icons.Default.Feedback,
-                        iconTint = CelestialGold,
-                        initialExpanded = false
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.4f)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(1.dp, MysticViolet.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
                     ) {
-                        Column {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Feedback, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("Contact, Feedback & Support", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color.White)
+                                    Text("Send User Feedback, Email Support & App Information", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -898,5 +955,109 @@ fun SettingsDialog(
     }
 }
 
+@Composable
+fun CollapsibleBlock(
+    title: String,
+    subtitle: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconTint: Color,
+    badgeText: String? = null,
+    borderColor: Color = MysticViolet.copy(alpha = 0.4f),
+    initialExpanded: Boolean = false,
+    testTag: String = "collapsible_block",
+    content: @Composable () -> Unit
+) {
+    var expanded by remember { mutableStateOf(initialExpanded) }
 
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.85f)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, borderColor, RoundedCornerShape(16.dp))
+            .testTag(testTag)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded },
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(34.dp)
+                            .clip(CircleShape)
+                            .background(iconTint.copy(alpha = 0.2f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(icon, contentDescription = null, tint = iconTint, modifier = Modifier.size(18.dp))
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = title,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            if (badgeText != null) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .background(iconTint)
+                                        .padding(horizontal = 5.dp, vertical = 1.dp)
+                                ) {
+                                    Text(
+                                        text = badgeText,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = DeepSpace,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 9.sp
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
 
+                IconButton(
+                    onClick = { expanded = !expanded },
+                    modifier = Modifier.size(28.dp)
+                ) {
+                    Icon(
+                        if (expanded) androidx.compose.material.icons.Icons.Default.Close else androidx.compose.material.icons.Icons.Default.Settings,
+                        contentDescription = if (expanded) "Collapse" else "Expand",
+                        tint = Color.White.copy(alpha = 0.7f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            if (expanded) {
+                Spacer(modifier = Modifier.height(14.dp))
+                content()
+            }
+        }
+    }
+}

@@ -157,6 +157,48 @@ fun ProfessionalLocatorDialog(
 
                 Spacer(modifier = Modifier.height(10.dp))
 
+                // Crisis Support & Mental Health Directory Resources Banner (from screenshots)
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.95f)),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, CelestialGold.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.Top) {
+                            Text("🆘", fontSize = 12.sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Immediate 24/7 Support: If you or someone you know is in distress, call or text 988 to reach the Suicide & Crisis Lifeline, or text HOME to 741741.",
+                                color = Color.White,
+                                fontSize = 10.5.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                lineHeight = 14.sp
+                            )
+                        }
+                        Text(
+                            text = "• SAMHSA National Helpline: Call 1-800-662-HELP (4357) or visit findtreatment.gov for free, confidential, 24/7 treatment referral.",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp
+                        )
+                        Text(
+                            text = "• Zocdoc / Open Path Collective: Search local mental health providers & affordable therapy collectives.",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 // Chat Messages List
                 Box(
                     modifier = Modifier

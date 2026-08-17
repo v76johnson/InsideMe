@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -126,6 +127,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.FileProvider
 import com.example.data.model.DeepSynthesisReport
 import com.example.ui.components.ReportReaderView
+import com.example.ui.components.TarotGeneratorView
+import androidx.compose.material.icons.filled.Casino
 import java.io.File
 import java.io.FileOutputStream
 
@@ -191,82 +194,61 @@ fun AstrologyScreen(
             .fillMaxSize()
             .background(DeepSpace)
     ) {
-        // Header & Tab bar
-        Column(
+        // Header & Astrology Home navigation (Removed horizontal scrolling menu)
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp)
+                .padding(horizontal = 20.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Star, contentDescription = null, tint = CelestialGold)
-                Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = { activeTab = 0 },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (activeTab == 0) CelestialGold else CosmicPurple,
+                    contentColor = if (activeTab == 0) DeepSpace else Color.White
+                ),
+                border = BorderStroke(1.dp, if (activeTab == 0) CelestialGold else MysticViolet.copy(alpha = 0.6f)),
+                shape = RoundedCornerShape(14.dp),
+                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
+                modifier = Modifier.testTag("astrology_home_top_btn")
+            ) {
+                Icon(
+                    Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = if (activeTab == 0) DeepSpace else CelestialGold
+                )
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "AI Astrology Hub",
-                    style = MaterialTheme.typography.headlineMedium,
+                    text = "Astrology Home",
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    fontSize = 13.sp
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            val tabScrollState = rememberScrollState()
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(tabScrollState)
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val tabs = listOf(
-                    Triple(0, "🌌 Home", "astro_home_tab"),
-                    Triple(1, "🪐 Charts", "natal_charts_tab"),
-                    Triple(2, "🔢 Numerology", "numerology_tab"),
-                    Triple(3, "🔮 Oracle", "oracle_tab"),
-                    Triple(4, "💖 Synastry", "birthdate_match_tab"),
-                    Triple(5, "✨ Mind & Cosmos", "mind_cosmos_report_tab")
-                )
-
-                tabs.forEach { (index, title, testTag) ->
-                    val isSelected = (activeTab == index)
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                if (isSelected) CelestialGold else CosmicPurple
-                            )
-                            .border(
-                                width = 1.dp,
-                                color = if (isSelected) CelestialGold else MysticViolet.copy(alpha = 0.5f),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .clickable { activeTab = index }
-                            .padding(horizontal = 14.dp, vertical = 9.dp)
-                            .testTag(testTag),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = if (isSelected) DeepSpace else Color.White,
-                                maxLines = 1,
-                                softWrap = false
-                            )
-                            if (index == 4 && !isPremium) {
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Icon(
-                                    Icons.Default.Lock,
-                                    contentDescription = "Locked",
-                                    tint = if (isSelected) DeepSpace else CelestialGold,
-                                    modifier = Modifier.size(12.dp)
-                                )
-                            }
-                        }
-                    }
+            if (activeTab != 0) {
+                val currentTabTitle = when (activeTab) {
+                    1 -> "🪐 Natal Charts"
+                    2 -> "🔮 AI Oracle"
+                    3 -> "💖 Synastry"
+                    4 -> "✨ Mind & Cosmos"
+                    5 -> "🃏 Tarot Generator"
+                    else -> ""
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(CosmicPurple)
+                        .border(1.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = currentTabTitle,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = CelestialGold
+                    )
                 }
             }
         }
@@ -280,7 +262,7 @@ fun AstrologyScreen(
                 onUpdateSigns = onUpdateSigns,
                 onOpenEditPersonalChartDialog = { showEditPersonalChartDialog = true },
                 onNavigateToTab = { activeTab = it },
-                onNavigateToReports = { activeTab = 5 }
+                onNavigateToReports = { activeTab = 4 }
             )
 
             1 -> NatalChartsTab(
@@ -291,20 +273,16 @@ fun AstrologyScreen(
                 onOpenAddChartDialog = { showAddChartDialog = true },
                 onDeleteChart = onDeleteNatalChart,
                 onAskOracleAboutChart = { chart ->
-                    activeTab = 3
+                    activeTab = 2
                     onSendOracleMessage("Analyze natal chart for ${chart.personName}: Sun in ${chart.sunSign.displayName}, Moon in ${chart.moonSign.displayName}, Rising in ${chart.risingSign.displayName}. What are key strengths and life themes?")
                 },
                 onAskOracleAboutPersonalChart = {
-                    activeTab = 3
+                    activeTab = 2
                     onSendOracleMessage("Analyze my personal natal chart: Sun in ${sunSign.displayName}, Moon in ${moonSign.displayName}, Rising in ${risingSign.displayName}. What are my key strengths, life purpose, and current transit guidance?")
                 }
             )
 
-            2 -> NumerologyAndChineseZodiacTab(
-                profile = profile
-            )
-
-            3 -> AiOracleTab(
+            2 -> AiOracleTab(
                 oracleMessages = oracleMessages,
                 isOracleThinking = isOracleThinking,
                 sunSign = sunSign,
@@ -313,7 +291,7 @@ fun AstrologyScreen(
                 onSend = onSendOracleMessage
             )
 
-            4 -> BirthdateSynastryTab(
+            3 -> BirthdateSynastryTab(
                 profile = profile,
                 savedCharts = natalCharts,
                 isGenerating = isGeneratingMatchReport,
@@ -324,7 +302,7 @@ fun AstrologyScreen(
                 onClearReport = onClearMatchReport
             )
 
-            5 -> MindAndCosmosReportTab(
+            4 -> MindAndCosmosReportTab(
                 savedReports = savedReports,
                 isGenerating = isGeneratingReport,
                 gemsBalance = gemsBalance,
@@ -333,6 +311,22 @@ fun AstrologyScreen(
                 onSelectReport = onSelectReport,
                 onToggleBookmark = onToggleBookmark
             )
+
+            5 -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 20.dp),
+                    contentPadding = PaddingValues(top = 12.dp, bottom = 90.dp)
+                ) {
+                    item {
+                        TarotGeneratorView(
+                            sunSign = sunSign,
+                            userName = profile?.userName?.ifBlank { "Seeker" } ?: "Seeker"
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -1870,6 +1864,7 @@ fun BirthDatePickerDialog(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AstroHomepageTab(
     profile: AstrologyProfile?,
@@ -1889,6 +1884,13 @@ fun AstroHomepageTab(
     val dobFormatted = remember(profile?.birthDateMillis) {
         profile?.birthDateMillis?.let { sdf.format(Date(it)) } ?: "11/19/1997"
     }
+
+    var selectedDobMillis by remember { mutableStateOf(profile?.birthDateMillis ?: 880000000000L) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val selectedDateText = remember(selectedDobMillis) { sdf.format(Date(selectedDobMillis)) }
+
+    val numerology = remember(selectedDobMillis) { AstrologyEngine.calculateLifePath(selectedDobMillis) }
+    val chineseZodiac = remember(selectedDobMillis) { AstrologyEngine.calculateChineseZodiac(selectedDobMillis) }
 
     LazyColumn(
         modifier = Modifier
@@ -2094,7 +2096,306 @@ fun AstroHomepageTab(
             }
         }
 
-        // 2. Astrology Services Options Hub
+        // 2. Interactive Birthdate Selector & Calculator Card
+        item {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, NebulaTeal.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
+            ) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("🔢", fontSize = 22.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Numerology & Zodiac Calculator",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(NebulaTeal)
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                        ) {
+                            Text("FREE SERVICE", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = DeepSpace)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = selectedDateText,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Selected Birthdate (MM/dd/yyyy)", color = Color.White.copy(alpha = 0.7f)) },
+                        trailingIcon = {
+                            IconButton(onClick = { showDatePicker = true }) {
+                                Icon(Icons.Default.DateRange, contentDescription = "Select Date", tint = CelestialGold)
+                            }
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = CelestialGold,
+                            unfocusedBorderColor = MysticViolet.copy(alpha = 0.6f),
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { showDatePicker = true }
+                            .testTag("astrology_home_dob_field")
+                    )
+
+                    if (profile != null && selectedDobMillis != profile.birthDateMillis) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        TextButton(
+                            onClick = { selectedDobMillis = profile.birthDateMillis },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text("Reset to My Birthdate", color = NebulaTeal, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Numerology Life Path Report Card
+        item {
+            Card(
+                shape = RoundedCornerShape(22.dp),
+                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.5.dp, CelestialGold.copy(alpha = 0.8f), RoundedCornerShape(22.dp))
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Numerology Life Path",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = CelestialGold
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(CelestialGold.copy(alpha = 0.2f))
+                                .border(1.dp, CelestialGold, RoundedCornerShape(8.dp))
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "Path #${numerology.lifePathNumber}",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = CelestialGold,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = numerology.title,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Keywords: ${numerology.keywords}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = NebulaTeal,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = numerology.description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        lineHeight = 20.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text("Core Strengths", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = CelestialGold)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    numerology.coreStrengths.forEach { strength ->
+                        Row(modifier = Modifier.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(strength, style = MaterialTheme.typography.bodySmall, color = Color.White)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text("Growth & Evolution Areas", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = ShadowRose)
+                    Spacer(modifier = Modifier.height(6.dp))
+                    numerology.growthAreas.forEach { growth ->
+                        Row(modifier = Modifier.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Star, contentDescription = null, tint = ShadowRose, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(growth, style = MaterialTheme.typography.bodySmall, color = Color.White)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(DeepSpace.copy(alpha = 0.6f))
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("🤝 Highly Compatible:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(numerology.compatibleLifePaths, style = MaterialTheme.typography.bodySmall, color = Color.White)
+                    }
+                }
+            }
+        }
+
+        // 4. Chinese Zodiac Report Card
+        item {
+            Card(
+                shape = RoundedCornerShape(22.dp),
+                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.5.dp, MysticViolet.copy(alpha = 0.7f), RoundedCornerShape(22.dp))
+            ) {
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(chineseZodiac.animalEmoji, fontSize = 26.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Chinese Zodiac",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MysticViolet)
+                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = "${chineseZodiac.birthYear} • ${chineseZodiac.animal}",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                maxLines = 1,
+                                softWrap = false
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = chineseZodiac.fullSign,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = CelestialGold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = chineseZodiac.personalityTraits,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White.copy(alpha = 0.9f),
+                        lineHeight = 20.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Element Meaning Box
+                    Card(
+                        shape = RoundedCornerShape(14.dp),
+                        colors = CardDefaults.cardColors(containerColor = DeepSpace.copy(alpha = 0.6f)),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(14.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(chineseZodiac.elementSymbol, fontSize = 18.sp)
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "${chineseZodiac.element} Element Influence",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = NebulaTeal
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = chineseZodiac.elementMeaning,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.85f)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("🍀 Lucky Numbers", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
+                            Text(chineseZodiac.luckyNumbers, style = MaterialTheme.typography.bodySmall, color = Color.White)
+                        }
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text("🎨 Lucky Colors", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
+                            Text(chineseZodiac.luckyColors, style = MaterialTheme.typography.bodySmall, color = Color.White)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Column {
+                        Text("❤️ Best Animal Matches", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = ShadowRose)
+                        Text(chineseZodiac.bestMatches, style = MaterialTheme.typography.bodySmall, color = Color.White)
+                    }
+                }
+            }
+        }
+
+        // 5. Astrology Services Options Hub
         item {
             Text(
                 text = "Astrology Services & Portal",
@@ -2117,20 +2418,7 @@ fun AstroHomepageTab(
             )
         }
 
-        // Option 2: Numerology & Chinese Zodiac
-        item {
-            AstroServiceOptionCard(
-                icon = Icons.Default.Star,
-                title = "🔢 Free Numerology & Zodiac",
-                subtitle = "Calculate your Numerology Life Path number, core strengths, growth areas, and Chinese Zodiac animal element traits.",
-                tagText = "Free Service",
-                buttonText = "Calculate Numerology",
-                onClick = { onNavigateToTab(2) },
-                testTag = "goto_numerology_service_button"
-            )
-        }
-
-        // Option 3: AI Cosmic Oracle
+        // Option 2: AI Cosmic Oracle
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.AutoAwesome,
@@ -2138,12 +2426,12 @@ fun AstroHomepageTab(
                 subtitle = "Ask Gemini AI personalized astrological questions, real-time transit insights, and daily predictions.",
                 tagText = "AI Powered",
                 buttonText = "Consult AI Oracle",
-                onClick = { onNavigateToTab(3) },
+                onClick = { onNavigateToTab(2) },
                 testTag = "goto_oracle_service_button"
             )
         }
 
-        // Option 4: Birthdate Synastry & Compatibility (Premium)
+        // Option 3: Birthdate Synastry & Compatibility (Premium)
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Favorite,
@@ -2151,12 +2439,12 @@ fun AstroHomepageTab(
                 subtitle = "Calculate precise planetary compatibility and love chemistry scores between two birthdates, times & cities.",
                 tagText = "Psyche+ Premium",
                 buttonText = "Check Synastry Match",
-                onClick = { onNavigateToTab(4) },
+                onClick = { onNavigateToTab(3) },
                 testTag = "goto_synastry_service_button"
             )
         }
 
-        // Option 5: Unified Mind & Cosmos AI Report
+        // Option 4: Unified Mind & Cosmos AI Report
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Psychology,
@@ -2167,6 +2455,43 @@ fun AstroHomepageTab(
                 onClick = { onNavigateToReports() },
                 testTag = "goto_synthesis_report_service_button"
             )
+        }
+
+        // Option 5: Tarot Card Reading Generator
+        item {
+            AstroServiceOptionCard(
+                icon = Icons.Default.Casino,
+                title = "🃏 Tarot Card Reading Generator",
+                subtitle = "Draw 1-card daily guidance, 3-card past/present/future spreads, and psychological reflections with archetypal wisdom.",
+                tagText = "78-Card Deck",
+                buttonText = "Open Tarot Generator",
+                onClick = { onNavigateToTab(5) },
+                testTag = "goto_tarot_service_button"
+            )
+        }
+    }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDobMillis)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { selectedDobMillis = it }
+                        showDatePicker = false
+                    }
+                ) {
+                    Text("OK", color = CelestialGold, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel", color = Color.White)
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 }
@@ -2318,353 +2643,6 @@ fun AstroServiceOptionCard(
                     softWrap = false
                 )
             }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun NumerologyAndChineseZodiacTab(
-    profile: AstrologyProfile?,
-    modifier: Modifier = Modifier
-) {
-    var selectedDobMillis by remember { mutableStateOf(profile?.birthDateMillis ?: 880000000000L) }
-    var showDatePicker by remember { mutableStateOf(false) }
-
-    val sdf = remember { SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()) }
-    val dateText = remember(selectedDobMillis) { sdf.format(Date(selectedDobMillis)) }
-
-    val numerology = remember(selectedDobMillis) { AstrologyEngine.calculateLifePath(selectedDobMillis) }
-    val chineseZodiac = remember(selectedDobMillis) { AstrologyEngine.calculateChineseZodiac(selectedDobMillis) }
-
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        contentPadding = PaddingValues(top = 12.dp, bottom = 90.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // 1. Interactive Birthdate Selector Card
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, NebulaTeal.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
-            ) {
-                Column(modifier = Modifier.padding(18.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("🔢", fontSize = 22.sp)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Numerology & Zodiac Calculator",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(NebulaTeal)
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
-                        ) {
-                            Text("FREE SERVICE", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = DeepSpace)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = dateText,
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Selected Birthdate (MM/dd/yyyy)", color = Color.White.copy(alpha = 0.7f)) },
-                        trailingIcon = {
-                            IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Default.DateRange, contentDescription = "Select Date", tint = CelestialGold)
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = CelestialGold,
-                            unfocusedBorderColor = MysticViolet.copy(alpha = 0.6f),
-                            focusedTextColor = Color.White,
-                            unfocusedTextColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { showDatePicker = true }
-                            .testTag("numerology_dob_field")
-                    )
-
-                    if (profile != null && selectedDobMillis != profile.birthDateMillis) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextButton(
-                            onClick = { selectedDobMillis = profile.birthDateMillis },
-                            modifier = Modifier.align(Alignment.End)
-                        ) {
-                            Text("Reset to My Birthdate", color = NebulaTeal, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                        }
-                    }
-                }
-            }
-        }
-
-        // 2. Numerology Life Path Analysis Card
-        item {
-            Card(
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.5.dp, CelestialGold.copy(alpha = 0.8f), RoundedCornerShape(22.dp))
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Numerology Life Path",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = CelestialGold
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(CelestialGold.copy(alpha = 0.2f))
-                                .border(1.dp, CelestialGold, RoundedCornerShape(8.dp))
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = "Path #${numerology.lifePathNumber}",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = CelestialGold,
-                                maxLines = 1,
-                                softWrap = false
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Text(
-                        text = numerology.title,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = "Keywords: ${numerology.keywords}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = NebulaTeal,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = numerology.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.9f),
-                        lineHeight = 20.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text("Core Strengths", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = CelestialGold)
-                    Spacer(modifier = Modifier.height(6.dp))
-                    numerology.coreStrengths.forEach { strength ->
-                        Row(modifier = Modifier.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(strength, style = MaterialTheme.typography.bodySmall, color = Color.White)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Text("Growth & Evolution Areas", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = ShadowRose)
-                    Spacer(modifier = Modifier.height(6.dp))
-                    numerology.growthAreas.forEach { growth ->
-                        Row(modifier = Modifier.padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Star, contentDescription = null, tint = ShadowRose, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(growth, style = MaterialTheme.typography.bodySmall, color = Color.White)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(DeepSpace.copy(alpha = 0.6f))
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("🤝 Highly Compatible:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(numerology.compatibleLifePaths, style = MaterialTheme.typography.bodySmall, color = Color.White)
-                    }
-                }
-            }
-        }
-
-        // 3. Chinese Zodiac Card
-        item {
-            Card(
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.5.dp, MysticViolet.copy(alpha = 0.7f), RoundedCornerShape(22.dp))
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(chineseZodiac.animalEmoji, fontSize = 26.sp)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Chinese Zodiac",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MysticViolet)
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = "${chineseZodiac.birthYear} • ${chineseZodiac.animal}",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                maxLines = 1,
-                                softWrap = false
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Text(
-                        text = chineseZodiac.fullSign,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = CelestialGold
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = chineseZodiac.personalityTraits,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.9f),
-                        lineHeight = 20.sp
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Element Meaning Box
-                    Card(
-                        shape = RoundedCornerShape(14.dp),
-                        colors = CardDefaults.cardColors(containerColor = DeepSpace.copy(alpha = 0.6f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(modifier = Modifier.padding(14.dp)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(chineseZodiac.elementSymbol, fontSize = 18.sp)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "${chineseZodiac.element} Element Influence",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = NebulaTeal
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = chineseZodiac.elementMeaning,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.85f)
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("🍀 Lucky Numbers", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
-                            Text(chineseZodiac.luckyNumbers, style = MaterialTheme.typography.bodySmall, color = Color.White)
-                        }
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("🎨 Lucky Colors", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
-                            Text(chineseZodiac.luckyColors, style = MaterialTheme.typography.bodySmall, color = Color.White)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Column {
-                        Text("❤️ Best Animal Matches", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold, color = ShadowRose)
-                        Text(chineseZodiac.bestMatches, style = MaterialTheme.typography.bodySmall, color = Color.White)
-                    }
-                }
-            }
-        }
-    }
-
-    if (showDatePicker) {
-        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDobMillis)
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { selectedDobMillis = it }
-                        showDatePicker = false
-                    }
-                ) {
-                    Text("OK", color = CelestialGold, fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = Color.White)
-                }
-            }
-        ) {
-            DatePicker(state = datePickerState)
         }
     }
 }

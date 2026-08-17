@@ -266,8 +266,9 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         birthTime: String = "12:00",
         birthCity: String = ""
     ) {
+        val finalDate = if (birthDateMillis > 0L) birthDateMillis else 880000000000L
         val calculated = AstrologyEngine.calculateProfileFromDate(
-            if (birthDateMillis > 0L) birthDateMillis else System.currentTimeMillis(),
+            finalDate,
             birthTime,
             birthCity
         )
@@ -278,12 +279,12 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
             updatedList.add(0, trimmedName)
         }
         val fullProfile = calculated.copy(
-            userName = trimmedName,
-            birthDateMillis = birthDateMillis,
+            userName = if (trimmedName.isNotBlank()) trimmedName else "Seeker",
+            birthDateMillis = finalDate,
             birthTime = birthTime,
             birthCity = birthCity,
             savedNameAdditions = updatedList,
-            isProfileConfigured = (trimmedName.isNotBlank() || birthDateMillis > 0L)
+            isProfileConfigured = true
         )
         viewModelScope.launch {
             repository.saveAstrologyProfile(fullProfile)

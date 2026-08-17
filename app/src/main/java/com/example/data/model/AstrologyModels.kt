@@ -109,3 +109,18 @@ data class CustomNatalChart(
     val notes: String = "",
     val createdAtMillis: Long = System.currentTimeMillis()
 )
+
+data class DailyHoroscope(
+    val sign: ZodiacSign,
+    val dateString: String,
+    val headline: String,
+    val overview: String,
+    val focusTheme: String,
+    val energyRating: Int, // 1 to 100
+    val loveVibe: String,
+    val careerVibe: String,
+    val cosmicAdvice: String,
+    val luckyNumber: Int,
+    val luckyColor: String,
+    val compatibleSignToday: ZodiacSign
+)

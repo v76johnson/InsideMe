@@ -186,30 +186,48 @@ fun FreeAiChatDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Crisis Support Banner
+                // Crisis Support & Mental Health Resources Banner (from screenshots)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.8f)),
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = CardDefaults.cardColors(containerColor = CosmicPurple.copy(alpha = 0.95f)),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.dp, CelestialGold.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
                 ) {
-                    Row(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        Icon(
-                            Icons.Default.MedicalServices,
-                            contentDescription = null,
-                            tint = CelestialGold,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Row(verticalAlignment = Alignment.Top) {
+                            Text("🆘", fontSize = 13.sp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Immediate 24/7 Support: If you or someone you know is in distress, call or text 988 to reach the Suicide & Crisis Lifeline, or text HOME to 741741.",
+                                color = Color.White,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                lineHeight = 15.sp
+                            )
+                        }
                         Text(
-                            text = "Need immediate help? Call/Text 988 Suicide & Crisis Lifeline (24/7) or Text HOME to 741741.",
-                            color = Color.White.copy(alpha = 0.9f),
-                            fontSize = 11.sp,
+                            text = "• SAMHSA National Helpline: Call 1-800-662-HELP (4357) or visit findtreatment.gov for free, confidential, 24/7 treatment referral.",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 10.5.sp,
                             lineHeight = 14.sp
+                        )
+                        Text(
+                            text = "• Zocdoc / Open Path Collective: Search local mental health providers & affordable therapy collectives.",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 10.5.sp,
+                            lineHeight = 14.sp
+                        )
+                        Text(
+                            text = "*This app is intended for entertainment and educational purposes and results should be discussed with a professional for diagnosis and treatment. In crisis, call 988.",
+                            color = Color.White.copy(alpha = 0.6f),
+                            fontSize = 9.sp,
+                            lineHeight = 12.sp
                         )
                     }
                 }

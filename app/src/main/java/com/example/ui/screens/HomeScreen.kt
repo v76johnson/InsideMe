@@ -60,6 +60,7 @@ import com.example.data.model.ZodiacSign
 import com.example.data.repository.NameAnalysisEngine
 import com.example.data.repository.TestCatalog
 import com.example.ui.components.DailyAffirmationWidget
+import com.example.ui.components.DailyHoroscopeWidget
 import com.example.ui.theme.CelestialGold
 import com.example.ui.theme.CosmicPurple
 import com.example.ui.theme.DeepSpace
@@ -80,7 +81,6 @@ fun HomeScreen(
     onGenerateReportClicked: () -> Unit,
     onUpgradeClicked: () -> Unit,
     onOpenFreeMindChat: () -> Unit = {},
-    onGenerateNameReport: (String) -> Unit = {},
     onOpenProfileSetup: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -95,12 +95,6 @@ fun HomeScreen(
     val moonSign = astrologyProfile?.moonSign ?: ZodiacSign.PISCES
     val risingSign = astrologyProfile?.risingSign ?: ZodiacSign.CANCER
 
-    val nameAnalysis = remember(userName) {
-        NameAnalysisEngine.analyzeName(userName)
-    }
-    val primaryMeaning = nameAnalysis.etymologies.firstOrNull()?.literalMeaning ?: "Luminous Essence & Strength"
-    val primaryCulture = nameAnalysis.etymologies.firstOrNull()?.languageOrCulture ?: "Universal"
-
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -110,7 +104,7 @@ fun HomeScreen(
             .background(DeepSpace),
         contentPadding = PaddingValues(top = 16.dp, bottom = 90.dp)
     ) {
-        // 1. Personalized Greeting & Selected Name Meaning Box (Top)
+        // 1. Personalized Greeting Box (Top)
         item {
             Column(
                 modifier = Modifier
@@ -127,46 +121,45 @@ fun HomeScreen(
                             .clickable { onOpenProfileSetup() }
                             .testTag("personalized_greeting_card")
                     ) {
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(18.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(18.dp)
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "WELCOME TO INSIDEME ✨",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = CelestialGold,
-                                    letterSpacing = 1.sp
-                                )
-                                Spacer(modifier = Modifier.height(2.dp))
-                                Text(
-                                    text = if (userName != "Seeker") "Greetings, $userName" else "Personalize Your Journey",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Tap to enter birthdate & name to calculate your true signs and name essence",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                )
-                            }
+                            Text(
+                                text = "WELCOME TO INSIDEME ✨",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = CelestialGold,
+                                letterSpacing = 1.sp
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(
+                                text = if (userName != "Seeker") "Greetings, $userName" else "Personalize Your Journey",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Enter your birthdate & name to calculate your exact Big 3 signs, daily horoscope, and personal astrology blueprint.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.85f),
+                                lineHeight = 18.sp
+                            )
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
 
                             Button(
                                 onClick = onOpenProfileSetup,
                                 colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
                                 shape = RoundedCornerShape(12.dp),
-                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                                modifier = Modifier.testTag("home_setup_profile_btn")
+                                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("home_setup_profile_btn")
                             ) {
-                                Text("✨ Setup", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text("✨ Setup Profile & Birthdate", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             }
                         }
                     }
@@ -189,7 +182,7 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column(modifier = Modifier.weight(1f)) {
+                                Column {
                                     Text(
                                         text = "WELCOME BACK ✨",
                                         style = MaterialTheme.typography.labelSmall,
@@ -206,71 +199,29 @@ fun HomeScreen(
                                     )
                                 }
 
-                                Button(
-                                    onClick = { onGenerateNameReport(userName) },
-                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
-                                    shape = RoundedCornerShape(12.dp),
-                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                                    modifier = Modifier.testTag("home_name_meaning_report_btn")
+                                Surface(
+                                    color = NebulaTeal.copy(alpha = 0.2f),
+                                    shape = RoundedCornerShape(8.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, NebulaTeal.copy(alpha = 0.6f))
                                 ) {
-                                    Icon(Icons.Default.HistoryEdu, contentDescription = null, modifier = Modifier.size(14.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Name Meaning", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                                    Text(
+                                        text = "DAILY INSIGHTS",
+                                        color = NebulaTeal,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 10.sp,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    )
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                            // Selected Name Meaning Information
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MysticViolet.copy(alpha = 0.35f),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 12.dp, vertical = 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(32.dp)
-                                            .clip(CircleShape)
-                                            .background(CelestialGold.copy(alpha = 0.2f)),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Icon(
-                                            Icons.Default.HistoryEdu,
-                                            contentDescription = "Name Essence",
-                                            tint = CelestialGold,
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                    }
-
-                                    Spacer(modifier = Modifier.width(10.dp))
-
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Text(
-                                            text = "Name Meaning: $primaryMeaning",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White,
-                                            maxLines = 2,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = "$primaryCulture Root • Intent: ${nameAnalysis.parentalIntentCategory}",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = NebulaTeal,
-                                            fontSize = 11.sp,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                }
-                            }
+                            Text(
+                                text = "Your cosmic transits, psychological profile, and personalized daily horoscope are ready below.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.85f),
+                                lineHeight = 18.sp
+                            )
                         }
                     }
                 }
@@ -525,9 +476,30 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(14.dp))
         }
 
+        // 3. Daily Horoscope Widget
+        item {
+            DailyHoroscopeWidget(
+                astrologyProfile = astrologyProfile,
+                onNavigateToAstrology = onNavigateToAstrology,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
 
+            Spacer(modifier = Modifier.height(14.dp))
+        }
 
-        // 4. Summary of Tests Taken & Scores Section
+        // 4. Daily Psychology Affirmation Widget (Moved above Summary of Tests)
+        item {
+            DailyAffirmationWidget(
+                testResults = testResults,
+                astrologyProfile = astrologyProfile,
+                onTakeAssessmentClicked = onNavigateToAssessments,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+        }
+
+        // 5. Summary of Tests Taken & Scores Section
         item {
             Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Row(
@@ -648,103 +620,6 @@ fun HomeScreen(
                             )
                         }
                     }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-        }
-
-        // 5. Daily Psychology Affirmation Widget
-        item {
-            DailyAffirmationWidget(
-                testResults = testResults,
-                astrologyProfile = astrologyProfile,
-                onTakeAssessmentClicked = onNavigateToAssessments,
-                modifier = Modifier.padding(horizontal = 20.dp)
-            )
-
-            Spacer(modifier = Modifier.height(14.dp))
-        }
-
-        // 6. Free AI Mind & Feelings Chat Card (Moved to bottom of home page)
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .border(1.dp, NebulaTeal.copy(alpha = 0.7f), RoundedCornerShape(20.dp))
-                    .clickable { onOpenFreeMindChat() }
-                    .testTag("home_free_mind_chat_card")
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .clip(CircleShape)
-                            .background(NebulaTeal.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Default.Psychology,
-                            contentDescription = null,
-                            tint = NebulaTeal,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Free AI Mind Companion",
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.weight(1f, fill = false),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Surface(
-                                color = NebulaTeal,
-                                shape = RoundedCornerShape(4.dp)
-                            ) {
-                                Text(
-                                    text = "100% FREE",
-                                    color = Color.Black,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    fontSize = 9.sp,
-                                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp),
-                                    maxLines = 1,
-                                    softWrap = false
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Discuss assessment scores, feelings & mental health guidance",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 11.sp,
-                            lineHeight = 16.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Icon(
-                        Icons.Default.ArrowForward,
-                        contentDescription = "Open Chat",
-                        tint = NebulaTeal,
-                        modifier = Modifier.size(20.dp)
-                    )
                 }
             }
 

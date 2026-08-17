@@ -1,6 +1,5 @@
 package com.example.ui.components
 
-import android.app.DatePickerDialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,13 +30,18 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -48,7 +52,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -65,10 +68,10 @@ import com.example.ui.theme.DeepSpace
 import com.example.ui.theme.MysticViolet
 import com.example.ui.theme.NebulaTeal
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FirstInstallNameDialog(
     initialName: String = "",
@@ -76,53 +79,24 @@ fun FirstInstallNameDialog(
     initialBirthTime: String = "12:00 PM",
     initialBirthCity: String = "",
     onSaveProfile: (name: String, birthDateMillis: Long, birthTime: String, birthCity: String) -> Unit = { _, _, _, _ -> },
-    onSaveName: (String) -> Unit = {},
     onSkip: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var nameFieldValue by remember {
         mutableStateOf(TextFieldValue(text = initialName, selection = TextRange(initialName.length)))
     }
     var selectedDateMillis by remember {
-        mutableLongStateOf(if (initialBirthDateMillis > 0L) initialBirthDateMillis else 0L)
+        mutableLongStateOf(if (initialBirthDateMillis > 0L) initialBirthDateMillis else 880000000000L)
     }
+    var hasExplicitlyPickedDate by remember {
+        mutableStateOf(initialBirthDateMillis > 0L)
+    }
+    var showDatePickerDialog by remember { mutableStateOf(false) }
     var birthTimeStr by remember { mutableStateOf(initialBirthTime) }
     var birthCityStr by remember { mutableStateOf(initialBirthCity) }
     var showAdvancedOptions by remember { mutableStateOf(false) }
 
     val dateFormat = remember { SimpleDateFormat("MMMM d, yyyy", Locale.getDefault()) }
-
-    // DatePickerDialog launcher
-    val calendar = Calendar.getInstance().apply {
-        if (selectedDateMillis > 0L) {
-            timeInMillis = selectedDateMillis
-        } else {
-            // Default picker position to ~22 years ago
-            add(Calendar.YEAR, -22)
-        }
-    }
-
-    val datePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                val cal = Calendar.getInstance().apply {
-                    set(Calendar.YEAR, year)
-                    set(Calendar.MONTH, month)
-                    set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    set(Calendar.HOUR_OF_DAY, 12)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-                selectedDateMillis = cal.timeInMillis
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-    }
 
     // Calculated Signs preview when date is chosen
     val previewSigns = remember(selectedDateMillis, birthTimeStr, birthCityStr) {
@@ -242,11 +216,11 @@ fun FirstInstallNameDialog(
                         color = CosmicPurple.copy(alpha = 0.4f),
                         border = androidx.compose.foundation.BorderStroke(
                             1.dp,
-                            if (selectedDateMillis > 0L) CelestialGold else MysticViolet.copy(alpha = 0.7f)
+                            if (hasExplicitlyPickedDate || selectedDateMillis > 0L) CelestialGold else MysticViolet.copy(alpha = 0.7f)
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { datePickerDialog.show() }
+                            .clickable { showDatePickerDialog = true }
                             .testTag("first_install_birthdate_picker")
                     ) {
                         Row(
@@ -268,20 +242,17 @@ fun FirstInstallNameDialog(
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
-                                    if (selectedDateMillis > 0L) {
-                                        Text(
-                                            text = dateFormat.format(Date(selectedDateMillis)),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color.White
-                                        )
-                                    } else {
-                                        Text(
-                                            text = "Tap to select birthdate...",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = Color.White.copy(alpha = 0.55f)
-                                        )
-                                    }
+                                    Text(
+                                        text = dateFormat.format(Date(selectedDateMillis)),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    Text(
+                                        text = if (hasExplicitlyPickedDate) "Custom Birthdate Set" else "Tap to change birthdate",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = if (hasExplicitlyPickedDate) NebulaTeal else Color.White.copy(alpha = 0.6f)
+                                    )
                                 }
                             }
 
@@ -292,7 +263,7 @@ fun FirstInstallNameDialog(
                                     .padding(horizontal = 10.dp, vertical = 4.dp)
                             ) {
                                 Text(
-                                    text = if (selectedDateMillis > 0L) "Change" else "Select",
+                                    text = if (hasExplicitlyPickedDate) "Edit" else "Select Date",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = CelestialGold
@@ -451,14 +422,13 @@ fun FirstInstallNameDialog(
                 Button(
                     onClick = {
                         val finalName = nameFieldValue.text.trim()
-                        val finalDate = if (selectedDateMillis > 0L) selectedDateMillis else System.currentTimeMillis()
+                        val finalDate = if (selectedDateMillis > 0L) selectedDateMillis else 880000000000L
                         onSaveProfile(
                             if (finalName.isNotBlank()) finalName else "Seeker",
                             finalDate,
                             birthTimeStr.ifBlank { "12:00 PM" },
                             birthCityStr
                         )
-                        onSaveName(if (finalName.isNotBlank()) finalName else "Seeker")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -494,4 +464,34 @@ fun FirstInstallNameDialog(
             }
         }
     }
+
+    if (showDatePickerDialog) {
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = if (selectedDateMillis > 0L) selectedDateMillis else 880000000000L
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePickerDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            selectedDateMillis = it
+                            hasExplicitlyPickedDate = true
+                        }
+                        showDatePickerDialog = false
+                    }
+                ) {
+                    Text("Select", color = CelestialGold, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePickerDialog = false }) {
+                    Text("Cancel", color = Color.White)
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 }
+
