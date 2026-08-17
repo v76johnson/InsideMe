@@ -27,12 +27,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
@@ -45,6 +48,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +62,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -84,7 +91,11 @@ import com.example.ui.theme.CosmicPurple
 import com.example.ui.theme.DeepSpace
 import com.example.ui.theme.MysticViolet
 import com.example.ui.theme.NebulaTeal
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsDialog(
     userSubscription: UserSubscription,
@@ -97,6 +108,9 @@ fun SettingsDialog(
     onOpenReviewModal: () -> Unit = {},
     onResetData: () -> Unit = {},
     onUpdateUserName: (String) -> Unit = {},
+    onUpdateBirthDate: (Long) -> Unit = {},
+    onNavigateToSynastry: () -> Unit = {},
+    onNavigateToSynthesis: () -> Unit = {},
     onRemoveSavedName: (String) -> Unit = {},
     onAddSavedName: (String) -> Unit = {},
     onRedeemPromoCode: (String) -> Boolean = { false }
@@ -108,6 +122,7 @@ fun SettingsDialog(
     var showFeedbackDialog by remember { mutableStateOf(false) }
     var feedbackCategory by remember { mutableStateOf("General Feedback") }
     var feedbackMessageText by remember { mutableStateOf("") }
+    var showDatePickerDialog by remember { mutableStateOf(false) }
 
     var promoCodeFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     var promoCodeMessage by remember { mutableStateOf<String?>(null) }
@@ -120,6 +135,12 @@ fun SettingsDialog(
     val initialName = astrologyProfile?.userName ?: ""
     var userNameFieldValue by remember { mutableStateOf(TextFieldValue(text = initialName, selection = TextRange(initialName.length))) }
     var isNameSaved by remember { mutableStateOf(false) }
+
+    val sdf = remember { SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()) }
+    val currentDobMillis = astrologyProfile?.birthDateMillis?.takeIf { it > 0L } ?: 880000000000L
+    val formattedDob = remember(astrologyProfile?.birthDateMillis) {
+        astrologyProfile?.birthDateMillis?.takeIf { it > 0L }?.let { sdf.format(Date(it)) } ?: "Not Set (Default: 11/19/1997)"
+    }
 
     LaunchedEffect(astrologyProfile?.userName) {
         val currentProfileName = astrologyProfile?.userName ?: ""
@@ -198,63 +219,113 @@ fun SettingsDialog(
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    // SECTION 0: USER PROFILE & NAME PERSONALIZATION
+                    // SECTION 0: USER PROFILE & DATE OF BIRTH PERSONALIZATION
                     CollapsibleBlock(
                         title = "User Profile & Personalization",
-                        subtitle = if (userNameFieldValue.text.isNotBlank()) "Addressed as: ${userNameFieldValue.text}" else "Set your name to personalize your reports",
+                        subtitle = if (userNameFieldValue.text.isNotBlank()) "Addressed as: ${userNameFieldValue.text} • DOB: $formattedDob" else "Set your name & birthdate to personalize reports",
                         icon = Icons.Default.Star,
                         iconTint = CelestialGold,
                         initialExpanded = true
                     ) {
-                        Column {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Name Input
                             Text(
                                 text = "Personalize How You Are Addressed",
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+
+                            OutlinedTextField(
+                                value = userNameFieldValue,
+                                onValueChange = { newValue ->
+                                    userNameFieldValue = newValue
+                                    isNameSaved = false
+                                },
+                                placeholder = { Text("Enter your preferred name...", color = Color.White.copy(alpha = 0.5f)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("settings_user_name_input"),
+                                singleLine = true,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = CelestialGold,
+                                    unfocusedBorderColor = CelestialGold.copy(alpha = 0.4f),
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+
+                            Button(
+                                onClick = {
+                                    onUpdateUserName(userNameFieldValue.text)
+                                    isNameSaved = true
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_save_name_button")
                             ) {
-                                OutlinedTextField(
-                                    value = userNameFieldValue,
-                                    onValueChange = { newValue ->
-                                        userNameFieldValue = newValue
-                                        isNameSaved = false
-                                    },
-                                    placeholder = { Text("Enter your preferred name...", color = Color.White.copy(alpha = 0.5f)) },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .testTag("settings_user_name_input"),
-                                    singleLine = true,
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = CelestialGold,
-                                        unfocusedBorderColor = CelestialGold.copy(alpha = 0.4f),
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White
-                                    ),
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Button(
-                                    onClick = {
-                                        onUpdateUserName(userNameFieldValue.text)
-                                        isNameSaved = true
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
-                                    shape = RoundedCornerShape(10.dp),
-                                    modifier = Modifier.testTag("settings_save_name_button")
-                                ) {
-                                    Text(if (isNameSaved) "Saved ✓" else "Save", fontWeight = FontWeight.Bold)
+                                Text(if (isNameSaved) "Saved ✓" else "Save Name", fontWeight = FontWeight.Bold)
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // Date of Birth Section
+                            Text(
+                                text = "Primary User Birthdate (Astrology & Reports)",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = CelestialGold
+                            )
+
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = DeepSpace,
+                                border = BorderStroke(1.dp, MysticViolet),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(modifier = Modifier.padding(14.dp)) {
+                                    Text(
+                                        text = "Current Birthdate: $formattedDob",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                    if (astrologyProfile != null && astrologyProfile.isConfigured) {
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = "Sun: ${astrologyProfile.sunSign.displayName} (${astrologyProfile.sunSign.symbol}) • Moon: ${astrologyProfile.moonSign.displayName} • Ascendant: ${astrologyProfile.risingSign.displayName}",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = NebulaTeal
+                                        )
+                                    }
                                 }
+                            }
+
+                            Button(
+                                onClick = { showDatePickerDialog = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_change_birthdate_button")
+                            ) {
+                                Icon(Icons.Default.DateRange, contentDescription = null, modifier = Modifier.size(16.dp), tint = CelestialGold)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Change Primary User Birthdate", fontWeight = FontWeight.Bold)
                             }
 
                             // SAVED NAME ADDITIONS / COMPANION NAMES
                             val savedAdditions = astrologyProfile?.savedNameAdditions ?: emptyList()
                             if (savedAdditions.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(14.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
                                     text = "SAVED COMPANION NAMES",
                                     style = MaterialTheme.typography.labelSmall,
@@ -262,10 +333,10 @@ fun SettingsDialog(
                                     color = CelestialGold,
                                     letterSpacing = 1.sp
                                 )
-                                Spacer(modifier = Modifier.height(6.dp))
 
                                 Column(
-                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     savedAdditions.forEach { nameItem ->
                                         Surface(
@@ -274,46 +345,26 @@ fun SettingsDialog(
                                             border = BorderStroke(1.dp, MysticViolet),
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
+                                            Column(modifier = Modifier.padding(12.dp)) {
                                                 Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    modifier = Modifier.weight(1f)
-                                                ) {
-                                                    Icon(
-                                                        Icons.Default.Star,
-                                                        contentDescription = null,
-                                                        tint = NebulaTeal,
-                                                        modifier = Modifier.size(14.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(8.dp))
-                                                    Text(
-                                                        text = nameItem,
-                                                        style = MaterialTheme.typography.bodySmall,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = Color.White
-                                                    )
-                                                }
-
-                                                Row(
-                                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
                                                     verticalAlignment = Alignment.CenterVertically
                                                 ) {
-                                                    if (!nameItem.equals(userNameFieldValue.text, ignoreCase = true)) {
-                                                        TextButton(
-                                                            onClick = {
-                                                                onUpdateUserName(nameItem)
-                                                                userNameFieldValue = TextFieldValue(text = nameItem, selection = TextRange(nameItem.length))
-                                                            },
-                                                            contentPadding = PaddingValues(horizontal = 6.dp, vertical = 2.dp)
-                                                        ) {
-                                                            Text("Set Main", color = NebulaTeal, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                                                        }
+                                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                                        Icon(
+                                                            Icons.Default.Star,
+                                                            contentDescription = null,
+                                                            tint = NebulaTeal,
+                                                            modifier = Modifier.size(14.dp)
+                                                        )
+                                                        Spacer(modifier = Modifier.width(8.dp))
+                                                        Text(
+                                                            text = nameItem,
+                                                            style = MaterialTheme.typography.bodySmall,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = Color.White
+                                                        )
                                                     }
 
                                                     IconButton(
@@ -321,6 +372,21 @@ fun SettingsDialog(
                                                         modifier = Modifier.size(24.dp)
                                                     ) {
                                                         Icon(Icons.Default.Close, contentDescription = "Remove", tint = Color.White.copy(alpha = 0.6f), modifier = Modifier.size(14.dp))
+                                                    }
+                                                }
+
+                                                if (!nameItem.equals(userNameFieldValue.text, ignoreCase = true)) {
+                                                    Spacer(modifier = Modifier.height(6.dp))
+                                                    OutlinedButton(
+                                                        onClick = {
+                                                            onUpdateUserName(nameItem)
+                                                            userNameFieldValue = TextFieldValue(text = nameItem, selection = TextRange(nameItem.length))
+                                                        },
+                                                        shape = RoundedCornerShape(8.dp),
+                                                        border = BorderStroke(1.dp, NebulaTeal),
+                                                        modifier = Modifier.fillMaxWidth()
+                                                    ) {
+                                                        Text("Set as Main Active Name", color = NebulaTeal, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                                                     }
                                                 }
                                             }
@@ -336,97 +402,148 @@ fun SettingsDialog(
                     // SECTION 1: SUBSCRIPTION & MEMBERSHIP MANAGEMENT
                     CollapsibleBlock(
                         title = "Subscription & Membership",
-                        subtitle = if (userSubscription.isPremium) "Tier: ${userSubscription.tier.title} (${userSubscription.tier.priceDisplay})" else "Free Tier (Gems: ${userSubscription.gemsBalance})",
+                        subtitle = if (userSubscription.isPremium) "Tier: ${userSubscription.tier.title} (${userSubscription.tier.priceDisplay})" else "Free Tier • Standard Access",
                         icon = Icons.Default.WorkspacePremium,
                         iconTint = CelestialGold,
                         initialExpanded = true
                     ) {
-                        Column {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            // Status Card
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = DeepSpace,
+                                border = BorderStroke(1.dp, MysticViolet),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(modifier = Modifier.padding(14.dp)) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         Text(
                                             text = "Status: ${if (userSubscription.isPremium) userSubscription.tier.title else "Free Tier"}",
                                             style = MaterialTheme.typography.bodyMedium,
                                             fontWeight = FontWeight.Bold,
                                             color = Color.White
                                         )
-                                        Text(
-                                            text = if (userSubscription.isPremium)
-                                                "${userSubscription.tier.priceDisplay} • Unlimited AI Reports"
-                                            else
-                                                "Gems: ${userSubscription.gemsBalance} • Standard Access",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = CelestialGold
-                                        )
+
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(if (userSubscription.isPremium) NebulaTeal else MysticViolet.copy(alpha = 0.5f))
+                                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = if (userSubscription.isPremium) "ACTIVE" else "FREE",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = if (userSubscription.isPremium) Color.Black else Color.White
+                                            )
+                                        }
                                     }
 
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(if (userSubscription.isPremium) NebulaTeal else MysticViolet.copy(alpha = 0.5f))
-                                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                                    ) {
-                                        Text(
-                                            text = if (userSubscription.isPremium) "ACTIVE" else "FREE",
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            color = if (userSubscription.isPremium) Color.Black else Color.White
-                                        )
-                                    }
-                                }
+                                    Spacer(modifier = Modifier.height(4.dp))
 
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Button(
-                                        onClick = {
-                                            onDismiss()
-                                            onNavigateToUpgrade()
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
-                                        shape = RoundedCornerShape(12.dp),
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp)
-                                            .testTag("settings_upgrade_button")
-                                    ) {
-                                        Icon(Icons.Default.WorkspacePremium, contentDescription = null, modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            if (userSubscription.isPremium) "Switch Tier" else "Upgrade Tier",
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 12.sp
-                                        )
-                                    }
-
-                                    OutlinedButton(
-                                        onClick = { showCancelSubscriptionConfirm = true },
-                                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF6B6B)),
-                                        border = BorderStroke(1.dp, if (userSubscription.isPremium) Color(0xFFFF6B6B) else Color.Gray.copy(alpha = 0.5f)),
-                                        shape = RoundedCornerShape(12.dp),
-                                        enabled = userSubscription.isPremium,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp)
-                                            .testTag("settings_cancel_subscription_button")
-                                    ) {
-                                        Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(16.dp), tint = if (userSubscription.isPremium) Color(0xFFFF6B6B) else Color.Gray)
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Cancel Subscription", fontWeight = FontWeight.Bold, fontSize = 11.sp, maxLines = 1)
-                                    }
+                                    Text(
+                                        text = if (userSubscription.isPremium)
+                                            "${userSubscription.tier.priceDisplay} • Unlimited AI Reports"
+                                        else
+                                            "Standard Free Access • Unlimited Core Assessments",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = CelestialGold
+                                    )
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(14.dp))
+                            // Primary Subscription Buttons - Vertically Stacked
+                            Button(
+                                onClick = {
+                                    onDismiss()
+                                    onNavigateToUpgrade()
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_upgrade_button")
+                            ) {
+                                Icon(Icons.Default.WorkspacePremium, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    if (userSubscription.isPremium) "Switch Subscription Tier" else "Upgrade to Premium Tier",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 12.sp
+                                )
+                            }
 
+                            if (userSubscription.isPremium) {
+                                OutlinedButton(
+                                    onClick = { showCancelSubscriptionConfirm = true },
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFFF6B6B)),
+                                    border = BorderStroke(1.dp, Color(0xFFFF6B6B)),
+                                    shape = RoundedCornerShape(12.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(44.dp)
+                                        .testTag("settings_cancel_subscription_button")
+                                ) {
+                                    Icon(Icons.Default.Cancel, contentDescription = null, modifier = Modifier.size(16.dp), tint = Color(0xFFFF6B6B))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Cancel Subscription", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                }
+                            }
+
+                            // Quick Access Feature Buttons in Subscription Box
+                            Text(
+                                text = "PREMIUM SERVICES ACCESS",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = CelestialGold,
+                                letterSpacing = 1.sp
+                            )
+
+                            Button(
+                                onClick = {
+                                    onDismiss()
+                                    onNavigateToSynastry()
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_access_synastry_button")
+                            ) {
+                                Icon(Icons.Default.Favorite, contentDescription = null, modifier = Modifier.size(16.dp), tint = CelestialGold)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("💖 Open Birthdate Synastry Match", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+
+                            Button(
+                                onClick = {
+                                    onDismiss()
+                                    onNavigateToSynthesis()
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_access_synthesis_button")
+                            ) {
+                                Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(16.dp), tint = CelestialGold)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("✨ Open Mind & Cosmos Synthesis", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            // Promo Code Section - Stacked
                             Text(
                                 text = "PROMO CODE",
                                 style = MaterialTheme.typography.labelSmall,
@@ -434,62 +551,56 @@ fun SettingsDialog(
                                 color = CelestialGold,
                                 letterSpacing = 1.sp
                             )
-                            Spacer(modifier = Modifier.height(6.dp))
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                OutlinedTextField(
-                                    value = promoCodeFieldValue,
-                                    onValueChange = {
-                                        promoCodeFieldValue = it
-                                        promoCodeMessage = null
-                                    },
-                                    placeholder = { Text("Enter promo code", color = Color.White.copy(alpha = 0.45f), fontSize = 12.sp) },
-                                    singleLine = true,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .testTag("settings_promo_code_input"),
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = CelestialGold,
-                                        unfocusedBorderColor = CelestialGold.copy(alpha = 0.5f),
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White,
-                                        focusedContainerColor = CosmicPurple.copy(alpha = 0.5f),
-                                        unfocusedContainerColor = CosmicPurple.copy(alpha = 0.3f)
-                                    ),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Button(
-                                    onClick = {
-                                        val code = promoCodeFieldValue.text.trim()
-                                        if (code.isNotBlank()) {
-                                            val success = onRedeemPromoCode(code)
-                                            if (success) {
-                                                promoCodeSuccess = true
-                                                promoCodeMessage = "🎉 Promo code accepted! All features & premium unlocked!"
-                                                promoCodeFieldValue = TextFieldValue("")
-                                            } else {
-                                                promoCodeSuccess = false
-                                                promoCodeMessage = "❌ Invalid promo code. Please try again."
-                                            }
+                            OutlinedTextField(
+                                value = promoCodeFieldValue,
+                                onValueChange = {
+                                    promoCodeFieldValue = it
+                                    promoCodeMessage = null
+                                },
+                                placeholder = { Text("Enter promo code (e.g. INSIDEVIP)", color = Color.White.copy(alpha = 0.45f), fontSize = 12.sp) },
+                                singleLine = true,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("settings_promo_code_input"),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = CelestialGold,
+                                    unfocusedBorderColor = CelestialGold.copy(alpha = 0.5f),
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedContainerColor = CosmicPurple.copy(alpha = 0.5f),
+                                    unfocusedContainerColor = CosmicPurple.copy(alpha = 0.3f)
+                                ),
+                                shape = RoundedCornerShape(12.dp)
+                            )
+
+                            Button(
+                                onClick = {
+                                    val code = promoCodeFieldValue.text.trim()
+                                    if (code.isNotBlank()) {
+                                        val success = onRedeemPromoCode(code)
+                                        if (success) {
+                                            promoCodeSuccess = true
+                                            promoCodeMessage = "🎉 Promo code accepted! All features & premium unlocked!"
+                                            promoCodeFieldValue = TextFieldValue("")
+                                        } else {
+                                            promoCodeSuccess = false
+                                            promoCodeMessage = "❌ Invalid promo code. Please try again."
                                         }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
-                                    shape = RoundedCornerShape(12.dp),
-                                    enabled = promoCodeFieldValue.text.isNotBlank(),
-                                    modifier = Modifier
-                                        .height(50.dp)
-                                        .testTag("settings_promo_code_submit_button")
-                                ) {
-                                    Text("Redeem", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                                }
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
+                                shape = RoundedCornerShape(12.dp),
+                                enabled = promoCodeFieldValue.text.isNotBlank(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_promo_code_submit_button")
+                            ) {
+                                Text("Redeem Promo Code", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
                             promoCodeMessage?.let { msg ->
-                                Spacer(modifier = Modifier.height(6.dp))
                                 Text(
                                     text = msg,
                                     style = MaterialTheme.typography.bodySmall,
@@ -511,7 +622,10 @@ fun SettingsDialog(
                         iconTint = NebulaTeal,
                         initialExpanded = false
                     ) {
-                        Column {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -531,8 +645,6 @@ fun SettingsDialog(
                                     )
                                 )
                             }
-
-                            Spacer(modifier = Modifier.height(10.dp))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -566,41 +678,37 @@ fun SettingsDialog(
                         iconTint = CelestialGold,
                         initialExpanded = false
                     ) {
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = { showExportDialog = true },
+                                shape = RoundedCornerShape(12.dp),
+                                border = BorderStroke(1.dp, CelestialGold),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_export_data_button")
                             ) {
-                                OutlinedButton(
-                                    onClick = { showExportDialog = true },
-                                    shape = RoundedCornerShape(12.dp),
-                                    border = BorderStroke(1.dp, CelestialGold),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(44.dp)
-                                        .testTag("settings_export_data_button")
-                                ) {
-                                    Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(15.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Raw Data (.json)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                                }
-
-                                Button(
-                                    onClick = { showReportExportDialog = true },
-                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier
-                                        .weight(1.3f)
-                                        .height(44.dp)
-                                        .testTag("settings_export_reports_cloud_button")
-                                ) {
-                                    Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Color.Black, modifier = Modifier.size(15.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Export Reports (PDF)", fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                                }
+                                Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Export Raw Assessment Data (.json)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Button(
+                                onClick = { showReportExportDialog = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_export_reports_cloud_button")
+                            ) {
+                                Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Export Generated Reports (PDF)", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
 
                             OutlinedButton(
                                 onClick = { showResetConfirm = true },
@@ -608,7 +716,7 @@ fun SettingsDialog(
                                 border = BorderStroke(1.dp, Color(0xFFFF6B6B).copy(alpha = 0.6f)),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(42.dp)
+                                    .height(44.dp)
                                     .testTag("settings_reset_data_button")
                             ) {
                                 Icon(Icons.Default.DeleteForever, contentDescription = null, tint = Color(0xFFFF6B6B), modifier = Modifier.size(16.dp))
@@ -628,51 +736,47 @@ fun SettingsDialog(
                         iconTint = CelestialGold,
                         initialExpanded = false
                     ) {
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Button(
+                                onClick = { showFeedbackDialog = true },
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_send_feedback_btn")
                             ) {
-                                Button(
-                                    onClick = { showFeedbackDialog = true },
-                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(44.dp)
-                                        .testTag("settings_send_feedback_btn")
-                                ) {
-                                    Icon(Icons.Default.Feedback, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Send Feedback", fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                                }
-
-                                Button(
-                                    onClick = {
-                                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                            data = Uri.parse("mailto:support@psycheapp.com")
-                                            putExtra(Intent.EXTRA_SUBJECT, "InsideMe App Support & Inquiry")
-                                        }
-                                        try {
-                                            context.startActivity(intent)
-                                        } catch (_: Exception) {
-                                            Toast.makeText(context, "Support email: support@psycheapp.com", Toast.LENGTH_LONG).show()
-                                        }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(44.dp)
-                                        .testTag("settings_email_support_btn")
-                                ) {
-                                    Icon(Icons.Default.Email, contentDescription = null, modifier = Modifier.size(16.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Email Support", fontWeight = FontWeight.Bold, fontSize = 11.sp)
-                                }
+                                Icon(Icons.Default.Feedback, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Send Feedback", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Button(
+                                onClick = {
+                                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                        data = Uri.parse("mailto:support@psycheapp.com")
+                                        putExtra(Intent.EXTRA_SUBJECT, "InsideMe App Support & Inquiry")
+                                    }
+                                    try {
+                                        context.startActivity(intent)
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, "Support email: support@psycheapp.com", Toast.LENGTH_LONG).show()
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_email_support_btn")
+                            ) {
+                                Icon(Icons.Default.Email, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Email Support Team", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
 
                             OutlinedButton(
                                 onClick = {
@@ -683,7 +787,7 @@ fun SettingsDialog(
                                 border = BorderStroke(1.dp, MysticViolet),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(42.dp)
+                                    .height(44.dp)
                                     .testTag("settings_review_button")
                             ) {
                                 Icon(Icons.Default.RateReview, contentDescription = null, tint = MysticViolet, modifier = Modifier.size(16.dp))
@@ -691,7 +795,7 @@ fun SettingsDialog(
                                 Text("Rate & Review InsideMe App", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
 
                             Box(
                                 modifier = Modifier
@@ -725,6 +829,32 @@ fun SettingsDialog(
                     )
                 }
             }
+        }
+    }
+
+    if (showDatePickerDialog) {
+        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = currentDobMillis)
+        DatePickerDialog(
+            onDismissRequest = { showDatePickerDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let {
+                            onUpdateBirthDate(it)
+                        }
+                        showDatePickerDialog = false
+                    }
+                ) {
+                    Text("Save Birthdate", color = CelestialGold, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePickerDialog = false }) {
+                    Text("Cancel", color = Color.White)
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 
@@ -895,7 +1025,177 @@ fun SettingsDialog(
             },
             containerColor = CosmicPurple
         )
+
+
+    if (showCancelSubscriptionConfirm) {
+        AlertDialog(
+            onDismissRequest = { showCancelSubscriptionConfirm = false },
+            containerColor = CosmicPurple,
+            titleContentColor = Color.White,
+            textContentColor = Color.White.copy(alpha = 0.9f),
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Warning, contentDescription = null, tint = Color(0xFFFF6B6B))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Cancel Subscription?", fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Text("Are you sure you want to cancel your ${userSubscription.tier.title} subscription? You will revert to the Free Tier.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onCancelSubscription()
+                        showCancelSubscriptionConfirm = false
+                        Toast.makeText(context, "Subscription canceled. Reverted to Free Tier.", Toast.LENGTH_LONG).show()
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B6B), contentColor = Color.White)
+                ) {
+                    Text("Yes, Cancel Plan", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showCancelSubscriptionConfirm = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White)
+                ) {
+                    Text("Keep Subscription")
+                }
+            }
+        )
     }
+
+    if (showFeedbackDialog) {
+        AlertDialog(
+            onDismissRequest = { showFeedbackDialog = false },
+            containerColor = CosmicPurple,
+            titleContentColor = Color.White,
+            textContentColor = Color.White,
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Feedback, contentDescription = null, tint = CelestialGold)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Send Feedback", fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column {
+                    Text(
+                        "Select category:",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf("General", "Bug Report", "Feature").forEach { cat ->
+                            val isCatSelected = (feedbackCategory == cat)
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(if (isCatSelected) CelestialGold else MysticViolet.copy(alpha = 0.5f))
+                                    .clickable { feedbackCategory = cat }
+                                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = cat,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isCatSelected) DeepSpace else Color.White
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    OutlinedTextField(
+                        value = feedbackMessageText,
+                        onValueChange = { feedbackMessageText = it },
+                        label = { Text("Your Message", color = Color.White.copy(alpha = 0.7f)) },
+                        placeholder = { Text("Tell us what you love or how we can improve...", color = Color.White.copy(alpha = 0.4f)) },
+                        minLines = 3,
+                        maxLines = 5,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = CelestialGold,
+                            unfocusedBorderColor = MysticViolet,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        if (feedbackMessageText.isNotBlank()) {
+                            Toast.makeText(context, "Thank you! Your feedback has been submitted.", Toast.LENGTH_LONG).show()
+                            feedbackMessageText = ""
+                            showFeedbackDialog = false
+                        } else {
+                            Toast.makeText(context, "Please enter a message before submitting.", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace)
+                ) {
+                    Icon(Icons.Default.Send, contentDescription = null, modifier = Modifier.size(16.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Submit", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showFeedbackDialog = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White)
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
+    if (showExportDialog) {
+        RawDataExportDialog(
+            testResults = testResults,
+            astrologyProfile = astrologyProfile,
+            onDismiss = { showExportDialog = false }
+        )
+    }
+
+    if (showReportExportDialog) {
+        ReportExportDialog(
+            reports = savedReports,
+            initialSelectedReport = savedReports.firstOrNull(),
+            onDismiss = { showReportExportDialog = false }
+        )
+    }
+
+    if (showResetConfirm) {
+        AlertDialog(
+            onDismissRequest = { showResetConfirm = false },
+            title = { Text("Clear Local Assessment History?", fontWeight = FontWeight.Bold, color = Color.White) },
+            text = { Text("Are you sure you want to clear your saved test results? This operation cannot be undone.", color = Color.White.copy(alpha = 0.8f)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onResetData()
+                        showResetConfirm = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White)
+                ) {
+                    Text("Clear Data")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showResetConfirm = false }) {
+                    Text("Cancel", color = Color.White)
+                }
+            },
+            containerColor = CosmicPurple
+        )
+    }
+}
 }
 
 
