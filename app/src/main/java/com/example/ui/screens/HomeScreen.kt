@@ -177,41 +177,21 @@ fun HomeScreen(
                                 .fillMaxWidth()
                                 .padding(18.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column {
-                                    Text(
-                                        text = "WELCOME BACK ✨",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        color = CelestialGold,
-                                        letterSpacing = 1.sp
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = "Greetings, $userName",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = Color.White
-                                    )
-                                }
-
-                                Surface(
-                                    color = NebulaTeal.copy(alpha = 0.2f),
-                                    shape = RoundedCornerShape(8.dp),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, NebulaTeal.copy(alpha = 0.6f))
-                                ) {
-                                    Text(
-                                        text = "DAILY INSIGHTS",
-                                        color = NebulaTeal,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 10.sp,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                    )
-                                }
+                            Column {
+                                Text(
+                                    text = "DAILY INSIGHTS ✨",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = CelestialGold,
+                                    letterSpacing = 1.sp
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Greetings, $userName",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color.White
+                                )
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))

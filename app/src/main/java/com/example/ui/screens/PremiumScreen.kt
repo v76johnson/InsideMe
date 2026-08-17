@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -23,7 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.RateReview
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -68,6 +72,8 @@ fun PremiumScreen(
     onSetSubscriptionTier: (SubscriptionTier) -> Unit,
     onPurchaseSingleReport: () -> Unit = {},
     onOpenReview: () -> Unit = {},
+    onNavigateToSynastry: () -> Unit = {},
+    onNavigateToSynthesis: () -> Unit = {},
     testResults: List<TestResultEntity> = emptyList(),
     astrologyProfile: AstrologyProfile? = null,
     modifier: Modifier = Modifier
@@ -311,6 +317,56 @@ fun PremiumScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
+        // Quick Access Features: Synastry & Synthesis Access Buttons
+        item {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, NebulaTeal.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Quick Access Features",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = CelestialGold
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = { onNavigateToSynastry() },
+                        colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                            .testTag("premium_access_synastry_btn")
+                    ) {
+                        Icon(Icons.Default.Favorite, contentDescription = null, tint = Color(0xFFFF5252), modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Open Birthdate Synastry Match", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { onNavigateToSynthesis() },
+                        colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                            .testTag("premium_access_synthesis_btn")
+                    ) {
+                        Icon(Icons.Default.Psychology, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Open Mind & Cosmos Synthesis", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+
         // COMBINED: Unlimited Subscriptions & Features of Unlimited (Single Box with Buttons at Bottom)
         item {
             Card(
@@ -358,20 +414,22 @@ fun PremiumScreen(
                             }
                         }
 
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(if (userSubscription.isPremium) NebulaTeal else CelestialGold)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                        ) {
-                            Text(
-                                text = if (userSubscription.isPremium) "ACTIVE" else "ALL IN ONE",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = if (userSubscription.isPremium) Color.Black else DeepSpace,
-                                maxLines = 1,
-                                softWrap = false
-                            )
+                        if (userSubscription.isPremium) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(NebulaTeal)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "ACTIVE",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            }
                         }
                     }
 
@@ -506,6 +564,43 @@ fun PremiumScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        // SHARE & INVITE FRIENDS BUTTON
+        item {
+            val context = LocalContext.current
+            Button(
+                onClick = {
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_SUBJECT, "Join InsideMe AI - Self Discovery & Cosmic Insights")
+                        putExtra(Intent.EXTRA_TEXT, "Check out InsideMe AI - Your Cosmic & Psychological Self-Discovery Companion! Explore daily insights, tests, astrology reports, and free tools. Download and join today!")
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, "Share InsideMe AI with Friends")
+                    try {
+                        context.startActivity(shareIntent)
+                    } catch (_: Exception) {
+                        Toast.makeText(context, "Share action triggered", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                shape = RoundedCornerShape(14.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .testTag("premium_share_button")
+            ) {
+                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Share Free Info & Invite Friends",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

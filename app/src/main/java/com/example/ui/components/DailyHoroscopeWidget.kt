@@ -118,16 +118,15 @@ fun DailyHoroscopeWidget(
                     Column {
                         Text(
                             text = "DAILY HOROSCOPE 🔮",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = CelestialGold,
-                            letterSpacing = 1.sp
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = CelestialGold
                         )
                         Text(
                             text = horoscope.dateString,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.65f),
-                            fontSize = 10.sp
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 11.sp
                         )
                     }
                 }

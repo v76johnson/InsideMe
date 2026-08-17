@@ -490,6 +490,11 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
                 repository.updateSubscriptionTier(SubscriptionTier.ANNUAL_PRO, isPremium = true)
             }
             return true
+        } else if (trimmed.equals("onefree", ignoreCase = true)) {
+            viewModelScope.launch {
+                repository.grantSingleReportPurchase(userSubscription.value)
+            }
+            return true
         }
         return false
     }

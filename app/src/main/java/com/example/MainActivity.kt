@@ -316,7 +316,9 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         userSubscription = userSub,
                         onSetSubscriptionTier = { tier -> viewModel.setSubscriptionTier(tier) },
                         onPurchaseSingleReport = { viewModel.purchaseSingleReportOnly() },
-                        onOpenReview = { viewModel.openReviewModal() }
+                        onOpenReview = { viewModel.openReviewModal() },
+                        onNavigateToSynastry = { selectedTab = 2 },
+                        onNavigateToSynthesis = { selectedTab = 2 }
                     )
                 }
             }

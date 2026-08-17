@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.RateReview
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
@@ -581,7 +582,11 @@ fun SettingsDialog(
                                         val success = onRedeemPromoCode(code)
                                         if (success) {
                                             promoCodeSuccess = true
-                                            promoCodeMessage = "🎉 Promo code accepted! All features & premium unlocked!"
+                                            promoCodeMessage = if (code.equals("onefree", ignoreCase = true)) {
+                                                "🎉 Promo code accepted! 1 free report added!"
+                                            } else {
+                                                "🎉 Promo code accepted! All features & premium unlocked!"
+                                            }
                                             promoCodeFieldValue = TextFieldValue("")
                                         } else {
                                             promoCodeSuccess = false
@@ -793,6 +798,35 @@ fun SettingsDialog(
                                 Icon(Icons.Default.RateReview, contentDescription = null, tint = MysticViolet, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text("Rate & Review InsideMe App", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Button(
+                                onClick = {
+                                    val sendIntent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        putExtra(Intent.EXTRA_SUBJECT, "Join InsideMe AI - Self Discovery & Cosmic Insights")
+                                        putExtra(Intent.EXTRA_TEXT, "Check out InsideMe AI - Your Cosmic & Psychological Self-Discovery Companion! Explore daily insights, tests, astrology reports, and free tools. Download and join today!")
+                                        type = "text/plain"
+                                    }
+                                    val shareIntent = Intent.createChooser(sendIntent, "Share InsideMe AI with Friends")
+                                    try {
+                                        context.startActivity(shareIntent)
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, "Share action triggered", Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_share_button")
+                            ) {
+                                Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Share Free Info & Invite Friends", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
                             Spacer(modifier = Modifier.height(4.dp))
