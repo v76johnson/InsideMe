@@ -124,7 +124,9 @@ data class AppColors(
     val celestialGold: Color,
     val starlightAmber: Color,
     val nebulaTeal: Color,
-    val shadowRose: Color
+    val shadowRose: Color,
+    val textColor: Color,
+    val textSecondaryColor: Color
 )
 
 val LocalAppColors = androidx.compose.runtime.compositionLocalOf {
@@ -135,7 +137,9 @@ val LocalAppColors = androidx.compose.runtime.compositionLocalOf {
         celestialGold = EditorialAccentGold,
         starlightAmber = Color(0xFFC792EA),
         nebulaTeal = EditorialAccentOlive,
-        shadowRose = EditorialAccentCrimson
+        shadowRose = EditorialAccentCrimson,
+        textColor = Color.White,
+        textSecondaryColor = Color.White.copy(alpha = 0.7f)
     )
 }
 
@@ -146,17 +150,21 @@ private val CosmicDarkAppColors = AppColors(
     celestialGold = EditorialAccentGold,
     starlightAmber = Color(0xFFC792EA),
     nebulaTeal = EditorialAccentOlive,
-    shadowRose = EditorialAccentCrimson
+    shadowRose = EditorialAccentCrimson,
+    textColor = Color.White,
+    textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 private val CosmicLightAppColors = AppColors(
     deepSpace = EditorialParchment,
-    cosmicPurple = EditorialCreamCard,
+    cosmicPurple = CardBackgroundDark,
     mysticViolet = EditorialAccentTerracotta,
     celestialGold = EditorialAccentGold,
-    starlightAmber = EditorialAccentNavy,
+    starlightAmber = Color(0xFFC792EA),
     nebulaTeal = EditorialAccentOlive,
-    shadowRose = EditorialAccentCrimson
+    shadowRose = EditorialAccentCrimson,
+    textColor = Color.White,
+    textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 private val EmeraldDarkAppColors = AppColors(
@@ -166,17 +174,21 @@ private val EmeraldDarkAppColors = AppColors(
     celestialGold = Color(0xFF81C784),
     starlightAmber = Color(0xFF4DB6AC),
     nebulaTeal = Color(0xFFA5D6A7),
-    shadowRose = Color(0xFFEF5350)
+    shadowRose = Color(0xFFEF5350),
+    textColor = Color.White,
+    textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 private val EmeraldLightAppColors = AppColors(
     deepSpace = Color(0xFFF1F8F6),
-    cosmicPurple = Color(0xFFFFFFFF),
-    mysticViolet = Color(0xFF80CBC4),
-    celestialGold = Color(0xFF2E7D6A),
-    starlightAmber = Color(0xFF00897B),
-    nebulaTeal = Color(0xFF43A047),
-    shadowRose = Color(0xFFD32F2F)
+    cosmicPurple = Color(0xFF152A25),
+    mysticViolet = Color(0xFF2E7D6A),
+    celestialGold = Color(0xFF81C784),
+    starlightAmber = Color(0xFF4DB6AC),
+    nebulaTeal = Color(0xFFA5D6A7),
+    shadowRose = Color(0xFFEF5350),
+    textColor = Color.White,
+    textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 private val AmberDarkAppColors = AppColors(
@@ -186,17 +198,21 @@ private val AmberDarkAppColors = AppColors(
     celestialGold = Color(0xFFF39C12),
     starlightAmber = Color(0xFFD76D38),
     nebulaTeal = Color(0xFFFFB74D),
-    shadowRose = Color(0xFFE53935)
+    shadowRose = Color(0xFFE53935),
+    textColor = Color.White,
+    textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 private val AmberLightAppColors = AppColors(
     deepSpace = Color(0xFFFBFAF8),
-    cosmicPurple = Color(0xFFFFFFFF),
-    mysticViolet = Color(0xFFEDBB99),
-    celestialGold = Color(0xFFD35400),
-    starlightAmber = Color(0xFFE67E22),
-    nebulaTeal = Color(0xFFD4AC0D),
-    shadowRose = Color(0xFFC0392B)
+    cosmicPurple = Color(0xFF261C14),
+    mysticViolet = Color(0xFF8D6E63),
+    celestialGold = Color(0xFFF39C12),
+    starlightAmber = Color(0xFFD76D38),
+    nebulaTeal = Color(0xFFFFB74D),
+    shadowRose = Color(0xFFE53935),
+    textColor = Color.White,
+    textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 @Composable
