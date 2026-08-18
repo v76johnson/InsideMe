@@ -445,7 +445,6 @@ fun PremiumScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     listOf(
-                        "✨ 100% Ad-Free Clean Experience & Zero Interruption",
                         "🧠 Unlimited Gemini AI Deep Synthesis Reports",
                         "💖 Birthdate Synastry & Inter-Chart Compatibility Matching",
                         "🔮 AI Astrological Oracle & Unlimited Natal Chart Analysis",
