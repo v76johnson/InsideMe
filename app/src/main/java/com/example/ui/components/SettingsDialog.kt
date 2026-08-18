@@ -344,7 +344,7 @@ fun SettingsDialog(
                             ) {
                                 Icon(Icons.Default.Share, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Invite Friends & Share 📤", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text("Share/Invite", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
                         }
                     }
@@ -901,7 +901,7 @@ fun SettingsDialog(
                             ) {
                                 Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Share Free Info & Invite Friends", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text("Share/Invite", fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
                             Spacer(modifier = Modifier.height(4.dp))

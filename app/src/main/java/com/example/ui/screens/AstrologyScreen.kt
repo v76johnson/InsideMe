@@ -810,6 +810,17 @@ fun BirthdateSynastryTab(
                             Icon(Icons.Default.Download, contentDescription = "Download Synastry PDF", tint = CelestialGold)
                         }
 
+                        IconButton(onClick = {
+                            val shareIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, "✨ Synastry Report (${report.person1Name} & ${report.person2Name}): ${report.title}\nCompatibility: ${report.compatibilityScore}%\n\n${report.actionableAdvice}")
+                            }
+                            localContext.startActivity(Intent.createChooser(shareIntent, "Share Synastry Report"))
+                        }) {
+                            Icon(Icons.Default.Share, contentDescription = "Share Report", tint = CelestialGold)
+                        }
+
                         TextButton(onClick = onClearReport) {
                             Text("New Calculation", color = NebulaTeal, fontWeight = FontWeight.Bold)
                         }

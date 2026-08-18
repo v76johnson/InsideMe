@@ -593,7 +593,7 @@ fun PremiumScreen(
                 Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Share Free Info & Invite Friends",
+                    text = "Share/Invite",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
