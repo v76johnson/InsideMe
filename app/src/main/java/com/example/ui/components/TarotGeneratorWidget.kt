@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -69,6 +70,7 @@ import com.example.ui.theme.ShadowRose
 fun TarotGeneratorView(
     sunSign: ZodiacSign? = null,
     userName: String = "Seeker",
+    onOpenChat: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var selectedSpread by remember { mutableStateOf(TarotSpreadType.DAILY_ONE_CARD) }
@@ -239,7 +241,7 @@ fun TarotGeneratorView(
                         TarotCardItemView(drawnCard = drawnCard, index = index)
                     }
 
-                    // Spread Synthesis & Astrological Integration Card
+                    // AI Oracle Tarot Discussion Card (Replacing redundant synthesis box)
                     Card(
                         shape = RoundedCornerShape(20.dp),
                         colors = CardDefaults.cardColors(containerColor = CosmicPurple),
@@ -254,10 +256,10 @@ fun TarotGeneratorView(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(22.dp))
+                                    Icon(Icons.Default.Psychology, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(22.dp))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Reading Synthesis & Cosmic Resonance",
+                                        text = "AI Oracle Tarot Discussion",
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = NebulaTeal
@@ -277,31 +279,54 @@ fun TarotGeneratorView(
                             Spacer(modifier = Modifier.height(10.dp))
 
                             Text(
-                                text = result.synthesisSummary,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.95f),
-                                lineHeight = 22.sp
+                                text = "Discuss the psychological meaning, emotional insights, and actionable growth steps of this tarot reading with your AI Oracle.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.85f)
                             )
 
-                            Spacer(modifier = Modifier.height(14.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clip(RoundedCornerShape(10.dp))
+                                    .clip(RoundedCornerShape(12.dp))
                                     .background(DeepSpace)
-                                    .padding(10.dp)
+                                    .padding(14.dp)
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text("🪐", fontSize = 16.sp)
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                     Text(
-                                        text = result.astrologicalAlignment,
+                                        text = result.synthesisSummary,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.White.copy(alpha = 0.95f),
+                                        lineHeight = 22.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "🪐 ${result.astrologicalAlignment}",
                                         style = MaterialTheme.typography.labelSmall,
                                         color = CelestialGold,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                 }
+                            }
+
+                            Spacer(modifier = Modifier.height(14.dp))
+                            Button(
+                                onClick = { onOpenChat("Discuss my Tarot reading (${selectedSpread.title}):\n\n${result.synthesisSummary}") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp)
+                                    .testTag("launch_tarot_chat_button"),
+                                shape = RoundedCornerShape(14.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace)
+                            ) {
+                                Icon(Icons.Default.Chat, contentDescription = null, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Launch AI Oracle Chat Discussion",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
                     }
@@ -332,40 +357,19 @@ fun TarotCardItemView(
             .testTag("tarot_card_item_${card.id}")
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
-            // Position Title & Orientation Tag
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Position Title Badge
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(DeepSpace)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(DeepSpace)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "POSITION ${index + 1}: ${drawnCard.positionTitle.uppercase()}",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = NebulaTeal
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(if (isRev) ShadowRose.copy(alpha = 0.3f) else CelestialGold.copy(alpha = 0.25f))
-                        .border(1.dp, if (isRev) ShadowRose else CelestialGold, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
-                    Text(
-                        text = if (isRev) "REVERSED 🔄" else "UPRIGHT ✨",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isRev) ShadowRose else CelestialGold
-                    )
-                }
+                Text(
+                    text = "POSITION ${index + 1}: ${drawnCard.positionTitle.uppercase()}",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = NebulaTeal
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -404,25 +408,45 @@ fun TarotCardItemView(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Keywords list
-            Row(
+            // Stacked Upright / Reversed Indicator under card name
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (isRev) ShadowRose.copy(alpha = 0.3f) else CelestialGold.copy(alpha = 0.25f))
+                    .border(1.dp, if (isRev) ShadowRose else CelestialGold, RoundedCornerShape(8.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = if (isRev) "REVERSED 🔄" else "UPRIGHT ✨",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = if (isRev) ShadowRose else CelestialGold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Stacked Badges (Keywords) under indicator instead of side by side
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 val keywords = if (isRev) card.keywordsReversed else card.keywordsUpright
-                keywords.take(3).forEach { kw ->
+                keywords.forEach { kw ->
                     Box(
                         modifier = Modifier
+                            .fillMaxWidth()
                             .clip(RoundedCornerShape(6.dp))
                             .background(MysticViolet.copy(alpha = 0.4f))
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = kw,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.9f)
+                            text = "• $kw",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = Color.White.copy(alpha = 0.9f),
+                            fontWeight = FontWeight.Medium
                         )
                     }
                 }

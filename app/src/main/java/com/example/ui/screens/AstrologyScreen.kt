@@ -298,7 +298,11 @@ fun AstrologyScreen(
                     item {
                         TarotGeneratorView(
                             sunSign = sunSign,
-                            userName = profile?.userName?.ifBlank { "Seeker" } ?: "Seeker"
+                            userName = profile?.userName?.ifBlank { "Seeker" } ?: "Seeker",
+                            onOpenChat = { prompt ->
+                                activeTab = 3
+                                onSendOracleMessage(prompt)
+                            }
                         )
                     }
                 }

@@ -486,12 +486,19 @@ object TarotEngine {
             }
         }
 
+        val hasReversed = drawnList.any { it.isReversed }
+        val finalSynthesis = if (hasReversed) {
+            synthesis + "\n\n🌱 **Support, Care & Growth Suggestion:** Notice where inner friction, stress, or vulnerability arises in your reading. Be exceptionally gentle with yourself. If you are navigating difficult emotional challenges, overwhelming anxiety, or distress, remember that professional guidance and 24/7 support resources (such as calling or texting **988** for the Suicide & Crisis Lifeline) are always available to help support your well-being."
+        } else {
+            synthesis
+        }
+
         val astroAlignment = "Aligned with ${sunSign?.displayName ?: "Cosmic Placements"} • ${primaryCard.card.astrologicalAssociation}"
 
         return TarotReadingResult(
             spreadType = spreadType,
             drawnCards = drawnList,
-            synthesisSummary = synthesis,
+            synthesisSummary = finalSynthesis,
             astrologicalAlignment = astroAlignment
         )
     }
