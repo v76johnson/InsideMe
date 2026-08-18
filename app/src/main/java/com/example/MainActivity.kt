@@ -70,7 +70,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            MyApplicationTheme {
+            val isDark by viewModel.isDarkTheme.collectAsStateWithLifecycle()
+            val colorIdx by viewModel.colorSchemeIndex.collectAsStateWithLifecycle()
+            MyApplicationTheme(darkTheme = isDark, colorSchemeIndex = colorIdx) {
                 MainAppContent(viewModel = viewModel)
             }
         }
@@ -366,11 +368,17 @@ fun MainAppContent(viewModel: PsycheViewModel) {
 
             // Settings Modal overlay
             if (showSettingsDialog) {
+                val isDark by viewModel.isDarkTheme.collectAsStateWithLifecycle()
+                val colorIdx by viewModel.colorSchemeIndex.collectAsStateWithLifecycle()
                 SettingsDialog(
                     userSubscription = userSub,
                     testResults = testResults,
                     astrologyProfile = astroProfile,
                     savedReports = savedReports,
+                    isDarkTheme = isDark,
+                    colorSchemeIndex = colorIdx,
+                    onDarkThemeChanged = { viewModel.setDarkTheme(it) },
+                    onColorSchemeChanged = { viewModel.setColorSchemeIndex(it) },
                     onDismiss = { showSettingsDialog = false },
                     onNavigateToUpgrade = { selectedTab = 3 },
                     onCancelSubscription = { viewModel.setSubscriptionTier(SubscriptionTier.FREE) },

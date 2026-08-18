@@ -1,6 +1,13 @@
 package com.example.ui.components
 
 import android.content.Intent
+import android.graphics.pdf.PdfDocument
+import android.graphics.Paint
+import android.graphics.Color as AndroidColor
+import android.widget.Toast
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.FileOutputStream
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +30,7 @@ import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -109,6 +117,60 @@ fun ReportReaderView(
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = {
+                        try {
+                            val pdfDocument = PdfDocument()
+                            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+                            val page = pdfDocument.startPage(pageInfo)
+                            val canvas = page.canvas
+                            val paint = Paint().apply {
+                                color = AndroidColor.BLACK
+                                textSize = 11f
+                                isAntiAlias = true
+                            }
+                            val titlePaint = Paint().apply {
+                                color = AndroidColor.BLACK
+                                textSize = 16f
+                                isFakeBoldText = true
+                                isAntiAlias = true
+                            }
+
+                            var y = 40f
+                            canvas.drawText(report.title, 40f, y, titlePaint)
+                            y += 25f
+                            canvas.drawText("Summary: ${report.archetypeSummary.take(85)}", 40f, y, paint)
+                            y += 25f
+
+                            for (trait in report.coreTraits) {
+                                if (y > 800f) break
+                                canvas.drawText("• $trait", 40f, y, paint)
+                                y += 18f
+                            }
+
+                            pdfDocument.finishPage(page)
+                            val file = File(context.cacheDir, "Synthesis_Report_${report.id}.pdf")
+                            val outputStream = FileOutputStream(file)
+                            pdfDocument.writeTo(outputStream)
+                            pdfDocument.close()
+                            outputStream.close()
+
+                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                            val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/pdf").apply {
+                                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            try {
+                                context.startActivity(intent)
+                            } catch (_: Exception) {
+                                Toast.makeText(context, "Synthesis PDF saved to cache: ${file.name}", Toast.LENGTH_LONG).show()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            Toast.makeText(context, "Failed to generate PDF: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                        }
+                    }) {
+                        Icon(Icons.Default.Download, contentDescription = "Download Synthesis PDF", tint = CelestialGold)
+                    }
+
                     IconButton(onClick = { showReportExportDialog = true }, modifier = Modifier.testTag("report_export_cloud_header_button")) {
                         Icon(
                             imageVector = Icons.Default.CloudUpload,

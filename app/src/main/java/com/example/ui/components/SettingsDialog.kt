@@ -103,6 +103,10 @@ fun SettingsDialog(
     testResults: List<TestResultEntity>,
     astrologyProfile: AstrologyProfile?,
     savedReports: List<DeepSynthesisReport> = emptyList(),
+    isDarkTheme: Boolean = true,
+    colorSchemeIndex: Int = 0,
+    onDarkThemeChanged: (Boolean) -> Unit = {},
+    onColorSchemeChanged: (Int) -> Unit = {},
     onDismiss: () -> Unit,
     onNavigateToUpgrade: () -> Unit = {},
     onCancelSubscription: () -> Unit = {},
@@ -219,6 +223,133 @@ fun SettingsDialog(
                     }
 
                     Spacer(modifier = Modifier.height(18.dp))
+
+                    // SECTION - APPEARANCE & APP PREFERENCES
+                    CollapsibleBlock(
+                        title = "Appearance & App Preferences",
+                        subtitle = "Dark mode, color schemes, notifications & sharing",
+                        icon = Icons.Default.Palette,
+                        iconTint = CelestialGold,
+                        initialExpanded = false
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Dark Mode", style = MaterialTheme.typography.bodyMedium, color = Color.White, fontWeight = FontWeight.Bold)
+                                Switch(
+                                    checked = isDarkTheme,
+                                    onCheckedChange = { onDarkThemeChanged(it) },
+                                    colors = SwitchDefaults.colors(checkedThumbColor = CelestialGold, checkedTrackColor = MysticViolet)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text("Select Color Scheme", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = CelestialGold)
+
+                            val schemes = listOf("Cosmic Velvet", "Emerald Forest", "Solar Amber")
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                schemes.forEachIndexed { idx, name ->
+                                    val isSelected = (colorSchemeIndex == idx)
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clip(RoundedCornerShape(10.dp))
+                                            .background(if (isSelected) CelestialGold else CosmicPurple)
+                                            .border(1.dp, CelestialGold, RoundedCornerShape(10.dp))
+                                            .clickable { onColorSchemeChanged(idx) }
+                                            .padding(vertical = 10.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = name,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isSelected) DeepSpace else Color.White,
+                                            maxLines = 1
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MysticViolet.copy(alpha = 0.4f)))
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Notifications & Preferences Switches
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text("Daily Insights & Affirmations", color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                                }
+                                Switch(
+                                    checked = dailyNotificationsEnabled,
+                                    onCheckedChange = { dailyNotificationsEnabled = it },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = DeepSpace,
+                                        checkedTrackColor = NebulaTeal
+                                    )
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Palette, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text("Deep Cosmic Palette", color = Color.White, style = MaterialTheme.typography.bodyMedium)
+                                }
+                                Switch(
+                                    checked = cosmicThemeEnabled,
+                                    onCheckedChange = { cosmicThemeEnabled = it },
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = DeepSpace,
+                                        checkedTrackColor = CelestialGold
+                                    )
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    val shareIntent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_TEXT, "✨ Join me on InsideMe & Psyche+! Discover your mind, natal charts, and AI synthesis reports. Download today!")
+                                    }
+                                    context.startActivity(Intent.createChooser(shareIntent, "Share InsideMe App"))
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_social_share_button")
+                            ) {
+                                Icon(Icons.Default.Share, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Invite Friends & Share 📤", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     // SECTION 0: USER PROFILE & DATE OF BIRTH PERSONALIZATION
                     CollapsibleBlock(
@@ -612,62 +743,6 @@ fun SettingsDialog(
                                     fontWeight = FontWeight.Bold,
                                     color = if (promoCodeSuccess) NebulaTeal else Color(0xFFFF6B6B),
                                     modifier = Modifier.testTag("settings_promo_code_message")
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // SECTION 2: APP PREFERENCES & NOTIFICATIONS
-                    CollapsibleBlock(
-                        title = "App Preferences & Notifications",
-                        subtitle = "Daily Affirmation Reminders & Theme Controls",
-                        icon = Icons.Default.Notifications,
-                        iconTint = NebulaTeal,
-                        initialExpanded = false
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text("Daily Insights & Affirmations", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                                }
-                                Switch(
-                                    checked = dailyNotificationsEnabled,
-                                    onCheckedChange = { dailyNotificationsEnabled = it },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = DeepSpace,
-                                        checkedTrackColor = NebulaTeal
-                                    )
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Palette, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text("Deep Cosmic Palette", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                                }
-                                Switch(
-                                    checked = cosmicThemeEnabled,
-                                    onCheckedChange = { cosmicThemeEnabled = it },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = DeepSpace,
-                                        checkedTrackColor = CelestialGold
-                                    )
                                 )
                             }
                         }

@@ -498,4 +498,18 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         }
         return false
     }
+
+    private val _isDarkTheme = MutableStateFlow(true)
+    val isDarkTheme: StateFlow<Boolean> = _isDarkTheme.asStateFlow()
+
+    private val _colorSchemeIndex = MutableStateFlow(0)
+    val colorSchemeIndex: StateFlow<Int> = _colorSchemeIndex.asStateFlow()
+
+    fun setDarkTheme(dark: Boolean) {
+        _isDarkTheme.value = dark
+    }
+
+    fun setColorSchemeIndex(index: Int) {
+        _colorSchemeIndex.value = index
+    }
 }

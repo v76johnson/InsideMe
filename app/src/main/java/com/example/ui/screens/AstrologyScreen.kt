@@ -47,6 +47,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
@@ -115,6 +116,8 @@ import com.example.ui.theme.ShadowRose
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.filled.TrendingUp
 
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
@@ -163,6 +166,8 @@ fun AstrologyScreen(
     onUpgradeClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val localContext = LocalContext.current
+
     if (selectedReport != null) {
         ReportReaderView(
             report = selectedReport,
@@ -581,6 +586,7 @@ fun BirthdateSynastryTab(
     onGenerate: (p1Name: String, p1Dob: Long, p1Time: String, p1City: String, p2Name: String, p2Dob: Long, p2Time: String, p2City: String) -> Unit,
     onClearReport: () -> Unit
 ) {
+    val localContext = LocalContext.current
     if (!isPremium) {
         LazyColumn(
             modifier = Modifier
@@ -743,8 +749,66 @@ fun BirthdateSynastryTab(
                         fontWeight = FontWeight.Bold,
                         color = CelestialGold
                     )
-                    TextButton(onClick = onClearReport) {
-                        Text("New Calculation", color = NebulaTeal, fontWeight = FontWeight.Bold)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = {
+                            try {
+                                val pdfDocument = android.graphics.pdf.PdfDocument()
+                                val pageInfo = android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, 1).create()
+                                val page = pdfDocument.startPage(pageInfo)
+                                val canvas = page.canvas
+                                val paint = android.graphics.Paint().apply {
+                                    color = android.graphics.Color.BLACK
+                                    textSize = 11f
+                                    isAntiAlias = true
+                                }
+                                val titlePaint = android.graphics.Paint().apply {
+                                    color = android.graphics.Color.BLACK
+                                    textSize = 16f
+                                    isFakeBoldText = true
+                                    isAntiAlias = true
+                                }
+
+                                var y = 40f
+                                canvas.drawText(report.title, 40f, y, titlePaint)
+                                y += 25f
+                                canvas.drawText("Compatibility Score: ${report.compatibilityScore}%", 40f, y, paint)
+                                y += 20f
+                                canvas.drawText("Between: ${report.person1Name} & ${report.person2Name}", 40f, y, paint)
+                                y += 30f
+
+                                for (line in report.actionableAdvice.split("\n")) {
+                                    if (y > 800f) break
+                                    canvas.drawText(line.take(95), 40f, y, paint)
+                                    y += 16f
+                                }
+
+                                pdfDocument.finishPage(page)
+                                val file = File(localContext.cacheDir, "Synastry_Report_${report.person1Name}_vs_${report.person2Name}.pdf")
+                                val outputStream = FileOutputStream(file)
+                                pdfDocument.writeTo(outputStream)
+                                pdfDocument.close()
+                                outputStream.close()
+
+                                val uri = FileProvider.getUriForFile(localContext, "${localContext.packageName}.fileprovider", file)
+                                val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/pdf").apply {
+                                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                try {
+                                    localContext.startActivity(intent)
+                                } catch (_: Exception) {
+                                    android.widget.Toast.makeText(localContext, "Synastry PDF saved to cache: ${file.name}", android.widget.Toast.LENGTH_LONG).show()
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                android.widget.Toast.makeText(localContext, "Failed to generate Synastry PDF: ${e.localizedMessage}", android.widget.Toast.LENGTH_LONG).show()
+                            }
+                        }) {
+                            Icon(Icons.Default.Download, contentDescription = "Download Synastry PDF", tint = CelestialGold)
+                        }
+
+                        TextButton(onClick = onClearReport) {
+                            Text("New Calculation", color = NebulaTeal, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }
@@ -2024,6 +2088,165 @@ fun AstroHomepageTab(
                         ElementCountChip(label = "🌍 Earth", count = earthCount)
                         ElementCountChip(label = "💨 Air", count = airCount)
                         ElementCountChip(label = "🌊 Water", count = waterCount)
+                    }
+                }
+            }
+        }
+
+        // 2. Zodiac Identity & Traits Blueprint Box (Moved from Home Screen)
+        item {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, MysticViolet.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
+                    .testTag("zodiac_and_traits_card")
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(NebulaTeal.copy(alpha = 0.2f))
+                                    .border(1.dp, NebulaTeal, CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = sunSign.symbol,
+                                    fontSize = 24.sp,
+                                    color = NebulaTeal
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Column {
+                                Text(
+                                    text = "${sunSign.displayName} (${sunSign.element.displayName} Element)",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = "Sun in ${sunSign.displayName} • Moon in ${moonSign.displayName} • Rising in ${risingSign.displayName}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Keywords Row
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        sunSign.keywords.take(4).forEach { kw ->
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(MysticViolet.copy(alpha = 0.4f))
+                                    .padding(horizontal = 7.dp, vertical = 3.dp)
+                            ) {
+                                Text(
+                                    text = kw,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = CelestialGold,
+                                    fontSize = 10.sp,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+                    HorizontalDivider(color = MysticViolet.copy(alpha = 0.4f))
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    // Good Traits Section
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = NebulaTeal, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Key Strengths & Good Traits",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = NebulaTeal
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    val trait1 = "High Reflective Intelligence & Depth"
+                    val trait2 = "Strong Empathetic Intuition (${sunSign.displayName} Placement)"
+                    val trait3 = "Strategic Problem-Solving & Focus"
+
+                    listOf(trait1, trait2, trait3).forEach { trait ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text("✦ ", color = NebulaTeal, fontSize = 12.sp, modifier = Modifier.padding(top = 1.dp))
+                            Text(
+                                text = trait,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Areas Needing Work / Improvement Section
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.TrendingUp, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Key Things Needing Work / Growth Focus",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = CelestialGold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    val growth1 = "Stress Decompression & Recovery under heavy cognitive workloads"
+                    val growth2 = "Reconciling inner emotional boundaries with social expectations"
+                    val growth3 = "Translating reflective self-insights into concrete daily habits"
+
+                    listOf(growth1, growth2, growth3).forEach { growth ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text("👉 ", fontSize = 12.sp, modifier = Modifier.padding(top = 1.dp))
+                            Text(
+                                text = growth,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.9f),
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
             }

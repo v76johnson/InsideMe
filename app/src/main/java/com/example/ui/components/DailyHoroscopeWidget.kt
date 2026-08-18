@@ -58,6 +58,7 @@ import com.example.data.model.ZodiacSign
 import com.example.data.repository.AstrologyEngine
 import com.example.ui.theme.CelestialGold
 import com.example.ui.theme.CosmicPurple
+import com.example.ui.theme.DeepSpace
 import com.example.ui.theme.MysticViolet
 import com.example.ui.theme.NebulaTeal
 
@@ -90,7 +91,7 @@ fun DailyHoroscopeWidget(
                 .fillMaxWidth()
                 .padding(18.dp)
         ) {
-            // Header Row: Label & Sign Switcher
+            // Header Row: Title & Date
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -130,65 +131,77 @@ fun DailyHoroscopeWidget(
                         )
                     }
                 }
+            }
 
-                // Sign Selector Dropdown
-                Box {
-                    Surface(
-                        color = MysticViolet.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(10.dp),
-                        border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold.copy(alpha = 0.5f)),
-                        modifier = Modifier
-                            .clickable { signMenuExpanded = true }
-                            .testTag("daily_horoscope_sign_selector")
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Sign Selector Dropdown Badge (placed under the title header)
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Surface(
+                    color = MysticViolet.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold.copy(alpha = 0.5f)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { signMenuExpanded = true }
+                        .testTag("daily_horoscope_sign_selector")
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "${selectedSign.displayName} ${selectedSign.symbol}",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                text = "Zodiac Sign: ",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.White.copy(alpha = 0.7f),
+                                fontSize = 12.sp
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                Icons.Default.ExpandMore,
-                                contentDescription = "Change Sign",
-                                tint = CelestialGold,
-                                modifier = Modifier.size(16.dp)
+                            Text(
+                                text = "${selectedSign.displayName} ${selectedSign.symbol} (${selectedSign.element.displayName})",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = CelestialGold
                             )
                         }
+                        Icon(
+                            Icons.Default.ExpandMore,
+                            contentDescription = "Change Sign",
+                            tint = CelestialGold,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
+                }
 
-                    DropdownMenu(
-                        expanded = signMenuExpanded,
-                        onDismissRequest = { signMenuExpanded = false },
-                        modifier = Modifier.background(CosmicPurple)
-                    ) {
-                        ZodiacSign.values().forEach { sign ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(sign.symbol, color = CelestialGold, fontSize = 16.sp)
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = sign.displayName,
-                                            color = if (sign == selectedSign) CelestialGold else Color.White,
-                                            fontWeight = if (sign == selectedSign) FontWeight.Bold else FontWeight.Normal
-                                        )
-                                        if (sign == astrologyProfile?.sunSign) {
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text("(You)", color = NebulaTeal, fontSize = 10.sp)
-                                        }
+                DropdownMenu(
+                    expanded = signMenuExpanded,
+                    onDismissRequest = { signMenuExpanded = false },
+                    modifier = Modifier.background(CosmicPurple)
+                ) {
+                    ZodiacSign.values().forEach { sign ->
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(sign.symbol, color = CelestialGold, fontSize = 16.sp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = sign.displayName,
+                                        color = if (sign == selectedSign) CelestialGold else Color.White,
+                                        fontWeight = if (sign == selectedSign) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                    if (sign == astrologyProfile?.sunSign) {
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("(You)", color = NebulaTeal, fontSize = 10.sp)
                                     }
-                                },
-                                onClick = {
-                                    selectedSign = sign
-                                    signMenuExpanded = false
                                 }
-                            )
-                        }
+                            },
+                            onClick = {
+                                selectedSign = sign
+                                signMenuExpanded = false
+                            }
+                        )
                     }
                 }
             }
