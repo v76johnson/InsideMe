@@ -28,6 +28,11 @@ fun ChartWheelView(
     risingSign: ZodiacSign,
     modifier: Modifier = Modifier
 ) {
+    val mysticViolet = MysticViolet
+    val celestialGold = CelestialGold
+    val nebulaTeal = NebulaTeal
+    val shadowRose = ShadowRose
+
     Box(
         modifier = modifier.size(240.dp),
         contentAlignment = Alignment.Center
@@ -40,21 +45,21 @@ fun ChartWheelView(
 
             // 1. Draw outer cosmic rings
             drawCircle(
-                color = MysticViolet.copy(alpha = 0.3f),
+                color = mysticViolet.copy(alpha = 0.3f),
                 radius = outerRadius,
                 center = center,
                 style = Stroke(width = 2.dp.toPx())
             )
 
             drawCircle(
-                color = CelestialGold.copy(alpha = 0.4f),
+                color = celestialGold.copy(alpha = 0.4f),
                 radius = innerRadius,
                 center = center,
                 style = Stroke(width = 1.5.dp.toPx())
             )
 
             drawCircle(
-                color = NebulaTeal.copy(alpha = 0.3f),
+                color = nebulaTeal.copy(alpha = 0.3f),
                 radius = coreRadius,
                 center = center,
                 style = Stroke(width = 1.dp.toPx())
@@ -107,21 +112,21 @@ fun ChartWheelView(
             drawPath(
                 path = aspectPath,
                 brush = Brush.radialGradient(
-                    listOf(CelestialGold.copy(alpha = 0.35f), MysticViolet.copy(alpha = 0.1f)),
+                    listOf(celestialGold.copy(alpha = 0.35f), mysticViolet.copy(alpha = 0.1f)),
                     center = center
                 )
             )
 
             drawPath(
                 path = aspectPath,
-                color = CelestialGold,
+                color = celestialGold,
                 style = Stroke(width = 2.dp.toPx())
             )
 
             // 4. Draw Placement Glowing Nodes
-            drawCircle(CelestialGold, radius = 6.dp.toPx(), center = sunPt)
-            drawCircle(NebulaTeal, radius = 6.dp.toPx(), center = moonPt)
-            drawCircle(ShadowRose, radius = 6.dp.toPx(), center = risingPt)
+            drawCircle(celestialGold, radius = 6.dp.toPx(), center = sunPt)
+            drawCircle(nebulaTeal, radius = 6.dp.toPx(), center = moonPt)
+            drawCircle(shadowRose, radius = 6.dp.toPx(), center = risingPt)
         }
     }
 }

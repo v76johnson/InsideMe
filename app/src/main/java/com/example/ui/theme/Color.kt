@@ -1,5 +1,7 @@
 package com.example.ui.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 // Editorial Aesthetic Palette - Warm Parchment & Deep Obsidian Ink
@@ -25,14 +27,27 @@ val EditorialTextSecondaryLight = Color(0xFF6B6570)
 val EditorialTextPrimaryDark = Color(0xFFF7F4EF)
 val EditorialTextSecondaryDark = Color(0xFFAA29C8)
 
-// Mapped Palette
-val DeepSpace = EditorialInk
-val CosmicPurple = EditorialCreamCardDark
-val MysticViolet = EditorialAccentTerracotta
-val CelestialGold = EditorialAccentGold
-val StarlightAmber = Color(0xFFC792EA) // Light Purple Lavender
-val NebulaTeal = EditorialAccentOlive
-val ShadowRose = EditorialAccentCrimson
+// Mapped Palette (Dynamic based on active theme via LocalAppColors)
+val DeepSpace: Color
+    @Composable get() = LocalAppColors.current.deepSpace
+
+val CosmicPurple: Color
+    @Composable get() = LocalAppColors.current.cosmicPurple
+
+val MysticViolet: Color
+    @Composable get() = LocalAppColors.current.mysticViolet
+
+val CelestialGold: Color
+    @Composable get() = LocalAppColors.current.celestialGold
+
+val StarlightAmber: Color
+    @Composable get() = LocalAppColors.current.starlightAmber
+
+val NebulaTeal: Color
+    @Composable get() = LocalAppColors.current.nebulaTeal
+
+val ShadowRose: Color
+    @Composable get() = LocalAppColors.current.shadowRose
 
 val CardBackgroundDark = Color(0xFF201E25)
 val CardBorderDark = EditorialBorderDark

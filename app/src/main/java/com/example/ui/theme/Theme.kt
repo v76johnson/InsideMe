@@ -117,6 +117,88 @@ private val AmberLight = lightColorScheme(
     error = Color(0xFFC0392B)
 )
 
+data class AppColors(
+    val deepSpace: Color,
+    val cosmicPurple: Color,
+    val mysticViolet: Color,
+    val celestialGold: Color,
+    val starlightAmber: Color,
+    val nebulaTeal: Color,
+    val shadowRose: Color
+)
+
+val LocalAppColors = androidx.compose.runtime.compositionLocalOf {
+    AppColors(
+        deepSpace = EditorialInk,
+        cosmicPurple = EditorialCreamCardDark,
+        mysticViolet = EditorialAccentTerracotta,
+        celestialGold = EditorialAccentGold,
+        starlightAmber = Color(0xFFC792EA),
+        nebulaTeal = EditorialAccentOlive,
+        shadowRose = EditorialAccentCrimson
+    )
+}
+
+private val CosmicDarkAppColors = AppColors(
+    deepSpace = EditorialInk,
+    cosmicPurple = CardBackgroundDark,
+    mysticViolet = EditorialAccentTerracotta,
+    celestialGold = EditorialAccentGold,
+    starlightAmber = Color(0xFFC792EA),
+    nebulaTeal = EditorialAccentOlive,
+    shadowRose = EditorialAccentCrimson
+)
+
+private val CosmicLightAppColors = AppColors(
+    deepSpace = EditorialParchment,
+    cosmicPurple = EditorialCreamCard,
+    mysticViolet = EditorialAccentTerracotta,
+    celestialGold = EditorialAccentGold,
+    starlightAmber = EditorialAccentNavy,
+    nebulaTeal = EditorialAccentOlive,
+    shadowRose = EditorialAccentCrimson
+)
+
+private val EmeraldDarkAppColors = AppColors(
+    deepSpace = Color(0xFF0F201C),
+    cosmicPurple = Color(0xFF152A25),
+    mysticViolet = Color(0xFF2E7D6A),
+    celestialGold = Color(0xFF81C784),
+    starlightAmber = Color(0xFF4DB6AC),
+    nebulaTeal = Color(0xFFA5D6A7),
+    shadowRose = Color(0xFFEF5350)
+)
+
+private val EmeraldLightAppColors = AppColors(
+    deepSpace = Color(0xFFF1F8F6),
+    cosmicPurple = Color(0xFFFFFFFF),
+    mysticViolet = Color(0xFF80CBC4),
+    celestialGold = Color(0xFF2E7D6A),
+    starlightAmber = Color(0xFF00897B),
+    nebulaTeal = Color(0xFF43A047),
+    shadowRose = Color(0xFFD32F2F)
+)
+
+private val AmberDarkAppColors = AppColors(
+    deepSpace = Color(0xFF1A120B),
+    cosmicPurple = Color(0xFF261C14),
+    mysticViolet = Color(0xFF8D6E63),
+    celestialGold = Color(0xFFF39C12),
+    starlightAmber = Color(0xFFD76D38),
+    nebulaTeal = Color(0xFFFFB74D),
+    shadowRose = Color(0xFFE53935)
+)
+
+private val AmberLightAppColors = AppColors(
+    deepSpace = Color(0xFFFBFAF8),
+    cosmicPurple = Color(0xFFFFFFFF),
+    mysticViolet = Color(0xFFEDBB99),
+    celestialGold = Color(0xFFD35400),
+    starlightAmber = Color(0xFFE67E22),
+    nebulaTeal = Color(0xFFD4AC0D),
+    shadowRose = Color(0xFFC0392B)
+)
+
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = true,
@@ -129,10 +211,18 @@ fun MyApplicationTheme(
         else -> if (darkTheme) CosmicDark else CosmicLight
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val appColors = when (colorSchemeIndex) {
+        1 -> if (darkTheme) EmeraldDarkAppColors else EmeraldLightAppColors
+        2 -> if (darkTheme) AmberDarkAppColors else AmberLightAppColors
+        else -> if (darkTheme) CosmicDarkAppColors else CosmicLightAppColors
+    }
+
+    androidx.compose.runtime.CompositionLocalProvider(LocalAppColors provides appColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
 
