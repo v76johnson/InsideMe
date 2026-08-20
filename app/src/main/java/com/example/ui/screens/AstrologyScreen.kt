@@ -274,6 +274,8 @@ fun AstrologyScreen(
             1 -> NatalChartsTab(
                 profile = profile,
                 natalCharts = natalCharts,
+                isPremium = isPremium,
+                onNavigateToPremium = { activeTab = 4 },
                 onUpdateSigns = onUpdateSigns,
                 onOpenEditPersonalChartDialog = { showEditPersonalChartDialog = true },
                 onOpenAddChartDialog = { showAddChartDialog = true },
@@ -1494,6 +1496,8 @@ fun EditPersonalNatalChartDialog(
 fun NatalChartsTab(
     profile: AstrologyProfile?,
     natalCharts: List<CustomNatalChart>,
+    isPremium: Boolean = false,
+    onNavigateToPremium: () -> Unit = {},
     onUpdateSigns: (ZodiacSign, ZodiacSign, ZodiacSign) -> Unit,
     onOpenEditPersonalChartDialog: () -> Unit,
     onOpenAddChartDialog: () -> Unit,
@@ -1607,6 +1611,18 @@ fun NatalChartsTab(
                     }
                 }
             }
+        }
+
+        // SECTION 1.5: COMPREHENSIVE NATAL REPORT
+        item {
+            ComprehensiveNatalReportView(
+                personName = profile?.birthCity?.ifBlank { "Personal Profile" } ?: "Personal Profile",
+                sunSign = sunSign,
+                moonSign = moonSign,
+                risingSign = risingSign,
+                isPremium = isPremium,
+                onUnlockClicked = onNavigateToPremium
+            )
         }
 
         // SECTION 2: SAVED ADDITIONAL CHARTS VAULT (Friends & Family)
@@ -2735,16 +2751,207 @@ fun MindAndCosmosReportTab(
                             )
                         }
 
-                        IconButton(onClick = { onToggleBookmark(report.id, report.isBookmarked) }) {
-                            Icon(
-                                imageVector = if (report.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                                contentDescription = "Bookmark",
-                                tint = CelestialGold
-                            )
+                        Row {
+                            val localContext = LocalContext.current
+                            IconButton(onClick = {
+                                val shareIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, "✨ ${report.title}\n\n${report.archetypeSummary}")
+                                }
+                                localContext.startActivity(Intent.createChooser(shareIntent, "Share Report"))
+                            }) {
+                                Icon(Icons.Default.Share, contentDescription = "Share Report", tint = CelestialGold)
+                            }
+
+                            IconButton(onClick = { onToggleBookmark(report.id, report.isBookmarked) }) {
+                                Icon(
+                                    imageVector = if (report.isBookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                                    contentDescription = "Bookmark",
+                                    tint = CelestialGold
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DetailedSectionCard(
+    title: String,
+    subtitle: String,
+    content: String,
+    accentColor: Color,
+    isUnlocked: Boolean,
+    onUnlock: () -> Unit = {}
+) {
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = DeepSpace),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, accentColor.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(title, style = MaterialTheme.typography.titleSmall, color = accentColor, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(subtitle, style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+                }
+                if (!isUnlocked) {
+                    Box(
+                        modifier = Modifier
+                            .background(CelestialGold, RoundedCornerShape(6.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text("Psyche+", fontWeight = FontWeight.Bold, fontSize = 10.sp, color = DeepSpace)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MysticViolet.copy(alpha = 0.3f)))
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White.copy(alpha = if (isUnlocked) 0.9f else 0.5f),
+                lineHeight = 20.sp
+            )
+
+            if (!isUnlocked) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = onUnlock,
+                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(14.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Unlock Full Placements & Aspects", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ComprehensiveNatalReportView(
+    personName: String,
+    sunSign: ZodiacSign,
+    moonSign: ZodiacSign,
+    risingSign: ZodiacSign,
+    isPremium: Boolean,
+    onUnlockClicked: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.5.dp, CelestialGold.copy(alpha = 0.6f), RoundedCornerShape(20.dp))
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Comprehensive Astrological Natal Report", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = CelestialGold)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text("Detailed Astrological Portrait for $personName", style = MaterialTheme.typography.bodySmall, color = Color.White.copy(alpha = 0.7f))
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // SECTION 1: THE BIG 3 (Always fully detailed in both Free & Paid)
+            DetailedSectionCard(
+                title = "1. The Big Three Trinity (Sun, Moon & Rising)",
+                subtitle = "Core Identity, Emotional Realm & Outer Projection",
+                content = "• **Sun in ${sunSign.displayName} (${sunSign.symbol} - ${sunSign.element.displayName}):** Your solar vitality centers on authentic self-expression, focused determination, and creative renewal. You are driven to master your craft and live with uncompromising integrity.\n\n" +
+                          "• **Moon in ${moonSign.displayName} (${moonSign.symbol} - ${moonSign.element.displayName}):** Your emotional core is anchored by profound empathy and intuitive depth. You absorb subtle environmental energies and require quiet sanctuary to recharge your spirit.\n\n" +
+                          "• **Rising Sign in ${risingSign.displayName} (${risingSign.symbol} - ${risingSign.element.displayName}):** Your Ascendant is the lens through which the world experiences you. You project an aura of calm dignity, perceptive wisdom, and magnetic grace.",
+                accentColor = CelestialGold,
+                isUnlocked = true
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // SECTION 2: MERCURY & VENUS
+            DetailedSectionCard(
+                title = "2. Mercury & Venus: Intellect, Communication & Love Style",
+                subtitle = "How you process thoughts and give/receive affection",
+                content = if (isPremium) {
+                    "• **Mercury Placement:** Your cognitive processing style blends analytical precision with intuitive synthesis. You communicate with piercing honesty and appreciate intellectual depth over superficial banter.\n\n" +
+                    "• **Venus Placement:** In romance and aesthetics, you seek soulful resonance, loyalty, and absolute emotional safety. You value meaningful partnerships and express affection through acts of devotion and deep listening."
+                } else {
+                    "🔒 **[Free Preview Summary]**: Mercury governs your communication style and mental focus, while Venus dictates your love language and aesthetic harmony. Upgrade to Psyche+ to unlock full in-depth interpretations for Mercury and Venus."
+                },
+                accentColor = NebulaTeal,
+                isUnlocked = isPremium,
+                onUnlock = onUnlockClicked
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // SECTION 3: MARS & JUPITER
+            DetailedSectionCard(
+                title = "3. Mars & Jupiter: Drive, Ambition & Expansion",
+                subtitle = "Your primal energy, passion, and luck cycles",
+                content = if (isPremium) {
+                    "• **Mars Placement:** Your inner drive is fueled by passionate determination and strategic patience. When pursuing goals, you do not rush blindly; you wait for the optimal moment and strike with unwavering focus.\n\n" +
+                    "• **Jupiter Placement:** Jupiter brings expansion, wisdom, and philosophical fortune. Your greatest growth occurs when you explore esoteric knowledge, mentor others, and embrace life as a sacred journey of discovery."
+                } else {
+                    "🔒 **[Free Preview Summary]**: Mars reveals your motivation, ambition, and conflict style, while Jupiter points to where luck and wisdom favor your endeavors. Upgrade to Psyche+ to unlock."
+                },
+                accentColor = CelestialGold,
+                isUnlocked = isPremium,
+                onUnlock = onUnlockClicked
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // SECTION 4: SATURN, URANUS, NEPTUNE & PLUTO
+            DetailedSectionCard(
+                title = "4. Saturn, Uranus, Neptune & Pluto: Karmic Lessons & Evolution",
+                subtitle = "Life tests, sudden awakenings, and profound transformation",
+                content = if (isPremium) {
+                    "• **Saturn (The Taskmaster):** Teaches mastery through disciplined perseverance and boundaries.\n" +
+                    "• **Uranus & Neptune (Generational Sparks):** Bring sudden flashes of intuition and visionary spiritual awakening.\n" +
+                    "• **Pluto (The Alchemist):** Governs deep personal rebirth, shedding old skin to step into ultimate empowerment."
+                } else {
+                    "🔒 **[Free Preview Summary]**: Outer planets outline your karmic lessons, spiritual awakening cycles, and profound life transformation milestones. Upgrade to Psyche+ to unlock."
+                },
+                accentColor = NebulaTeal,
+                isUnlocked = isPremium,
+                onUnlock = onUnlockClicked
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // SECTION 5: HOUSES & ASPECTS
+            DetailedSectionCard(
+                title = "5. Astrological Houses & Major Aspect Matrix",
+                subtitle = "Life domains (Career, Home, Relationships) & Planetary geometry",
+                content = if (isPremium) {
+                    "• **Angular Houses (1st, 4th, 7th, 10th):** Spotlight your identity, home foundation, partnership dynamics, and public legacy.\n" +
+                    "• **Major Aspects (Trines, Squares, Conjunctions):** Reveal the harmonious flow and dynamic friction between your planetary energies, driving creative tension into mastery."
+                } else {
+                    "🔒 **[Free Preview Summary]**: Detailed house breakdowns (career, relationships, wealth, spiritual growth) and aspect geometric matrix. Upgrade to Psyche+ to unlock."
+                },
+                accentColor = CelestialGold,
+                isUnlocked = isPremium,
+                onUnlock = onUnlockClicked
+            )
         }
     }
 }

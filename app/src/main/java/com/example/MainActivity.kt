@@ -86,6 +86,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showFreeMindChatDialog by remember { mutableStateOf(false) }
     var showProfileSetupDialog by remember { mutableStateOf(false) }
+    var showNameMeaningDialog by remember { mutableStateOf(false) }
     var hasDismissedFirstInstallOnboarding by remember { mutableStateOf(false) }
 
     val testResults by viewModel.testResults.collectAsStateWithLifecycle()
@@ -249,7 +250,11 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         },
                         onUpgradeClicked = { selectedTab = 3 },
                         onOpenFreeMindChat = { showFreeMindChatDialog = true },
-                        onOpenProfileSetup = { showProfileSetupDialog = true }
+                        onOpenProfileSetup = { showProfileSetupDialog = true },
+                        onOpenNameMeaning = { targetName ->
+                            viewModel.generateNameMeaningReport(targetName)
+                            showNameMeaningDialog = true
+                        }
                     )
 
                     1 -> AssessmentsScreen(
@@ -388,6 +393,20 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     onRemoveSavedName = { viewModel.removeSavedNameAddition(it) },
                     onAddSavedName = { viewModel.addSavedNameAddition(it) },
                     onRedeemPromoCode = { viewModel.redeemPromoCode(it) }
+                )
+            }
+
+            // Name Meaning Report Modal overlay
+            if (showNameMeaningDialog) {
+                NameMeaningReportDialog(
+                    report = nameMeaningReport,
+                    isGenerating = isGeneratingNameReport,
+                    currentMainName = astroProfile?.userName ?: "",
+                    savedNames = astroProfile?.savedNameAdditions ?: emptyList(),
+                    onAnalyzeName = { viewModel.generateNameMeaningReport(it) },
+                    onSetMainName = { viewModel.updateUserName(it) },
+                    onSaveNameAddition = { viewModel.addSavedNameAddition(it) },
+                    onDismiss = { showNameMeaningDialog = false }
                 )
             }
         }

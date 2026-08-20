@@ -34,46 +34,46 @@ object NameAnalysisEngine {
         val lower = name.lowercase(Locale.getDefault())
         return when {
             lower.contains("alex") -> listOf(
-                NameEtymologySource("Greek (Classical)", "Defender of Mankind / Protector of Men", "Derived from 'Alexein' (to ward off/defend) and 'Aner' (man). Associated with warrior leaders and strategic defenders."),
+                NameEtymologySource("Greek (Classical)", "Defender of Mankind / Protector of Men", "Derived from 'Alexein' (to ward off) and 'Aner' (man). Associated with warrior leaders and strategic defenders. Famous Bearers: Alexander the Great, Alexander Hamilton."),
                 NameEtymologySource("Latin / Imperial", "Chivalrous Ruler & Sovereign", "Adopted widely across Roman and Byzantine dynasties as a mark of high governance and intellectual courage."),
                 NameEtymologySource("Modern Global", "Universal Vanguard", "Consistently ranks across Slavic, European, and American cultures as a timeless symbol of proactive leadership.")
             )
             lower.contains("john") || lower.contains("jack") || lower.contains("juan") || lower.contains("jean") || lower.contains("sean") || lower.contains("ian") -> listOf(
-                NameEtymologySource("Hebrew (Biblical)", "Yohanan • 'God is Gracious'", "Originating from the Ancient Near East, symbolizing divine favor, integrity, and unyielding faith."),
+                NameEtymologySource("Hebrew (Biblical)", "Yohanan • 'God is Gracious'", "Originating from the Ancient Near East, symbolizing divine favor, integrity, and unyielding faith. Famous Bearers: John the Baptist, John F. Kennedy, John Milton."),
                 NameEtymologySource("Greek & Latin", "Ioannes • The Harbinger", "Transliterated through early ecclesiastical texts representing truth-tellers, visionaries, and principled pioneers."),
                 NameEtymologySource("Celtic & Germanic", "The Steadfast Pillar", "Evolved into foundational naming pillars representing dependability, moral grounding, and strength.")
             )
             lower.contains("sophia") || lower.contains("sophie") || lower.contains("sofia") -> listOf(
-                NameEtymologySource("Greek (Philosophical)", "Divine Wisdom & Pure Insight", "Rooted in classical Greek philosophy representing the transcendent feminine principle of spiritual insight and clarity."),
+                NameEtymologySource("Greek (Philosophical)", "Divine Wisdom & Pure Insight", "Rooted in classical Greek philosophy representing the transcendent feminine principle of spiritual insight and clarity. Famous Bearers: Sophia Loren, philosopher Hypatia."),
                 NameEtymologySource("Byzantine & Orthodox", "Hagia Sophia • Holy Wisdom", "Constructed as the supreme architectural and spiritual metaphor for divine order and intellectual radiance."),
                 NameEtymologySource("Latin & Romance", "Elegance of Mind", "Celebrated across European literature as a symbol of emotional poise, deep intuition, and aesthetic grace.")
             )
             lower.contains("michael") || lower.contains("michelle") || lower.contains("mikael") -> listOf(
-                NameEtymologySource("Hebrew (Archangelic)", "Mikha'el • 'Who is like God?'", "The supreme angelic champion of light and justice, representing spiritual defense and righteous courage."),
+                NameEtymologySource("Hebrew (Archangelic)", "Mikha'el • 'Who is like God?'", "The supreme angelic champion of light and justice, representing spiritual defense and righteous courage. Famous Bearers: Michelangelo, Michael Jordan, Michael Faraday."),
                 NameEtymologySource("Latin & Ecclesiastical", "The Divine Shield", "Prominent across centuries of European iconography as the emblem of order overcoming chaos."),
                 NameEtymologySource("Modern Universal", "TruthSeeker & Pillar", "A timeless classic instilling high moral duty, protective instinct, and inner fortitude.")
             )
             lower.contains("mary") || lower.contains("maria") || lower.contains("marie") || lower.contains("miriam") -> listOf(
-                NameEtymologySource("Hebrew / Aramaic", "Miryam • 'Beloved', 'Star of the Sea'", "Ancient Semitic root implying deep emotional ocean, beloved sanctuary, and guidance."),
+                NameEtymologySource("Hebrew / Aramaic", "Miryam • 'Beloved', 'Star of the Sea'", "Ancient Semitic root implying deep emotional ocean, beloved sanctuary, and guidance. Famous Bearers: Marie Curie, Mary Shelley, Queen Mary."),
                 NameEtymologySource("Egyptian (Ancient)", "Mry • 'Deeply Loved'", "Traced to ancient Kingdom honorifics signifying divine tenderness and unconditional devotion."),
                 NameEtymologySource("Latin", "Stella Maris • Ocean Guide", "Symbolizes spiritual navigation, intuitive emotional depth, and serene resilience.")
             )
             lower.contains("david") -> listOf(
-                NameEtymologySource("Hebrew (Monarchic)", "Dawid • 'Beloved', 'Uniter'", "The poetic king and psalmist of Israel, uniting creative artistry with strategic bravery."),
+                NameEtymologySource("Hebrew (Monarchic)", "Dawid • 'Beloved', 'Uniter'", "The poetic king and psalmist of Israel, uniting creative artistry with strategic bravery. Famous Bearers: King David, David Livingstone, David Bowie."),
                 NameEtymologySource("Celtic & Welsh", "Dewi • Water Bearer & Guide", "Patron saint root representing purity of spirit, hospitality, and harmonic leadership."),
                 NameEtymologySource("Universal Classic", "The Courageous Triumph", "Metaphor for overcoming immense odds through intellectual resourcefulness and heart.")
             )
             lower.contains("sarah") || lower.contains("sara") -> listOf(
-                NameEtymologySource("Hebrew (Matriarchal)", "Sārah • 'Princess', 'Noble Woman'", "Matriarch of nations representing royal dignity, divine laughter, and everlasting legacy."),
+                NameEtymologySource("Hebrew (Matriarchal)", "Sārah • 'Princess', 'Noble Woman'", "Matriarch of nations representing royal dignity, divine laughter, and everlasting legacy. Famous Bearers: Sarah Bernhardt, Sarah Teasdale."),
                 NameEtymologySource("Arabic", "Surrah • Joyful Radiant One", "Rooted in semitic adjectives describing pure joy, bright disposition, and infectious warmth."),
                 NameEtymologySource("European Classic", "Sovereign Grace", "Maintained across centuries as a mark of refined composure and gentle authority.")
             )
             lower.contains("victoria") || lower.contains("victor") -> listOf(
-                NameEtymologySource("Latin (Imperial)", "Victory • Conqueror of Obstacles", "Direct personification of triumph over adversity in Roman mythology."),
+                NameEtymologySource("Latin (Imperial)", "Victory • Conqueror of Obstacles", "Direct personification of triumph over adversity in Roman mythology. Famous Bearers: Queen Victoria, Victor Hugo."),
                 NameEtymologySource("Romance Languages", "Resilient Sovereign", "Celebrated across royal lines as a mark of endurance, high standards, and decisive strategy.")
             )
             lower.contains("grace") || lower.contains("faith") || lower.contains("joy") || lower.contains("hope") -> listOf(
-                NameEtymologySource("Latin / Virtue Root", "Gratia • Divine Favor & Beauty", "Puritan and Renaissance virtue naming tradition intended to imprint moral light upon character."),
+                NameEtymologySource("Latin / Virtue Root", "Gratia • Divine Favor & Beauty", "Puritan and Renaissance virtue naming tradition intended to imprint moral light upon character. Famous Bearers: Grace Kelly."),
                 NameEtymologySource("Spiritual Archetype", "Ethereal Harmony", "Acts as a living blessing, radiating serene composure, empathy, and upliftment.")
             )
             lower.contains("willow") || lower.contains("rose") || lower.contains("lily") || lower.contains("river") || lower.contains("sky") || lower.contains("iris") -> listOf(

@@ -121,7 +121,8 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         _isOracleThinking.value = true
 
         viewModelScope.launch {
-            val answer = repository.askAstrologyOracle(question, astrologyProfile.value)
+            val isPremium = userSubscription.value.isPremium
+            val answer = repository.askAstrologyOracle(question, astrologyProfile.value, isPremium)
             val aiMsg = AstrologyChatMessage(sender = "oracle", text = answer)
             _oracleMessages.value = _oracleMessages.value.toMutableList().apply { add(aiMsg) }
             _isOracleThinking.value = false

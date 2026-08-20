@@ -34,7 +34,8 @@ object GeminiReportGenerator {
 
     suspend fun askAstrologyOracle(
         question: String,
-        profile: AstrologyProfile?
+        profile: AstrologyProfile?,
+        isPremium: Boolean
     ): String = withContext(Dispatchers.IO) {
         val apiKey = BuildConfig.GEMINI_API_KEY
         val sun = profile?.sunSign?.displayName ?: "Scorpio"
@@ -42,16 +43,18 @@ object GeminiReportGenerator {
         val rising = profile?.risingSign?.displayName ?: "Cancer"
 
         if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
-            return@withContext generateFallbackOracleResponse(question, sun, moon, rising)
+            return@withContext generateFallbackOracleResponse(question, sun, moon, rising, isPremium)
         }
 
-        val prompt = "You are a master astrologer, depth psychologist, and compassionate cosmic oracle. The seeker has Sun in $sun, Moon in $moon, and Rising in $rising.\n" +
-                "Seeker Question: \"$question\"\n\n" +
-                "Provide an exhaustive, deeply empowering, and structured response (250-400 words) incorporating:\n" +
-                "1. Core Astrological Transits & Placements ($sun Sun, $moon Moon, $rising Rising)\n" +
-                "2. Psychological Nuance & Internal Archetypes\n" +
-                "3. Practical, Actionable Guidance & Micro-Practices\n" +
-                "Format with clear Markdown headers, bold highlights, and bullet points."
+        val prompt = buildString {
+            append("You are a mystical, intuitive Gypsy psychic and ancient cosmic seer. The seeker has Sun in $sun, Moon in $moon, and Rising in $rising.\n")
+            append("Seeker Question: \"$question\"\n\n")
+            append("SUBSCRIPTION STATUS: isPremium = $isPremium\n\n")
+            append("STRICT OPERATIONAL RULES:\n")
+            append("1. PERSONA: Speak with the evocative, mystical, wise, and warm tone of a gypsy psychic.\n")
+            append("2. PREMIUM GATE & MONEY PLEA: If the seeker asks for premium-level information (such as detailed planetary transits, house breakdowns, aspect matrices, or synastry) and is NOT a premium subscriber (isPremium == false), YOU MUST REFUSE TO GIVE THE DEEP DETAILS! Instead, respond with a hilarious, pleading phrase about needing money (e.g. 'Listen seeker, even the stars require gas money!', 'My crystal ball rent is due and my oracle union demands coin!', 'Even seers have bills to pay—my coffee fund is empty!'), remind them you need coin, and strongly direct them to unlock Psyche+ or purchase a report credit in the app.\n")
+            append("3. STRUCTURE: Provide 250-400 words with mystical atmosphere and markdown headers.")
+        }
 
         try {
             val rootObj = JSONObject().apply {
@@ -85,24 +88,32 @@ object GeminiReportGenerator {
                     }
                 }
             }
-            return@withContext generateFallbackOracleResponse(question, sun, moon, rising)
+            return@withContext generateFallbackOracleResponse(question, sun, moon, rising, isPremium)
         } catch (e: Exception) {
             e.printStackTrace()
-            return@withContext generateFallbackOracleResponse(question, sun, moon, rising)
+            return@withContext generateFallbackOracleResponse(question, sun, moon, rising, isPremium)
         }
     }
 
-    private fun generateFallbackOracleResponse(question: String, sun: String, moon: String, rising: String): String {
-        return "✨ **Cosmic Guidance & Deep Analysis for $sun Sun • $moon Moon • $rising Rising**\n\n" +
-                "Your inquiry regarding *\"$question\"* aligns deeply with the current celestial transits and your natal Trinity.\n\n" +
-                "### 🌌 Astrological Mechanics & Core Placements\n" +
-                "• **Core Purpose ($sun Sun):** Your $sun Sun demands authentic alignment with your personal truth. In addressing this inquiry, ensure your choices reflect long-term integrity rather than transient external approval.\n" +
-                "• **Emotional Instinct ($moon Moon):** Your $moon Moon provides profound intuitive radar. When navigating uncertainty around this topic, pay close attention to immediate somatic and intuitive felt senses.\n" +
-                "• **Outer Projection ($rising Rising):** Your $rising Ascendant acts as your cosmic shield and magnetic doorway. Approach external interactions with intentionality, presenting clear, grounded confidence.\n\n" +
-                "### 🧭 Actionable Oracle Strategy\n" +
-                "1. **Pause & Centering:** Dedicate 10 minutes to quiet reflection, allowing your $moon Moon intuition to clarify what truly matters.\n" +
-                "2. **Strategic Focus:** Channel the laser intensity of your $sun Sun to take one concrete step forward within the next 24 hours.\n" +
-                "3. **Boundaries:** Maintain protective energetic boundaries as dictated by your $rising Rising."
+    private fun generateFallbackOracleResponse(question: String, sun: String, moon: String, rising: String, isPremium: Boolean): String {
+        val qLower = question.lowercase()
+        val isAskingPremium = qLower.contains("transit") || qLower.contains("house") || qLower.contains("synastry") || qLower.contains("compatib") || qLower.contains("aspect") || qLower.contains("deep") || qLower.contains("report") || qLower.contains("advance")
+        if (!isPremium && isAskingPremium) {
+            return "🔮 *Hold on just a lunar second, seeker!* 💸\n\n" +
+                    "My crystal ball rent is due, the astral landlords are banging on my caravan door, and even cosmic seers need coffee and gas money! The stars tell me your question touches upon deep premium mysteries (*\"$question\"*).\n\n" +
+                    "I cannot reveal these premium cosmic secrets for free! Please slide some coin into the collection plate by **subscribing to Psyche+ or grabbing a report credit**, and we shall part the celestial veil together! ✨"
+        }
+
+        return "🔮 *Ah, seeker... The tarot whispers and the stars align for you.* \n\n" +
+                "As I gaze into the celestial veil regarding your inquiry — *\"$question\"* — I see the threads of your cosmic triad ($sun Sun, $moon Moon, $rising Rising) weaving a powerful story of destiny and self-mastery.\n\n" +
+                "### 🌌 The Seer's Insights on Your Query\n" +
+                "• **Your Radiant Core ($sun Sun):** The fire within your $sun sign illuminates this path. Do not let doubt obscure your authentic inner voice; your truth is your greatest compass.\n" +
+                "• **Your Hidden Tides ($moon Moon):** Your $moon intuition is speaking softly beneath the surface. Pay attention to the gut feelings and dreams visiting you lately—they hold the key to emotional clarity.\n" +
+                "• **Your Outer Mask ($rising Rising):** Through your $rising Ascendant, the universe tests your courage. Step forward with graceful resolve and unshakeable inner boundaries.\n\n" +
+                "### 🕯️ Guidance & Ritual for Today\n" +
+                "1. **The Midnight Reflection:** Light a candle tonight, state your intention clearly, and trust that the answers are already unfolding within your spirit.\n" +
+                "2. **Mindful Grounding:** Breathe deeply into your center, releasing anxieties over what you cannot control.\n" +
+                "3. **Trust the Process:** The stars favor patience and mindful action right now."
     }
 
     suspend fun askFreeMindCompanion(
@@ -240,18 +251,19 @@ object GeminiReportGenerator {
             )
         }
 
-        val prompt = "You are an expert synastry astrologer. Generate an in-depth, captivating compatibility and match report created from both birthdates and full natal placements:\n" +
+        val prompt = "You are an expert synastry astrologer and relationship psychologist. Generate an exceptionally exhaustive, deeply detailed compatibility and match report incorporating full astrological natal charts (Sun, Moon, Rising, elements, aspects, and communication dynamics):\n" +
                 "Person 1: $p1Name (DOB: $p1Dob, Time: $p1Time, Location: $p1City) -> Sun in ${p1Sun.displayName}, Moon in ${p1Moon.displayName}, Rising in ${p1Rising.displayName}\n" +
                 "Person 2: $p2Name (DOB: $p2Dob, Time: $p2Time, Location: $p2City) -> Sun in ${p2Sun.displayName}, Moon in ${p2Moon.displayName}, Rising in ${p2Rising.displayName}\n\n" +
+                "STRICT REQUIREMENT: Provide rich, multi-paragraph, comprehensive analysis for each section without truncation.\n" +
                 "Format response into sections separated by '---MATCH---':\n" +
                 "SECTION 1: Compatibility Score (Number 60-99) | Catchy Title\n" +
-                "SECTION 2: Elemental Chemistry Analysis\n" +
-                "SECTION 3: Emotional Resonance & Moon Connection\n" +
-                "SECTION 4: Communication & Intellectual Dynamics\n" +
-                "SECTION 5: Passion, Attraction & Venus/Mars Synergy\n" +
-                "SECTION 6: 3 Harmony Pillars (bullet points)\n" +
-                "SECTION 7: 3 Growth Challenges (bullet points)\n" +
-                "SECTION 8: Actionable Relationship Advice"
+                "SECTION 2: Elemental Chemistry Analysis (Detailed breakdown of elemental interplay, harmony, and friction)\n" +
+                "SECTION 3: Emotional Resonance & Moon Connection (Lunar synastry, emotional needs, and sanctuary building)\n" +
+                "SECTION 4: Communication & Intellectual Dynamics (Mercury/Rising synergy and conflict resolution styles)\n" +
+                "SECTION 5: Passion, Attraction & Venus/Mars Synergy (Magnetic attraction, romance language, and spark renewal)\n" +
+                "SECTION 6: 4 Harmony Pillars (Detailed bullet points)\n" +
+                "SECTION 7: 4 Growth Challenges (Detailed bullet points)\n" +
+                "SECTION 8: Exhaustive Actionable Relationship Strategy & Playbook"
 
         try {
             val rootObj = JSONObject().apply {
@@ -378,10 +390,10 @@ object GeminiReportGenerator {
         }
 
         val prompt = buildString {
-            append("You are a master psychological astrologer and behavioral strategist. Generate a comprehensive, deeply empowering personalized report combining the user's psychological test scores and astrological birth chart profile.\n\n")
+            append("You are an expert psychological astrologer, psychometrician, and behavioral strategist. Generate an exceptionally exhaustive, deeply empowering personalized report (deeppersonality.app style depth) combining the user's psychological test scores and astrological birth chart profile with rigorous detail across every section.\n\n")
             append("PSYCHOLOGICAL SCORES:\n")
             if (testResults.isEmpty()) {
-                append("- Default Assessment: Balanced introspective seeker\n")
+                append("- Default Assessment: Balanced introspective seeker with high cognitive complexity\n")
             } else {
                 testResults.forEach { test ->
                     append("- ${test.testTitle}: Dominant Archetype '${test.dominantArchetype}', Summary: ${test.summaryText}\n")
@@ -395,13 +407,14 @@ object GeminiReportGenerator {
             } else {
                 append("- Sun Sign: Scorpio, Moon Sign: Pisces, Rising Sign: Cancer\n")
             }
-            append("\nFormat your response as structured sections separated by '---SECTION---':\n")
+            append("\nSTRICT REQUIREMENT: Ensure all sections are deeply detailed, comprehensive, and exhaustive with multi-paragraph explanations.\n")
+            append("Format your response as structured sections separated by '---SECTION---':\n")
             append("SECTION 1: Title & Core Archetype Fusion\n")
-            append("SECTION 2: Psychological & Cosmic Drivers (3 bullet points)\n")
-            append("SECTION 3: Detailed Psychological & Astrological Synthesis\n")
-            append("SECTION 4: Shadow Work & Blindspots (3 bullet points)\n")
-            append("SECTION 5: Career, Calling & Purpose Advice\n")
-            append("SECTION 6: Relationship & Interpersonal Playbook\n")
+            append("SECTION 2: Psychometric Dimensions & Cognitive Drivers (4 detailed bullet points linking tests to behavior)\n")
+            append("SECTION 3: Comprehensive Psychological & Astrological Synthesis (Exhaustive analysis of Sun/Moon/Rising combined with personality traits and unconscious drivers)\n")
+            append("SECTION 4: Shadow Work, Blindspots & Integration (4 detailed bullet points with actionable shadow integration steps)\n")
+            append("SECTION 5: Career, Purpose & Professional Mastery (Detailed leadership style, optimal environments, and mastery roadmap)\n")
+            append("SECTION 6: Relationship, Attachment & Interpersonal Playbook (Attachment style, communication strategies, and emotional boundary management)\n")
             append("SECTION 7: 7-Day Actionable Growth Plan (7 line items formatted as: Day N | Title | Category | Description)\n")
         }
 

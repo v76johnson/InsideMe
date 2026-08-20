@@ -64,8 +64,8 @@ class PsycheRepository(private val database: AppDatabase) {
         database.natalChartDao().deleteNatalChart(chartId)
     }
 
-    suspend fun askAstrologyOracle(question: String, profile: AstrologyProfile?): String {
-        return GeminiReportGenerator.askAstrologyOracle(question, profile)
+    suspend fun askAstrologyOracle(question: String, profile: AstrologyProfile?, isPremium: Boolean): String {
+        return GeminiReportGenerator.askAstrologyOracle(question, profile, isPremium)
     }
 
     suspend fun askFreeMindCompanion(

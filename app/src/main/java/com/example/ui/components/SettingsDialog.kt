@@ -227,7 +227,7 @@ fun SettingsDialog(
                     // SECTION - APPEARANCE & APP PREFERENCES
                     CollapsibleBlock(
                         title = "Appearance & App Preferences",
-                        subtitle = "Dark mode, color schemes, notifications & sharing",
+                        subtitle = "Color schemes & sharing",
                         icon = Icons.Default.Palette,
                         iconTint = CelestialGold,
                         initialExpanded = false
@@ -236,20 +236,6 @@ fun SettingsDialog(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text("Dark Mode", style = MaterialTheme.typography.bodyMedium, color = Color.White, fontWeight = FontWeight.Bold)
-                                Switch(
-                                    checked = isDarkTheme,
-                                    onCheckedChange = { onDarkThemeChanged(it) },
-                                    colors = SwitchDefaults.colors(checkedThumbColor = CelestialGold, checkedTrackColor = MysticViolet)
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(4.dp))
                             Text("Select Color Scheme", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = CelestialGold)
 
                             val schemes = listOf("Cosmic Velvet", "Emerald Forest", "Solar Amber")
@@ -284,48 +270,6 @@ fun SettingsDialog(
                             Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MysticViolet.copy(alpha = 0.4f)))
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // Notifications & Preferences Switches
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text("Daily Insights & Affirmations", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                                }
-                                Switch(
-                                    checked = dailyNotificationsEnabled,
-                                    onCheckedChange = { dailyNotificationsEnabled = it },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = DeepSpace,
-                                        checkedTrackColor = NebulaTeal
-                                    )
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(Icons.Default.Palette, contentDescription = null, tint = Color.White.copy(alpha = 0.8f), modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text("Deep Cosmic Palette", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                                }
-                                Switch(
-                                    checked = cosmicThemeEnabled,
-                                    onCheckedChange = { cosmicThemeEnabled = it },
-                                    colors = SwitchDefaults.colors(
-                                        checkedThumbColor = DeepSpace,
-                                        checkedTrackColor = CelestialGold
-                                    )
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
                             Button(
                                 onClick = {
                                     val shareIntent = Intent().apply {

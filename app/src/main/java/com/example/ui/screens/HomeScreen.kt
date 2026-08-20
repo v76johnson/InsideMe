@@ -82,6 +82,7 @@ fun HomeScreen(
     onUpgradeClicked: () -> Unit,
     onOpenFreeMindChat: () -> Unit = {},
     onOpenProfileSetup: () -> Unit = {},
+    onOpenNameMeaning: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val totalTestsCount = TestCatalog.allTests.size
@@ -202,6 +203,59 @@ fun HomeScreen(
                                 color = Color.White.copy(alpha = 0.85f),
                                 lineHeight = 18.sp
                             )
+
+                            if (userName != "Seeker") {
+                                val nameReport = remember(userName) { NameAnalysisEngine.analyzeName(userName) }
+                                val primaryEty = nameReport.etymologies.firstOrNull()
+
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(DeepSpace.copy(alpha = 0.6f))
+                                        .border(1.dp, CelestialGold.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                                        .padding(10.dp)
+                                ) {
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(14.dp))
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "Name Essence • ${primaryEty?.languageOrCulture ?: "Origin"}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = CelestialGold
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = "\"${primaryEty?.literalMeaning ?: ""}\" • ${nameReport.numerologicalVibration}",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = Color.White.copy(alpha = 0.9f),
+                                            fontSize = 11.sp,
+                                            lineHeight = 15.sp
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                androidx.compose.material3.OutlinedButton(
+                                    onClick = { onOpenNameMeaning(userName) },
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = CelestialGold),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold.copy(alpha = 0.6f)),
+                                    shape = RoundedCornerShape(10.dp),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("detailed_name_search_btn")
+                                ) {
+                                    Icon(Icons.Default.HistoryEdu, contentDescription = null, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("✨ Detailed AI Search (Origins, Meanings & Famous Bearers)", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                }
+                            }
                         }
                     }
                 }

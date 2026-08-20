@@ -35,6 +35,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -730,6 +731,18 @@ fun AssessmentsScreen(
                             }
 
                             Row {
+                                val localContext = LocalContext.current
+                                IconButton(onClick = {
+                                    val shareIntent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_TEXT, "✨ ${report.title}\n\n${report.archetypeSummary}")
+                                    }
+                                    localContext.startActivity(Intent.createChooser(shareIntent, "Share Report"))
+                                }) {
+                                    Icon(Icons.Default.Share, contentDescription = "Share Report", tint = CelestialGold)
+                                }
+
                                 IconButton(onClick = {
                                     reportToExport = report
                                     showReportExportDialog = true
