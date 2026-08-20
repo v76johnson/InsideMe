@@ -463,6 +463,54 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private val _nameAiChatMessages = MutableStateFlow<List<MindChatMessage>>(emptyList())
+    val nameAiChatMessages: StateFlow<List<MindChatMessage>> = _nameAiChatMessages.asStateFlow()
+
+    private val _isNameAiThinking = MutableStateFlow(false)
+    val isNameAiThinking: StateFlow<Boolean> = _isNameAiThinking.asStateFlow()
+
+    fun startNameAiChat(targetName: String = "") {
+        _isGeneratingNameReport.value = true
+        viewModelScope.launch {
+            val nameToUse = targetName.ifBlank { astrologyProfile.value?.userName ?: "Seeker" }
+            val report = repository.generateNameMeaningReport(nameToUse, astrologyProfile.value)
+            _nameMeaningReport.value = report
+
+            val reportMsg = MindChatMessage(
+                sender = "companion",
+                text = report.toAiCompanionChatMessage()
+            )
+            _nameAiChatMessages.value = listOf(reportMsg)
+            _isGeneratingNameReport.value = false
+        }
+    }
+
+    fun sendNameAiChatMessage(text: String) {
+        if (text.isBlank()) return
+        val userMsg = MindChatMessage(sender = "user", text = text)
+        val currentHistory = _nameAiChatMessages.value.toMutableList().apply { add(userMsg) }
+        _nameAiChatMessages.value = currentHistory
+        _isNameAiThinking.value = true
+
+        viewModelScope.launch {
+            val currentReportName = _nameMeaningReport.value?.name ?: "User Name"
+            val prompt = "You are an expert onomastic and astrological name analyst. We are discussing the name \"$currentReportName\".\n" +
+                    "Conversation history:\n" + currentHistory.takeLast(6).joinToString("\n") { "${it.sender}: ${it.text}" } + "\n\n" +
+                    "User Question: $text\n" +
+                    "Provide a warm, insightful, etymologically and psychologically rich response (150-300 words) using markdown."
+
+            val answer = repository.askFreeMindCompanion(
+                userMessage = prompt,
+                history = currentHistory,
+                testResults = testResults.value,
+                astroProfile = astrologyProfile.value
+            )
+            val aiMsg = MindChatMessage(sender = "companion", text = answer)
+            _nameAiChatMessages.value = _nameAiChatMessages.value.toMutableList().apply { add(aiMsg) }
+            _isNameAiThinking.value = false
+        }
+    }
+
     fun generateNameMeaningReport(targetName: String = "") {
         _isGeneratingNameReport.value = true
         viewModelScope.launch {
@@ -475,6 +523,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
 
     fun dismissNameMeaningReport() {
         _nameMeaningReport.value = null
+        _nameAiChatMessages.value = emptyList()
     }
 
     fun setSubscriptionTier(tier: SubscriptionTier) {

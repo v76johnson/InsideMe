@@ -58,6 +58,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.mutableStateOf
 import com.example.ui.components.FirstInstallNameDialog
+import com.example.ui.components.NameAiChatDialog
 import com.example.ui.components.NameMeaningReportDialog
 import com.example.ui.components.SettingsDialog
 
@@ -86,7 +87,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showFreeMindChatDialog by remember { mutableStateOf(false) }
     var showProfileSetupDialog by remember { mutableStateOf(false) }
-    var showNameMeaningDialog by remember { mutableStateOf(false) }
+    var showNameAiChatDialog by remember { mutableStateOf(false) }
     var hasDismissedFirstInstallOnboarding by remember { mutableStateOf(false) }
 
     val testResults by viewModel.testResults.collectAsStateWithLifecycle()
@@ -109,6 +110,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
 
     val nameMeaningReport by viewModel.nameMeaningReport.collectAsStateWithLifecycle()
     val isGeneratingNameReport by viewModel.isGeneratingNameReport.collectAsStateWithLifecycle()
+    val nameAiChatMessages by viewModel.nameAiChatMessages.collectAsStateWithLifecycle()
+    val isNameAiThinking by viewModel.isNameAiThinking.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -252,8 +255,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         onOpenFreeMindChat = { showFreeMindChatDialog = true },
                         onOpenProfileSetup = { showProfileSetupDialog = true },
                         onOpenNameMeaning = { targetName ->
-                            viewModel.generateNameMeaningReport(targetName)
-                            showNameMeaningDialog = true
+                            viewModel.startNameAiChat(targetName)
+                            showNameAiChatDialog = true
                         }
                     )
 
@@ -396,17 +399,21 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                 )
             }
 
-            // Name Meaning Report Modal overlay
-            if (showNameMeaningDialog) {
-                NameMeaningReportDialog(
+            // Name AI Chat Dialog overlay
+            if (showNameAiChatDialog) {
+                NameAiChatDialog(
                     report = nameMeaningReport,
                     isGenerating = isGeneratingNameReport,
                     currentMainName = astroProfile?.userName ?: "",
-                    savedNames = astroProfile?.savedNameAdditions ?: emptyList(),
-                    onAnalyzeName = { viewModel.generateNameMeaningReport(it) },
-                    onSetMainName = { viewModel.updateUserName(it) },
-                    onSaveNameAddition = { viewModel.addSavedNameAddition(it) },
-                    onDismiss = { showNameMeaningDialog = false }
+                    messages = nameAiChatMessages,
+                    isThinking = isNameAiThinking,
+                    onSendMessage = { text -> viewModel.sendNameAiChatMessage(text) },
+                    onSetMainName = { name -> viewModel.updateUserName(name) },
+                    onAnalyzeName = { name -> viewModel.startNameAiChat(name) },
+                    onDismiss = {
+                        showNameAiChatDialog = false
+                        viewModel.dismissNameMeaningReport()
+                    }
                 )
             }
         }
