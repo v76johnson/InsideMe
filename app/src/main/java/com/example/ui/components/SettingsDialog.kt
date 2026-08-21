@@ -3,6 +3,8 @@ package com.example.ui.components
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -118,7 +120,8 @@ fun SettingsDialog(
     onNavigateToSynthesis: () -> Unit = {},
     onRemoveSavedName: (String) -> Unit = {},
     onAddSavedName: (String) -> Unit = {},
-    onRedeemPromoCode: (String) -> Boolean = { false }
+    onRedeemPromoCode: (String) -> Boolean = { false },
+    onImportData: (String) -> Unit = {}
 ) {
     var showExportDialog by remember { mutableStateOf(false) }
     var showReportExportDialog by remember { mutableStateOf(false) }
@@ -137,6 +140,21 @@ fun SettingsDialog(
     var cosmicThemeEnabled by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            try {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                val jsonString = inputStream?.bufferedReader().use { reader -> reader?.readText() } ?: ""
+                if (jsonString.isNotBlank()) {
+                    onImportData(jsonString)
+                }
+            } catch (e: Exception) {
+                Toast.makeText(context, "Error reading import file: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     val initialName = astrologyProfile?.userName ?: ""
     var userNameFieldValue by remember { mutableStateOf(TextFieldValue(text = initialName, selection = TextRange(initialName.length))) }
     var isNameSaved by remember { mutableStateOf(false) }
@@ -718,6 +736,20 @@ fun SettingsDialog(
                                 Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text("Export Raw Assessment Data (.json)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+
+                            OutlinedButton(
+                                onClick = { importLauncher.launch("application/json") },
+                                shape = RoundedCornerShape(12.dp),
+                                border = BorderStroke(1.dp, CelestialGold),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(44.dp)
+                                    .testTag("settings_import_data_button")
+                            ) {
+                                Icon(Icons.Default.CloudUpload, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text("Import Raw Assessment Data (.json)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
                             Button(

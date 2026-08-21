@@ -311,7 +311,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
             _isGeneratingReport.value = true
             val successConsume = repository.consumeGemForReport(sub)
             if (successConsume) {
-                val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value)
+                val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value, nameMeaningReport.value)
                 _selectedReport.value = report
                 onSuccess(report)
             } else {
@@ -335,7 +335,8 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
                 val report = repository.generateAndSaveMasterMetaReport(
                     savedReports.value,
                     testResults.value,
-                    astrologyProfile.value
+                    astrologyProfile.value,
+                    nameMeaningReport.value
                 )
                 _selectedReport.value = report
                 onSuccess(report)
@@ -354,7 +355,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
             val newSub = userSubscription.value
             val successConsume = repository.consumeGemForReport(newSub)
             if (successConsume) {
-                val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value)
+                val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value, nameMeaningReport.value)
                 _selectedReport.value = report
                 onSuccess(report)
             }
@@ -371,6 +372,17 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
             _selectedReport.value = report
             onSuccess(report)
             _isGeneratingReport.value = false
+        }
+    }
+
+    fun importJsonData(jsonString: String, onSuccess: (Int, Boolean) -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val (count, profileUpdated) = repository.importRawJsonData(jsonString)
+                onSuccess(count, profileUpdated)
+            } catch (e: Exception) {
+                onError(e.localizedMessage ?: "Failed to import JSON data")
+            }
         }
     }
 

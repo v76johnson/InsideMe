@@ -22,5 +22,8 @@ data class UserSubscription(
 ) {
     val hasAdFreePass: Boolean
         get() = isPremium || (adFreeUntilMillis > System.currentTimeMillis())
+
+    val isMonthlyOrYearly: Boolean
+        get() = tier == SubscriptionTier.MONTHLY_PRO || tier == SubscriptionTier.ANNUAL_PRO
 }
 

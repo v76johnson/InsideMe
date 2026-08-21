@@ -1,0 +1,75 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Gradle 8.9
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: '8.9'
+
+    - name: Pre-generate local debug.keystore
+      run: |
+        mkdir -p ~/.android
+        keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" || true
+        cp ~/.android/debug.keystore ./debug.keystore || true
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew 2>/dev/null || true
+
+    - name: Build with Gradle
+      run: |
+        if [ -f "./gradlew" ]; then
+          ./gradlew assembleDebug --no-daemon
+        else
+          gradle assembleDebug --no-daemon
+        fi
+
+    - name: Sign Android APK with Constant Key
+      run: |
+        APK_FILE=$(find app/build/outputs/apk -name "*.apk" -not -name "*androidTest*" | head -n 1)
+        if [ -n "$APK_FILE" ]; then
+          echo "Signing APK at: $APK_FILE"
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA256 -keystore ./debug.keystore -storepass android -keypass android "$APK_FILE" androiddebugkey
+        else
+          echo "Error: No APK found to sign!" >&2
+          exit 1
+        fi
+
+    - name: Prepare InsideMe.apk
+      run: |
+        mkdir -p build-apks
+        APK_PATH=$(find app/build/outputs/apk -name "*.apk" -not -name "*androidTest*" | head -n 1)
+        if [ -n "$APK_PATH" ]; then
+          echo "Found signed APK at: $APK_PATH"
+          cp "$APK_PATH" build-apks/InsideMe.apk
+          ls -lh build-apks/
+        else
+          echo "Error: No APK found in app/build/outputs/apk!" >&2
+          find app/build -type f -name "*.apk" || true
+          exit 1
+        fi
+
+    - name: Upload InsideMe APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: InsideMe
+        path: build-apks/InsideMe.apk
+        if-no-files-found: error
+        retention-days: 7

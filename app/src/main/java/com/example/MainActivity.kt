@@ -1,6 +1,7 @@
 package com.example
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,6 +72,30 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        try {
+            val internalFile = java.io.File(filesDir, "yourfile.json")
+            val sourceFile = if (internalFile.exists()) {
+                internalFile
+            } else {
+                val existing = filesDir.listFiles { f -> f.name.endsWith(".json") }
+                if (existing != null && existing.isNotEmpty()) existing[0] else internalFile
+            }
+            
+            if (sourceFile.exists()) {
+                val downloadDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
+                if (downloadDir != null) {
+                    if (!downloadDir.exists()) downloadDir.mkdirs()
+                    val destFile = java.io.File(downloadDir, "emergency_backup.json")
+                    sourceFile.copyTo(destFile, overwrite = true)
+                    android.util.Log.d("EmergencyBackup", "Successfully copied internal data to ${destFile.absolutePath}")
+                }
+            } else {
+                android.util.Log.w("EmergencyBackup", "Internal data JSON file not found at ${internalFile.absolutePath}")
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("EmergencyBackup", "Error during emergency backup copy", e)
+        }
+
         setContent {
             val isDark by viewModel.isDarkTheme.collectAsStateWithLifecycle()
             val colorIdx by viewModel.colorSchemeIndex.collectAsStateWithLifecycle()
@@ -83,6 +109,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppContent(viewModel: PsycheViewModel) {
+    val context = LocalContext.current
     var selectedTab by remember { mutableIntStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showFreeMindChatDialog by remember { mutableStateOf(false) }
@@ -252,7 +279,14 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                             )
                         },
                         onUpgradeClicked = { selectedTab = 3 },
-                        onOpenFreeMindChat = { showFreeMindChatDialog = true },
+                        onOpenFreeMindChat = {
+                            if (userSub.isMonthlyOrYearly) {
+                                showFreeMindChatDialog = true
+                            } else {
+                                selectedTab = 3
+                                Toast.makeText(context, "AI discussion and chat about reports are restricted to Monthly or Yearly Psyche+ access.", Toast.LENGTH_LONG).show()
+                            }
+                        },
                         onOpenProfileSetup = { showProfileSetupDialog = true },
                         onOpenNameMeaning = { targetName ->
                             viewModel.startNameAiChat(targetName)
@@ -278,7 +312,14 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         onSelectReport = { viewModel.selectReport(it) },
                         onToggleBookmark = { id, current -> viewModel.toggleBookmark(id, current) },
                         onToggleHabit = { report, idx -> viewModel.toggleHabitCompletion(report, idx) },
-                        onOpenFreeMindChat = { showFreeMindChatDialog = true }
+                        onOpenFreeMindChat = {
+                            if (userSub.isMonthlyOrYearly) {
+                                showFreeMindChatDialog = true
+                            } else {
+                                selectedTab = 3
+                                Toast.makeText(context, "AI discussion and chat about reports are restricted to Monthly or Yearly Psyche+ access.", Toast.LENGTH_LONG).show()
+                            }
+                        }
                     )
 
                     2 -> AstrologyScreen(
@@ -395,7 +436,17 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     onUpdateUserName = { viewModel.updateUserName(it) },
                     onRemoveSavedName = { viewModel.removeSavedNameAddition(it) },
                     onAddSavedName = { viewModel.addSavedNameAddition(it) },
-                    onRedeemPromoCode = { viewModel.redeemPromoCode(it) }
+                    onRedeemPromoCode = { viewModel.redeemPromoCode(it) },
+                    onImportData = { json ->
+                        viewModel.importJsonData(json,
+                            onSuccess = { count, profileUpdated ->
+                                android.widget.Toast.makeText(context, "Successfully imported profile and $count test results!", android.widget.Toast.LENGTH_LONG).show()
+                            },
+                            onError = { err ->
+                                android.widget.Toast.makeText(context, "Import failed: $err", android.widget.Toast.LENGTH_LONG).show()
+                            }
+                        )
+                    }
                 )
             }
 

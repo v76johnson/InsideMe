@@ -13,6 +13,7 @@ import com.example.data.model.DailyHabitItem
 import com.example.data.model.DeepSynthesisReport
 import com.example.data.model.InDepthMatchReport
 import com.example.data.model.MindChatMessage
+import com.example.data.model.NameMeaningReport
 import com.example.data.model.PsychologyTest
 import com.example.data.model.SubscriptionTier
 import com.example.data.model.UserSubscription
@@ -204,6 +205,71 @@ class PsycheRepository(private val database: AppDatabase) {
         database.testResultDao().clearAllTestResults()
     }
 
+    suspend fun importRawJsonData(jsonString: String): Pair<Int, Boolean> {
+        val rootObj = JSONObject(jsonString)
+        var profileConfigured = false
+
+        if (rootObj.has("astrologyProfile")) {
+            val pObj = rootObj.getJSONObject("astrologyProfile")
+            val sunStr = pObj.optString("sunSign", "SCORPIO")
+            val moonStr = pObj.optString("moonSign", "PISCES")
+            val risingStr = pObj.optString("risingSign", "CANCER")
+            val birthDate = pObj.optLong("birthDateMillis", System.currentTimeMillis())
+            val birthTime = pObj.optString("birthTime", "12:00")
+            val birthCity = pObj.optString("birthCity", "")
+
+            val sunSign = ZodiacSign.entries.find { it.displayName.equals(sunStr, true) || it.name.equals(sunStr, true) } ?: ZodiacSign.SCORPIO
+            val moonSign = ZodiacSign.entries.find { it.displayName.equals(moonStr, true) || it.name.equals(moonStr, true) } ?: ZodiacSign.PISCES
+            val risingSign = ZodiacSign.entries.find { it.displayName.equals(risingStr, true) || it.name.equals(risingStr, true) } ?: ZodiacSign.CANCER
+
+            val entity = com.example.data.local.AstrologyProfileEntity(
+                birthDateMillis = birthDate,
+                birthTime = birthTime,
+                birthCity = birthCity,
+                sunSignName = sunSign.name,
+                moonSignName = moonSign.name,
+                risingSignName = risingSign.name,
+                userName = pObj.optString("userName", "Seeker"),
+                savedNameAdditionsJson = "",
+                isProfileConfigured = true
+            )
+            database.astrologyProfileDao().saveAstrologyProfile(entity)
+            profileConfigured = true
+        }
+
+        var importedCount = 0
+        if (rootObj.has("completedAssessmentResults")) {
+            val resultsArr = rootObj.getJSONArray("completedAssessmentResults")
+            for (i in 0 until resultsArr.length()) {
+                val itemObj = resultsArr.getJSONObject(i)
+                val testId = itemObj.optString("testId", "test_$i")
+                val testTitle = itemObj.optString("testTitle", "Imported Assessment")
+                val completedAt = itemObj.optLong("completedAtMillis", System.currentTimeMillis())
+                val dominant = itemObj.optString("dominantArchetype", "Seeker")
+                val summary = itemObj.optString("summaryText", "Imported raw data test result.")
+
+                val scoresObj = itemObj.optJSONObject("traitScores")
+                val scoresJson = scoresObj?.toString() ?: "{}"
+
+                val answersArr = itemObj.optJSONArray("questionAnswers")
+                val answersJson = answersArr?.toString() ?: "[]"
+
+                val testEntity = TestResultEntity(
+                    testId = testId,
+                    testTitle = testTitle,
+                    completedAtMillis = completedAt,
+                    dominantArchetype = dominant,
+                    scoresJson = scoresJson,
+                    summaryText = summary,
+                    answersJson = answersJson
+                )
+                database.testResultDao().insertTestResult(testEntity)
+                importedCount++
+            }
+        }
+        return Pair(importedCount, profileConfigured)
+    }
+
     suspend fun saveAstrologyProfile(profile: AstrologyProfile) {
         val entity = AstrologyProfileEntity(
             birthDateMillis = profile.birthDateMillis,
@@ -225,9 +291,10 @@ class PsycheRepository(private val database: AppDatabase) {
 
     suspend fun generateAndSaveReport(
         testResults: List<TestResultEntity>,
-        astroProfile: AstrologyProfile?
+        astroProfile: AstrologyProfile?,
+        nameMeaningReport: NameMeaningReport? = null
     ): DeepSynthesisReport {
-        val report = GeminiReportGenerator.generateDeepReport(testResults, astroProfile)
+        val report = GeminiReportGenerator.generateDeepReport(testResults, astroProfile, nameMeaningReport)
 
         val entity = SavedReportEntity(
             id = report.id,
@@ -251,9 +318,10 @@ class PsycheRepository(private val database: AppDatabase) {
     suspend fun generateAndSaveMasterMetaReport(
         savedReports: List<DeepSynthesisReport>,
         testResults: List<TestResultEntity>,
-        astroProfile: AstrologyProfile?
+        astroProfile: AstrologyProfile?,
+        nameMeaningReport: NameMeaningReport? = null
     ): DeepSynthesisReport {
-        val report = GeminiReportGenerator.generateMasterMetaAnalysisReport(savedReports, testResults, astroProfile)
+        val report = GeminiReportGenerator.generateMasterMetaAnalysisReport(savedReports, testResults, astroProfile, nameMeaningReport)
 
         val entity = SavedReportEntity(
             id = report.id,

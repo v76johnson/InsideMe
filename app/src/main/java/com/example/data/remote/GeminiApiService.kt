@@ -382,7 +382,8 @@ object GeminiReportGenerator {
 
     suspend fun generateDeepReport(
         testResults: List<TestResultEntity>,
-        astroProfile: AstrologyProfile?
+        astroProfile: AstrologyProfile?,
+        nameMeaningReport: NameMeaningReport? = null
     ): DeepSynthesisReport = withContext(Dispatchers.IO) {
         val apiKey = BuildConfig.GEMINI_API_KEY
         if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
@@ -390,7 +391,7 @@ object GeminiReportGenerator {
         }
 
         val prompt = buildString {
-            append("You are an expert psychological astrologer, psychometrician, and behavioral strategist. Generate an exceptionally exhaustive, deeply empowering personalized report (deeppersonality.app style depth) combining the user's psychological test scores and astrological birth chart profile with rigorous detail across every section.\n\n")
+            append("You are an expert psychological astrologer, psychometrician, and behavioral strategist. Generate an exceptionally exhaustive, deeply empowering personalized report (deeppersonality.app style depth) combining the user's psychological test scores, astrological birth chart profile, and name meaning onomastic report with rigorous detail across every section.\n\n")
             append("PSYCHOLOGICAL SCORES:\n")
             if (testResults.isEmpty()) {
                 append("- Default Assessment: Balanced introspective seeker with high cognitive complexity\n")
@@ -406,6 +407,16 @@ object GeminiReportGenerator {
                 append("- Rising Sign: ${astroProfile.risingSign.displayName}\n")
             } else {
                 append("- Sun Sign: Scorpio, Moon Sign: Pisces, Rising Sign: Cancer\n")
+            }
+            append("\nNAME MEANING & ONOMASTIC PROFILE:\n")
+            if (nameMeaningReport != null) {
+                append("- Name: ${nameMeaningReport.name}\n")
+                append("- Etymologies: ${nameMeaningReport.etymologies.joinToString("; ") { "${it.languageOrCulture}: ${it.literalMeaning}" }}\n")
+                append("- Parental Intent Category: ${nameMeaningReport.parentalIntentCategory}\n")
+                append("- Personality & Behavioral Effects: ${nameMeaningReport.personalityEffects}\n")
+                append("- Numerological Vibration: ${nameMeaningReport.numerologicalVibration}\n")
+            } else {
+                append("- User Name: ${astroProfile?.userName ?: "Seeker"}\n")
             }
             append("\nSTRICT REQUIREMENT: Ensure all sections are deeply detailed, comprehensive, and exhaustive with multi-paragraph explanations.\n")
             append("Format your response as structured sections separated by '---SECTION---':\n")
@@ -530,51 +541,53 @@ object GeminiReportGenerator {
         val moon = astroProfile?.moonSign ?: ZodiacSign.PISCES
         val rising = astroProfile?.risingSign ?: ZodiacSign.CANCER
 
-        val dominantArchetypes = testResults.joinToString(", ") { it.dominantArchetype }.ifEmpty { "Intuitive Strategist (INFJ & Type 4)" }
+        val dominantArchetypes = testResults.joinToString(", ") { it.dominantArchetype }.ifEmpty { "The Still Architect & Strategic Visionary" }
 
-        val title = "Deep Synthesis: ${sun.displayName} Sun & ${dominantArchetypes}"
+        val title = "Comprehensive Psycho-Astrological Synthesis: ${sun.displayName} Sun & ${dominantArchetypes}"
 
         return DeepSynthesisReport(
             id = UUID.randomUUID().toString(),
             title = title,
-            archetypeSummary = "The Master Alchemist: Unified Mind & Cosmic Blueprint",
+            archetypeSummary = "The Master Alchemist: Unified Mind, Deep Personality Profile & Natal Blueprint",
             coreTraits = listOf(
-                "Perceptive Emotional Radar (${moon.displayName} Moon)",
-                "Relentless Strategic Autonomy (${sun.displayName} Sun)",
-                "Protective & Inviting External Aura (${rising.displayName} Rising)",
+                "Perceptive Emotional Radar & Intuitive Attunement (${moon.displayName} Moon)",
+                "Relentless Strategic Autonomy & Entrepreneurial Drive (${sun.displayName} Sun)",
+                "Protective, Gentle & Deeply Grounded External Aura (${rising.displayName} Rising)",
                 "High Openness & Abstract Cognitive Complexity",
-                "Deep Resilience Under Psychological Stress"
+                "Advanced Self-Correction & High Internal Awareness"
             ),
-            psychologicalBreakdown = "### 🧠 Deep Psychological Breakdown\n\n" +
-                    "Your cognitive and personality profile reflects an exceptional alignment between deep analytical introspection and heightened emotional receptivity. " +
-                    "Across your psychological test assessments, your results reveal a dominant cognitive style focused on synthesizing abstract patterns, decoding subtle interpersonal nuances, and maintaining high standards of personal agency.\n\n" +
-                    "Unlike conventional personalities that lean exclusively towards either cold logic or ungrounded emotion, your cognitive architecture functions as a bridge. " +
-                    "You possess the mental discipline required to dissect complex problems objectively, alongside an empathetic radar that grasps the unsaid motivations of others. " +
-                    "Under pressure, your primary coping strategy relies on internal reflection and strategic re-framing rather than impulsive reaction.",
-            astrologicalSynthesis = "### 🌌 Natal Chart Cosmic Matrix\n\n" +
-                    "Your astrological Trinity acts as the foundational energetic framework for your mind:\n\n" +
-                    "• **The Core Vitality (${sun.displayName} Sun in ${sun.element.displayName}):** Your core driver centers on transformation, unwavering focus, and authentic self-expression. You operate best when aligned with deep purpose and total ownership over your life path.\n" +
-                    "• **The Inner Sanctuary (${moon.displayName} Moon in ${moon.element.displayName}):** Your emotional core is anchored by vivid imaginative depth and intuitive wisdom. You absorb subtle environmental shifts effortlessly, making rest and quiet recalibration essential for maintaining optimal focus.\n" +
-                    "• **The Exterior Doorway (${rising.displayName} Rising in ${rising.element.displayName}):** You present an aura of calm, perceptive dignity. People naturally feel drawn to your steady presence and trust your judgment in moments of crisis.",
+            psychologicalBreakdown = "### 🧠 Deep Psychometric & Personality Breakdown\n\n" +
+                    "Your cognitive and personality profile reflects an exceptional alignment between deep analytical introspection and heightened emotional receptivity. Across your psychometric test assessments, your results reveal a dominant cognitive style focused on synthesizing abstract patterns, decoding subtle interpersonal nuances, and maintaining uncompromising personal agency.\n\n" +
+                    "**1. Core Personality & Emotional Architecture:**\n" +
+                    "You feel things with profound depth but have learned to maintain a poised, measured exterior. This protective dissociation or controlled composure is not coldness; it is a precision-engineered architecture designed to keep your inner sanctuary secure while you navigate a demanding world. You possess an innate emotional accuracy, reading unspoken room dynamics instantly.\n\n" +
+                    "**2. The Inner System (Protectors & Exiles):**\n" +
+                    "Your internal landscape is governed by highly coordinated protective patterns—primarily **The Controller** (managing outcomes and avoiding chaos) and **The Sentinel** (high-alert scanning for boundary violations or unexpected threats). Beneath these functional protectors lies your exile theme—often a deep search for authentic meaning and connection that transcends surface-level interactions.\n\n" +
+                    "**3. Neurodiversity & Cognitive Style:**\n" +
+                    "Your cognitive processing favors holistic pattern recognition and deep focus. You process complex situations cognitively first, synthesizing emotional data into clear logical frameworks before acting. This creates remarkable problem-solving capability and unwavering resilience under pressure.",
+            astrologicalSynthesis = "### 🌌 Natal Chart & Cosmic Matrix Analysis\n\n" +
+                    "Your astrological Trinity and planetary placements provide a profound blueprint for your life path:\n\n" +
+                    "• **The Core Vitality (${sun.displayName} Sun in ${sun.element.displayName}):** Positioned in the Tenth House of Career and Public Standing, your Sun drives an unyielding ambition for mastery, autonomy, and professional legacy. You are uncomfortable taking arbitrary orders and thrive when steering your own ship.\n" +
+                    "• **The Inner Sanctuary (${moon.displayName} Moon in ${moon.element.displayName}):** Resting in the Seventh House of Partnerships, your Lunar placement makes one-to-one connections central to your emotional evolution. You seek deep attunement and intellectual partnership, pairing brilliant intuition with a distinct need for personal freedom.\n" +
+                    "• **The Exterior Doorway (${rising.displayName} Rising in ${rising.element.displayName}):** Your Cancer Ascendant creates an immediate impression of warmth, approachability, and empathetic attunement, masking your inner fiery independence with grace and gentle humor.\n\n" +
+                    "**Planetary Aspects & Elemental Balance:**\n" +
+                    "Harmonious conjunctions (such as Sun conjunct Midheaven and Moon conjunct Pluto) grant you intense psychological stamina, strategic vision, and the ability to transform obstacles into catalysts for profound personal reinvention.",
             shadowWorkInsights = listOf(
-                "Recognize when self-preservation turns into unnecessary emotional isolation or aloofness.",
-                "Practice expressing vulnerable boundaries before stress builds to critical mass.",
-                "Balance high perfectionist ideals with compassionate self-acceptance.",
-                "Beware of over-analyzing emotional motives when simple honest dialogue suffices.",
-                "Acknowledge the physical fatigue caused by taking on emotional burdens from your environment."
+                "Recognize when self-preservation turns into unnecessary emotional isolation or preemptive withdrawal.",
+                "Notice the pattern of preemptive apology—pausing 60 seconds before apologizing to ensure you are repairing rather than smoothing over unresolved boundaries.",
+                "Balance high perfectionist standards with unconditional self-compassion.",
+                "Channel your high stimulation-seeking values into structured creative projects rather than abandoning them midway.",
+                "Acknowledge that your need for absolute autonomy and your desire for deep connection can coexist through honest, explicit communication."
             ),
             careerAndPurposeAdvice = "### 🚀 Career, Purpose & Professional Mastery\n\n" +
-                    "You thrive in high-autonomy environments where strategic vision, creative innovation, and human empathy intersect. " +
-                    "Your ideal career path permits independent decision-making and offers tangible meaning rather than repetitive routine.\n\n" +
-                    "• **Optimal Work Conditions:** Independent strategic roles, leadership position in mission-driven ventures, executive counseling, creative direction, or psychological research.\n" +
+                    "You thrive in high-autonomy environments where strategic vision, creative innovation, and human impact intersect. Your ideal career path permits independent decision-making and offers tangible meaning rather than repetitive routine.\n\n" +
+                    "• **Optimal Work Conditions:** Independent entrepreneurial ventures, strategic leadership, creative direction, psychological research, or advisory roles where you direct the overarching architecture.\n" +
                     "• **Leadership Style:** Empathetic yet decisive. You lead by example, inspiring trust through competence, integrity, and quiet authority.\n" +
-                    "• **Growth Key:** Avoid micro-management traps by delegating operational mechanics while retaining vision control.",
+                    "• **Motivation Balance:** Driven equally by intrinsic mastery and external financial independence, ensuring your work fuels both personal passion and sovereign security.",
             relationshipPlaybook = "### 💖 Interpersonal & Relationship Playbook\n\n" +
-                    "In intimate and professional relationships, you require both profound emotional depth and sacred personal space. " +
-                    "Surface-level small talk leaves you drained, whereas authentic vulnerability and intellectual synergy fuel your connection.\n\n" +
-                    "• **Communication Strategy:** Pair clear verbal statements with explicit appreciation for your partner's love language. Do not expect others to read non-verbal cues.\n" +
-                    "• **Emotional Safety:** Establish clear personal boundaries early, ensuring both you and your partner feel respected and understood.\n" +
-                    "• **Conflict Resolution:** Step back during heated moments to process emotions internally, then re-engage with calm clarity.",
+                    "In intimate and professional relationships, you require both profound emotional attunement and sacred personal space. Surface-level small talk leaves you drained, whereas authentic vulnerability and intellectual synergy fuel your connection.\n\n" +
+                    "• **Communication Strategy:** Pair clear verbal statements with explicit appreciation for your partner's love language. Name your boundaries before they are crossed rather than reacting defensively.\n" +
+                    "• **Conflict Architecture:** Step back during heated moments to process emotions internally, then re-engage with calm clarity.\n" +
+                    "• **Green Flags:** Partners who validate your emotional depth, respect your need for quiet presence, and communicate with radical transparency.",
             dailyActionPlan = createDefault7DayPlan(sun.displayName),
             isGeneratedByAi = false
         )
@@ -595,7 +608,8 @@ object GeminiReportGenerator {
     suspend fun generateMasterMetaAnalysisReport(
         savedReports: List<DeepSynthesisReport>,
         testResults: List<TestResultEntity>,
-        astroProfile: AstrologyProfile?
+        astroProfile: AstrologyProfile?,
+        nameMeaningReport: NameMeaningReport? = null
     ): DeepSynthesisReport = withContext(Dispatchers.IO) {
         val apiKey = BuildConfig.GEMINI_API_KEY
         if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
@@ -604,8 +618,8 @@ object GeminiReportGenerator {
 
         val prompt = buildString {
             append("You are a world-class psychological astrologer, narrative therapist, and meta-analytic counselor. ")
-            append("The user has generated multiple personal reports and assessment results over time. ")
-            append("Analyze ALL personal reports and test scores TOGETHER to produce a comprehensive Master Personal Meta-Analysis Report that cross-synthesizes what they all mean in combination.\n\n")
+            append("The user has generated multiple personal reports, assessment results, and name meaning onomastic reports over time. ")
+            append("Analyze ALL personal reports, test scores, and name profiles TOGETHER to produce a comprehensive Master Personal Meta-Analysis Report that cross-synthesizes what they all mean in combination.\n\n")
 
             append("SAVED PERSONAL REPORTS TO SYNTHESIZE (${savedReports.size} total):\n")
             if (savedReports.isEmpty()) {
@@ -636,6 +650,15 @@ object GeminiReportGenerator {
                 append("- Rising: ${astroProfile.risingSign.displayName}\n")
             } else {
                 append("- Sun: Scorpio, Moon: Pisces, Rising: Cancer\n")
+            }
+
+            append("\nNAME MEANING & ONOMASTIC PROFILE:\n")
+            if (nameMeaningReport != null) {
+                append("- Name: ${nameMeaningReport.name}\n")
+                append("- Etymologies: ${nameMeaningReport.etymologies.joinToString("; ") { "${it.languageOrCulture}: ${it.literalMeaning}" }}\n")
+                append("- Personality Effects: ${nameMeaningReport.personalityEffects}\n")
+            } else {
+                append("- User Name: ${astroProfile?.userName ?: "Seeker"}\n")
             }
 
             append("\nTask: Perform a deep, interconnected meta-synthesis explaining how all these individual reports intersect, validate each other, and reveal the user's master overarching identity.\n")
