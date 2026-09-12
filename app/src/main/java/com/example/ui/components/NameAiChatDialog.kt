@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +39,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -193,52 +195,47 @@ fun NameAiChatDialog(
                         .border(1.dp, CelestialGold.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
                 ) {
                     Column(modifier = Modifier.padding(10.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Text(
+                            text = "Active App Name: \"${report?.name ?: currentMainName}\"",
+                            color = CelestialGold,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Etymology & Psychological Blueprint • Click to set or analyze another",
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 10.5.sp
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = {
+                                val nameToSet = report?.name ?: currentMainName
+                                if (nameToSet.isNotBlank()) {
+                                    onSetMainName(nameToSet)
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = CelestialGold),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("set_as_app_name_btn")
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Active App Name: \"${report?.name ?: currentMainName}\"",
-                                    color = CelestialGold,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "Vibration: ${report?.numerologicalVibration ?: "Universal"} • Click to set or analyze another",
-                                    color = Color.White.copy(alpha = 0.7f),
-                                    fontSize = 10.5.sp
-                                )
-                            }
-
-                            Row {
-                                Button(
-                                    onClick = {
-                                        val nameToSet = report?.name ?: currentMainName
-                                        if (nameToSet.isNotBlank()) {
-                                            onSetMainName(nameToSet)
-                                        }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = CelestialGold),
-                                    shape = RoundedCornerShape(8.dp),
-                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                                    modifier = Modifier.testTag("set_as_app_name_btn")
-                                ) {
-                                    Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Black, modifier = Modifier.size(14.dp))
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Set as App Name", color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                                }
-
-                                Spacer(modifier = Modifier.width(6.dp))
-
-                                IconButton(
-                                    onClick = { showEditField = !showEditField },
-                                    modifier = Modifier.size(32.dp)
-                                ) {
-                                    Icon(Icons.Default.Edit, contentDescription = "Analyze New Name", tint = CelestialGold, modifier = Modifier.size(16.dp))
-                                }
-                            }
+                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color.Black, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Set as App Name", color = Color.Black, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        OutlinedButton(
+                            onClick = { showEditField = !showEditField },
+                            shape = RoundedCornerShape(8.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = CelestialGold),
+                            border = BorderStroke(1.dp, CelestialGold.copy(alpha = 0.6f)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.Edit, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Analyze New Name", color = CelestialGold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
 
                         if (showEditField) {

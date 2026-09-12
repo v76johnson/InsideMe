@@ -105,15 +105,15 @@ object GeminiReportGenerator {
         }
 
         return "🔮 *Ah, seeker... The tarot whispers and the stars align for you.* \n\n" +
-                "As I gaze into the celestial veil regarding your inquiry — *\"$question\"* — I see the threads of your cosmic triad ($sun Sun, $moon Moon, $rising Rising) weaving a powerful story of destiny and self-mastery.\n\n" +
-                "### 🌌 The Seer's Insights on Your Query\n" +
-                "• **Your Radiant Core ($sun Sun):** The fire within your $sun sign illuminates this path. Do not let doubt obscure your authentic inner voice; your truth is your greatest compass.\n" +
-                "• **Your Hidden Tides ($moon Moon):** Your $moon intuition is speaking softly beneath the surface. Pay attention to the gut feelings and dreams visiting you lately—they hold the key to emotional clarity.\n" +
-                "• **Your Outer Mask ($rising Rising):** Through your $rising Ascendant, the universe tests your courage. Step forward with graceful resolve and unshakeable inner boundaries.\n\n" +
-                "### 🕯️ Guidance & Ritual for Today\n" +
-                "1. **The Midnight Reflection:** Light a candle tonight, state your intention clearly, and trust that the answers are already unfolding within your spirit.\n" +
-                "2. **Mindful Grounding:** Breathe deeply into your center, releasing anxieties over what you cannot control.\n" +
-                "3. **Trust the Process:** The stars favor patience and mindful action right now."
+                "As I gaze into the celestial veil regarding your inquiry — *\"$question\"* — I see the profound threads of your cosmic triad ($sun Sun, $moon Moon, $rising Rising) weaving a powerful story of destiny, psychological transformation, and self-mastery.\n\n" +
+                "### 🌌 The Seer's Deep Astrological Synthesis\n" +
+                "• **Your Radiant Core ($sun Sun):** The unyielding fire and focused drive within your $sun sign illuminates this path. You are being called to step into complete sovereign ownership of your life direction. Do not let external expectations obscure your authentic inner voice; your truth is your greatest compass.\n" +
+                "• **Your Hidden Tides ($moon Moon):** Your $moon intuition is speaking with immense clarity beneath the surface. Pay close attention to the intuitive hits, synchronicities, and emotional resonances visiting you lately—they hold the precise key to your psychological liberation and inner peace.\n" +
+                "• **Your Outer Mask & Ascendant ($rising Rising):** Through your $rising Ascendant, the universe reflects how you process external challenges. Step forward with graceful resolve, fierce emotional intelligence, and unshakeable inner boundaries.\n\n" +
+                "### 🗝️ Practical Cosmic & Psychological Guidance\n" +
+                "1. **Embrace Sovereign Autonomy:** Your chart indicates that true breakthroughs occur when you stop seeking validation outside yourself and trust your internal authority.\n" +
+                "2. **Honor Your Need for Sanctuary:** Balance your outer drive with intentional periods of solitude and deep emotional restoration.\n" +
+                "3. **Integration Ritual:** Write down the core obstacle you are facing, meditate on what it is trying to teach your soul, and consciously release the burden of trying to control every outcome."
     }
 
     suspend fun askFreeMindCompanion(

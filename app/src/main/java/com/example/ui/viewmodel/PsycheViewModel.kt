@@ -324,13 +324,13 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
     fun generateMasterMetaReport(onSuccess: (DeepSynthesisReport) -> Unit, onNeedAdOrGems: () -> Unit) {
         val sub = userSubscription.value
         viewModelScope.launch {
-            if (!sub.isPremium && sub.gemsBalance < 10) {
+            if (!sub.isPremium && sub.gemsBalance < 50) {
                 onNeedAdOrGems()
                 return@launch
             }
 
             _isGeneratingReport.value = true
-            val successConsume = repository.consumeGemForReport(sub)
+            val successConsume = repository.consumeGemsForSynthesis(sub)
             if (successConsume) {
                 val report = repository.generateAndSaveMasterMetaReport(
                     savedReports.value,

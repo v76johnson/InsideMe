@@ -230,7 +230,7 @@ fun HomeScreen(
                                         }
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(
-                                            text = "\"${primaryEty?.literalMeaning ?: ""}\" • ${nameReport.numerologicalVibration}",
+                                            text = "\"${primaryEty?.literalMeaning ?: ""}\"",
                                             style = MaterialTheme.typography.bodySmall,
                                             color = Color.White.copy(alpha = 0.9f),
                                             fontSize = 11.sp,

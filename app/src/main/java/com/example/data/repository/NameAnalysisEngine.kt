@@ -32,7 +32,25 @@ object NameAnalysisEngine {
 
     private fun locateNameOrigins(name: String): List<NameEtymologySource> {
         val lower = name.lowercase(Locale.getDefault())
+        val capitalized = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
         return when {
+            lower.contains("anna") || lower.contains("anne") || lower.contains("hannah") -> listOf(
+                NameEtymologySource(
+                    "Origin and Meaning",
+                    "The name $capitalized means 'grace' or 'favor'.",
+                    "• Hebrew Roots: The name comes from the Hebrew name Hannah. It grows from a word that means to show kindness or favor.\n• Latin Meaning: In ancient Rome, the name was also tied to a word meaning 'the year's cycle' or the passing of time.\n• Global Appeal: People use this classic name in many languages and cultures around the world."
+                ),
+                NameEtymologySource(
+                    "Religious and Cultural History",
+                    "Sacred Heritage & New Testament Legacy",
+                    "• Bible: An older woman named Anna appears in the New Testament as a prophet who meets the infant Jesus.\n• Tradition: Christian tradition names Saint Anne as the mother of Mary and the grandmother of Jesus."
+                ),
+                NameEtymologySource(
+                    "Common Variations",
+                    "Spelling & Cultural Forms",
+                    "• Anne / Ann: Common in English and French.\n• Ana: Common in Spanish and Portuguese.\n• Anya: Common in Russian.\n• Hannah: The original Hebrew form."
+                )
+            )
             lower.contains("alex") -> listOf(
                 NameEtymologySource("Greek (Classical)", "Defender of Mankind / Protector of Men", "Derived from 'Alexein' (to ward off) and 'Aner' (man). Associated with warrior leaders and strategic defenders. Famous Bearers: Alexander the Great, Alexander Hamilton."),
                 NameEtymologySource("Latin / Imperial", "Chivalrous Ruler & Sovereign", "Adopted widely across Roman and Byzantine dynasties as a mark of high governance and intellectual courage."),

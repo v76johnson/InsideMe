@@ -590,6 +590,38 @@ fun NameMeaningReportDialog(
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
+
+                        // Oracle Prompt Guidance Card
+                        Card(
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = CelestialGold.copy(alpha = 0.15f)),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(1.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                        ) {
+                            Column(modifier = Modifier.padding(14.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(18.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "✨ ASK THE NAME ORACLE",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = CelestialGold,
+                                        letterSpacing = 1.sp
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "You can ask the Name Oracle about anything to do with name meanings, origins, personality effects, numerology, and more!",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    lineHeight = 17.sp
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
 

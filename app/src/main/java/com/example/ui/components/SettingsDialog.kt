@@ -739,7 +739,7 @@ fun SettingsDialog(
                             }
 
                             OutlinedButton(
-                                onClick = { importLauncher.launch("application/json") },
+                                onClick = { importLauncher.launch("*/*") },
                                 shape = RoundedCornerShape(12.dp),
                                 border = BorderStroke(1.dp, CelestialGold),
                                 modifier = Modifier
@@ -749,7 +749,7 @@ fun SettingsDialog(
                             ) {
                                 Icon(Icons.Default.CloudUpload, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Import Raw Assessment Data (.json)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text("Import Test Answers & Data (.json, .pdf)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
 
                             Button(
@@ -813,13 +813,13 @@ fun SettingsDialog(
                             Button(
                                 onClick = {
                                     val intent = Intent(Intent.ACTION_SENDTO).apply {
-                                        data = Uri.parse("mailto:support@psycheapp.com")
+                                        data = Uri.parse("mailto:vsingleton76@gmail.com")
                                         putExtra(Intent.EXTRA_SUBJECT, "InsideMe App Support & Inquiry")
                                     }
                                     try {
                                         context.startActivity(intent)
                                     } catch (_: Exception) {
-                                        Toast.makeText(context, "Support email: support@psycheapp.com", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(context, "Support email: vsingleton76@gmail.com", Toast.LENGTH_LONG).show()
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),

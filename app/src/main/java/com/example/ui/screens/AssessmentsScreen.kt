@@ -582,7 +582,7 @@ fun AssessmentsScreen(
                             Icon(Icons.Default.Psychology, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(24.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "MULTI-REPORT META-ANALYSIS",
+                                text = "REPORT SYNTHESIS (PREMIUM FEATURE)",
                                 style = MaterialTheme.typography.labelMedium,
                                 color = CelestialGold,
                                 fontWeight = FontWeight.Bold,
@@ -593,7 +593,7 @@ fun AssessmentsScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Analyze All Personal Reports Together",
+                            text = "Full Report Synthesis of All Data",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
@@ -608,6 +608,52 @@ fun AssessmentsScreen(
                             color = Color.White.copy(alpha = 0.8f),
                             textAlign = TextAlign.Center
                         )
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Pricing & Advisory Banner
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = CelestialGold.copy(alpha = 0.12f),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold.copy(alpha = 0.4f)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Full Synthesis Report:",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = CelestialGold
+                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = "$9.99",
+                                            style = MaterialTheme.typography.bodySmall.copy(textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough),
+                                            color = Color.White.copy(alpha = 0.5f)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = "$4.99 Sale",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = CelestialGold
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "💡 Advisory: Review or share free bonus reports (10 gems) apply to standard reports and do NOT cover synthesis reports ($4.99). For best results, complete all core assessments and Name Meaning prior to generating your synthesis report.",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    lineHeight = 16.sp
+                                )
+                            }
+                        }
 
                         Spacer(modifier = Modifier.height(16.dp))
 

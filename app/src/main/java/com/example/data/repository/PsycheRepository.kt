@@ -206,52 +206,118 @@ class PsycheRepository(private val database: AppDatabase) {
     }
 
     suspend fun importRawJsonData(jsonString: String): Pair<Int, Boolean> {
-        val rootObj = JSONObject(jsonString)
-        var profileConfigured = false
-
-        if (rootObj.has("astrologyProfile")) {
-            val pObj = rootObj.getJSONObject("astrologyProfile")
-            val sunStr = pObj.optString("sunSign", "SCORPIO")
-            val moonStr = pObj.optString("moonSign", "PISCES")
-            val risingStr = pObj.optString("risingSign", "CANCER")
-            val birthDate = pObj.optLong("birthDateMillis", System.currentTimeMillis())
-            val birthTime = pObj.optString("birthTime", "12:00")
-            val birthCity = pObj.optString("birthCity", "")
-
-            val sunSign = ZodiacSign.entries.find { it.displayName.equals(sunStr, true) || it.name.equals(sunStr, true) } ?: ZodiacSign.SCORPIO
-            val moonSign = ZodiacSign.entries.find { it.displayName.equals(moonStr, true) || it.name.equals(moonStr, true) } ?: ZodiacSign.PISCES
-            val risingSign = ZodiacSign.entries.find { it.displayName.equals(risingStr, true) || it.name.equals(risingStr, true) } ?: ZodiacSign.CANCER
-
-            val entity = com.example.data.local.AstrologyProfileEntity(
-                birthDateMillis = birthDate,
-                birthTime = birthTime,
-                birthCity = birthCity,
-                sunSignName = sunSign.name,
-                moonSignName = moonSign.name,
-                risingSignName = risingSign.name,
-                userName = pObj.optString("userName", "Seeker"),
-                savedNameAdditionsJson = "",
-                isProfileConfigured = true
-            )
-            database.astrologyProfileDao().saveAstrologyProfile(entity)
-            profileConfigured = true
-        }
-
         var importedCount = 0
-        if (rootObj.has("completedAssessmentResults")) {
-            val resultsArr = rootObj.getJSONArray("completedAssessmentResults")
-            for (i in 0 until resultsArr.length()) {
-                val itemObj = resultsArr.getJSONObject(i)
-                val testId = itemObj.optString("testId", "test_$i")
-                val testTitle = itemObj.optString("testTitle", "Imported Assessment")
-                val completedAt = itemObj.optLong("completedAtMillis", System.currentTimeMillis())
-                val dominant = itemObj.optString("dominantArchetype", "Seeker")
-                val summary = itemObj.optString("summaryText", "Imported raw data test result.")
+        var profileConfigured = false
+        val trimmed = jsonString.trim()
 
-                val scoresObj = itemObj.optJSONObject("traitScores")
+        try {
+            if (trimmed.startsWith("[")) {
+                val resultsArr = JSONArray(trimmed)
+                for (i in 0 until resultsArr.length()) {
+                    val itemObj = resultsArr.optJSONObject(i) ?: continue
+                    val testId = itemObj.optString("testId", "test_$i")
+                    val testTitle = itemObj.optString("testTitle", "Imported Assessment")
+                    val completedAt = itemObj.optLong("completedAtMillis", System.currentTimeMillis())
+                    val dominant = itemObj.optString("dominantArchetype", "Seeker")
+                    val summary = itemObj.optString("summaryText", "Imported test result.")
+                    val scoresObj = itemObj.optJSONObject("traitScores")
+                    val scoresJson = scoresObj?.toString() ?: "{}"
+                    val answersArr = itemObj.optJSONArray("questionAnswers") ?: itemObj.optJSONArray("answers")
+                    val answersJson = answersArr?.toString() ?: "[]"
+
+                    val testEntity = TestResultEntity(
+                        testId = testId,
+                        testTitle = testTitle,
+                        completedAtMillis = completedAt,
+                        dominantArchetype = dominant,
+                        scoresJson = scoresJson,
+                        summaryText = summary,
+                        answersJson = answersJson
+                    )
+                    database.testResultDao().insertTestResult(testEntity)
+                    importedCount++
+                }
+                return Pair(importedCount, profileConfigured)
+            }
+
+            val rootObj = JSONObject(trimmed)
+
+            if (rootObj.has("astrologyProfile")) {
+                val pObj = rootObj.getJSONObject("astrologyProfile")
+                val sunStr = pObj.optString("sunSign", "SCORPIO")
+                val moonStr = pObj.optString("moonSign", "PISCES")
+                val risingStr = pObj.optString("risingSign", "CANCER")
+                val birthDate = pObj.optLong("birthDateMillis", System.currentTimeMillis())
+                val birthTime = pObj.optString("birthTime", "12:00")
+                val birthCity = pObj.optString("birthCity", "")
+
+                val sunSign = ZodiacSign.entries.find { it.displayName.equals(sunStr, true) || it.name.equals(sunStr, true) } ?: ZodiacSign.SCORPIO
+                val moonSign = ZodiacSign.entries.find { it.displayName.equals(moonStr, true) || it.name.equals(moonStr, true) } ?: ZodiacSign.PISCES
+                val risingSign = ZodiacSign.entries.find { it.displayName.equals(risingStr, true) || it.name.equals(risingStr, true) } ?: ZodiacSign.CANCER
+
+                val entity = com.example.data.local.AstrologyProfileEntity(
+                    birthDateMillis = birthDate,
+                    birthTime = birthTime,
+                    birthCity = birthCity,
+                    sunSignName = sunSign.name,
+                    moonSignName = moonSign.name,
+                    risingSignName = risingSign.name,
+                    userName = pObj.optString("userName", "Seeker"),
+                    savedNameAdditionsJson = "",
+                    isProfileConfigured = true
+                )
+                database.astrologyProfileDao().saveAstrologyProfile(entity)
+                profileConfigured = true
+            }
+
+            val assessmentKeys = listOf("completedAssessmentResults", "testResults", "assessmentResults", "results", "answers", "questionAnswers")
+            var foundArray: JSONArray? = null
+            for (key in assessmentKeys) {
+                if (rootObj.has(key)) {
+                    val arr = rootObj.optJSONArray(key)
+                    if (arr != null) {
+                        foundArray = arr
+                        break
+                    }
+                }
+            }
+
+            if (foundArray != null) {
+                for (i in 0 until foundArray.length()) {
+                    val itemObj = foundArray.optJSONObject(i) ?: continue
+                    val testId = itemObj.optString("testId", "test_$i")
+                    val testTitle = itemObj.optString("testTitle", "Imported Assessment")
+                    val completedAt = itemObj.optLong("completedAtMillis", System.currentTimeMillis())
+                    val dominant = itemObj.optString("dominantArchetype", "Seeker")
+                    val summary = itemObj.optString("summaryText", "Imported assessment result.")
+
+                    val scoresObj = itemObj.optJSONObject("traitScores")
+                    val scoresJson = scoresObj?.toString() ?: "{}"
+
+                    val answersArr = itemObj.optJSONArray("questionAnswers") ?: itemObj.optJSONArray("answers")
+                    val answersJson = answersArr?.toString() ?: "[]"
+
+                    val testEntity = TestResultEntity(
+                        testId = testId,
+                        testTitle = testTitle,
+                        completedAtMillis = completedAt,
+                        dominantArchetype = dominant,
+                        scoresJson = scoresJson,
+                        summaryText = summary,
+                        answersJson = answersJson
+                    )
+                    database.testResultDao().insertTestResult(testEntity)
+                    importedCount++
+                }
+            } else if (rootObj.has("testId") || rootObj.has("testTitle") || rootObj.has("dominantArchetype")) {
+                val testId = rootObj.optString("testId", "imported_single")
+                val testTitle = rootObj.optString("testTitle", "Imported Assessment")
+                val completedAt = rootObj.optLong("completedAtMillis", System.currentTimeMillis())
+                val dominant = rootObj.optString("dominantArchetype", "Seeker")
+                val summary = rootObj.optString("summaryText", "Imported assessment result.")
+                val scoresObj = rootObj.optJSONObject("traitScores")
                 val scoresJson = scoresObj?.toString() ?: "{}"
-
-                val answersArr = itemObj.optJSONArray("questionAnswers")
+                val answersArr = rootObj.optJSONArray("questionAnswers") ?: rootObj.optJSONArray("answers")
                 val answersJson = answersArr?.toString() ?: "[]"
 
                 val testEntity = TestResultEntity(
@@ -265,8 +331,34 @@ class PsycheRepository(private val database: AppDatabase) {
                 )
                 database.testResultDao().insertTestResult(testEntity)
                 importedCount++
+            } else {
+                val testEntity = TestResultEntity(
+                    testId = "uploaded_document_${System.currentTimeMillis()}",
+                    testTitle = "Uploaded Test Answers & Document",
+                    completedAtMillis = System.currentTimeMillis(),
+                    dominantArchetype = "Seeker",
+                    scoresJson = "{\"Uploaded\": 100}",
+                    summaryText = trimmed.take(1500),
+                    answersJson = "[]"
+                )
+                database.testResultDao().insertTestResult(testEntity)
+                importedCount++
             }
+
+        } catch (e: Exception) {
+            val testEntity = TestResultEntity(
+                testId = "uploaded_raw_${System.currentTimeMillis()}",
+                testTitle = "Uploaded Assessment Answers",
+                completedAtMillis = System.currentTimeMillis(),
+                dominantArchetype = "Seeker",
+                scoresJson = "{\"Uploaded\": 100}",
+                summaryText = trimmed.take(1500),
+                answersJson = "[]"
+            )
+            database.testResultDao().insertTestResult(testEntity)
+            importedCount++
         }
+
         return Pair(importedCount, profileConfigured)
     }
 
@@ -420,7 +512,24 @@ class PsycheRepository(private val database: AppDatabase) {
             val entity = UserSubscriptionEntity(
                 isPremium = currentSub.isPremium,
                 tierName = currentSub.tier.name,
-                gemsBalance = currentSub.gemsBalance - 10, // 10 gems per AI synthesis report
+                gemsBalance = currentSub.gemsBalance - 10, // 10 gems per $1 AI report
+                adsWatchedCount = currentSub.adsWatchedCount,
+                adFreeUntilMillis = currentSub.adFreeUntilMillis,
+                hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus
+            )
+            database.userSubscriptionDao().saveSubscription(entity)
+            return true
+        }
+        return false
+    }
+
+    suspend fun consumeGemsForSynthesis(currentSub: UserSubscription): Boolean {
+        if (currentSub.isPremium) return true
+        if (currentSub.gemsBalance >= 50) { // 50 gems = $4.99 synthesis report
+            val entity = UserSubscriptionEntity(
+                isPremium = currentSub.isPremium,
+                tierName = currentSub.tier.name,
+                gemsBalance = currentSub.gemsBalance - 50,
                 adsWatchedCount = currentSub.adsWatchedCount,
                 adFreeUntilMillis = currentSub.adFreeUntilMillis,
                 hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus

@@ -72,30 +72,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        try {
-            val internalFile = java.io.File(filesDir, "yourfile.json")
-            val sourceFile = if (internalFile.exists()) {
-                internalFile
-            } else {
-                val existing = filesDir.listFiles { f -> f.name.endsWith(".json") }
-                if (existing != null && existing.isNotEmpty()) existing[0] else internalFile
-            }
-            
-            if (sourceFile.exists()) {
-                val downloadDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
-                if (downloadDir != null) {
-                    if (!downloadDir.exists()) downloadDir.mkdirs()
-                    val destFile = java.io.File(downloadDir, "emergency_backup.json")
-                    sourceFile.copyTo(destFile, overwrite = true)
-                    android.util.Log.d("EmergencyBackup", "Successfully copied internal data to ${destFile.absolutePath}")
-                }
-            } else {
-                android.util.Log.w("EmergencyBackup", "Internal data JSON file not found at ${internalFile.absolutePath}")
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("EmergencyBackup", "Error during emergency backup copy", e)
-        }
-
         setContent {
             val isDark by viewModel.isDarkTheme.collectAsStateWithLifecycle()
             val colorIdx by viewModel.colorSchemeIndex.collectAsStateWithLifecycle()
