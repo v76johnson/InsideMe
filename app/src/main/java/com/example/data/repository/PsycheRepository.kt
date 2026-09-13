@@ -213,6 +213,20 @@ class PsycheRepository(private val database: AppDatabase) {
         val trimmed = jsonString.trim()
 
         try {
+            if (!trimmed.startsWith("[") && !trimmed.startsWith("{")) {
+                val testEntity = TestResultEntity(
+                    testId = "imported_document_${System.currentTimeMillis()}",
+                    testTitle = "Imported Document / PDF",
+                    completedAtMillis = System.currentTimeMillis(),
+                    dominantArchetype = "Imported Seeker",
+                    scoresJson = "{}",
+                    summaryText = trimmed.take(1500),
+                    answersJson = "[]"
+                )
+                database.testResultDao().insertTestResult(testEntity)
+                return Pair(1, false)
+            }
+
             if (trimmed.startsWith("[")) {
                 val resultsArr = JSONArray(trimmed)
                 for (i in 0 until resultsArr.length()) {
@@ -483,9 +497,10 @@ class PsycheRepository(private val database: AppDatabase) {
         savedReports: List<DeepSynthesisReport>,
         testResults: List<TestResultEntity>,
         astroProfile: AstrologyProfile?,
-        nameMeaningReport: NameMeaningReport? = null
+        nameMeaningReport: NameMeaningReport? = null,
+        chatHistory: List<MindChatMessage> = emptyList()
     ): DeepSynthesisReport {
-        val reportsList = GeminiReportGenerator.generateMultiDocumentSynthesisLibrary(savedReports, testResults, astroProfile, nameMeaningReport)
+        val reportsList = GeminiReportGenerator.generateMultiDocumentSynthesisLibrary(savedReports, testResults, astroProfile, nameMeaningReport, chatHistory)
 
         for (report in reportsList) {
             val entity = SavedReportEntity(

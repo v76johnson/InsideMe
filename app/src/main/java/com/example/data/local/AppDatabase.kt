@@ -13,7 +13,7 @@ import androidx.room.RoomDatabase
         UserSubscriptionEntity::class,
         CustomNatalChartEntity::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

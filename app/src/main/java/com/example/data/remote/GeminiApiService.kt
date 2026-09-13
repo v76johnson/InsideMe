@@ -609,9 +609,10 @@ object GeminiReportGenerator {
         savedReports: List<DeepSynthesisReport>,
         testResults: List<TestResultEntity>,
         astroProfile: AstrologyProfile?,
-        nameMeaningReport: NameMeaningReport? = null
+        nameMeaningReport: NameMeaningReport? = null,
+        chatHistory: List<MindChatMessage> = emptyList()
     ): List<DeepSynthesisReport> = withContext(Dispatchers.IO) {
-        val baseReport = generateMasterMetaAnalysisReport(savedReports, testResults, astroProfile, nameMeaningReport)
+        val baseReport = generateMasterMetaAnalysisReport(savedReports, testResults, astroProfile, nameMeaningReport, chatHistory)
         
         val doc1 = baseReport.copy(
             id = UUID.randomUUID().toString(),
@@ -646,7 +647,8 @@ object GeminiReportGenerator {
         savedReports: List<DeepSynthesisReport>,
         testResults: List<TestResultEntity>,
         astroProfile: AstrologyProfile?,
-        nameMeaningReport: NameMeaningReport? = null
+        nameMeaningReport: NameMeaningReport? = null,
+        chatHistory: List<MindChatMessage> = emptyList()
     ): DeepSynthesisReport = withContext(Dispatchers.IO) {
         val apiKey = BuildConfig.GEMINI_API_KEY
         if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
@@ -655,8 +657,8 @@ object GeminiReportGenerator {
 
         val prompt = buildString {
             append("You are a world-class psychological astrologer, narrative therapist, and meta-analytic counselor. ")
-            append("The user has generated multiple personal reports, assessment results, and name meaning onomastic reports over time. ")
-            append("Analyze ALL personal reports, test scores, and name profiles TOGETHER to produce an extraordinarily comprehensive, deep, multi-page equivalent Master Personal Meta-Analysis Report (50+ page depth in textual detail) that cross-synthesizes every single test result, natal chart trait, name meaning element, and synastry relationship combination in clear, everyday English.\n\n")
+            append("The user has generated multiple personal reports, assessment results, name meaning onomastic reports, and wellbeing chat history over time. ")
+            append("Analyze ALL personal reports, test scores, name profiles, uploaded document/PDF tests, and chat conversations TOGETHER to produce an extraordinarily comprehensive, deep, multi-page equivalent Master Personal Meta-Analysis Report (50+ page depth in textual detail) that cross-synthesizes every single test result, uploaded document, chat reflection, natal chart trait, name meaning element, and synastry relationship combination in clear, everyday English.\n\n")
 
             append("SAVED PERSONAL REPORTS TO SYNTHESIZE (${savedReports.size} total):\n")
             if (savedReports.isEmpty()) {
@@ -671,12 +673,21 @@ object GeminiReportGenerator {
                 }
             }
 
-            append("COMPLETED PSYCHOLOGY TEST ASSESSMENTS (${testResults.size} total):\n")
+            append("COMPLETED PSYCHOLOGY TEST ASSESSMENTS & UPLOADED DOCUMENTS (${testResults.size} total):\n")
             if (testResults.isEmpty()) {
                 append("- Default Assessment Profile: Balanced Mind & Intuitive Explorer\n")
             } else {
                 testResults.forEach { test ->
-                    append("- Test: ${test.testTitle} | Dominant Trait: '${test.dominantArchetype}' | Summary: ${test.summaryText}\n")
+                    append("- Test/Document: ${test.testTitle} | Dominant Trait: '${test.dominantArchetype}' | Summary: ${test.summaryText}\n")
+                }
+            }
+
+            append("\nAI WELLBEING CHAT HISTORY & REFLECTIONS (${chatHistory.size} messages):\n")
+            if (chatHistory.isEmpty()) {
+                append("- No chat history recorded yet.\n")
+            } else {
+                chatHistory.takeLast(15).forEach { msg ->
+                    append("- [${msg.sender}]: ${msg.text}\n")
                 }
             }
 

@@ -329,7 +329,8 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
                 savedReports.value,
                 testResults.value,
                 astrologyProfile.value,
-                nameMeaningReport.value
+                nameMeaningReport.value,
+                mindChatMessages.value
             )
             _selectedReport.value = report
             onSuccess(report)
@@ -354,7 +355,8 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
                 savedReports.value,
                 testResults.value,
                 astrologyProfile.value,
-                nameMeaningReport.value
+                nameMeaningReport.value,
+                mindChatMessages.value
             )
             _selectedReport.value = report
             onSuccess(report)
