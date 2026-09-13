@@ -26,6 +26,9 @@ interface AstrologyProfileDao {
     @Query("SELECT * FROM astrology_profile WHERE id = 1 LIMIT 1")
     fun getAstrologyProfile(): Flow<AstrologyProfileEntity?>
 
+    @Query("SELECT * FROM astrology_profile WHERE id = 1 LIMIT 1")
+    suspend fun getProfileSync(): AstrologyProfileEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveAstrologyProfile(profile: AstrologyProfileEntity)
 }

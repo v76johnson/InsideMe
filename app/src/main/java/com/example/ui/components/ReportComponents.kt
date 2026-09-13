@@ -33,6 +33,8 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -116,61 +118,7 @@ fun ReportReaderView(
                         .testTag("back_to_reports_library_button")
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = {
-                        try {
-                            val pdfDocument = PdfDocument()
-                            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-                            val page = pdfDocument.startPage(pageInfo)
-                            val canvas = page.canvas
-                            val paint = Paint().apply {
-                                color = AndroidColor.BLACK
-                                textSize = 11f
-                                isAntiAlias = true
-                            }
-                            val titlePaint = Paint().apply {
-                                color = AndroidColor.BLACK
-                                textSize = 16f
-                                isFakeBoldText = true
-                                isAntiAlias = true
-                            }
-
-                            var y = 40f
-                            canvas.drawText(report.title, 40f, y, titlePaint)
-                            y += 25f
-                            canvas.drawText("Summary: ${report.archetypeSummary.take(85)}", 40f, y, paint)
-                            y += 25f
-
-                            for (trait in report.coreTraits) {
-                                if (y > 800f) break
-                                canvas.drawText("• $trait", 40f, y, paint)
-                                y += 18f
-                            }
-
-                            pdfDocument.finishPage(page)
-                            val file = File(context.cacheDir, "Synthesis_Report_${report.id}.pdf")
-                            val outputStream = FileOutputStream(file)
-                            pdfDocument.writeTo(outputStream)
-                            pdfDocument.close()
-                            outputStream.close()
-
-                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-                            val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/pdf").apply {
-                                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
-                            }
-                            try {
-                                context.startActivity(intent)
-                            } catch (_: Exception) {
-                                Toast.makeText(context, "Synthesis PDF saved to cache: ${file.name}", Toast.LENGTH_LONG).show()
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            Toast.makeText(context, "Failed to generate PDF: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
-                        }
-                    }) {
-                        Icon(Icons.Default.Download, contentDescription = "Download Synthesis PDF", tint = CelestialGold)
-                    }
-
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     IconButton(onClick = { showReportExportDialog = true }, modifier = Modifier.testTag("report_export_cloud_header_button")) {
                         Icon(
                             imageVector = Icons.Default.CloudUpload,
@@ -239,6 +187,24 @@ fun ReportReaderView(
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.8f)
                     )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        onClick = {
+                            showReportExportDialog = true
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                            .testTag("get_full_report_title_button")
+                    ) {
+                        Icon(Icons.Default.Download, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Get Full Report", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
                 }
             }
 
@@ -443,22 +409,22 @@ fun ReportReaderView(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         androidx.compose.material3.Button(
                             onClick = { showCareLocatorDialog = true },
                             colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = DeepSpace),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
-                                .weight(1f)
-                                .height(44.dp)
+                                .fillMaxWidth()
+                                .height(46.dp)
                                 .testTag("report_locate_professional_button")
                         ) {
-                            Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(15.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Care AI", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                            Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Care AI / Professional Care", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
 
                         androidx.compose.material3.OutlinedButton(
@@ -466,13 +432,13 @@ fun ReportReaderView(
                             shape = RoundedCornerShape(12.dp),
                             border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold),
                             modifier = Modifier
-                                .weight(1.1f)
-                                .height(44.dp)
+                                .fillMaxWidth()
+                                .height(46.dp)
                                 .testTag("report_download_raw_data_button")
                         ) {
-                            Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(15.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Raw Data (Free)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                            Icon(Icons.Default.Download, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Download Raw Data (Free)", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
 
                         androidx.compose.material3.Button(
@@ -480,13 +446,13 @@ fun ReportReaderView(
                             colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
-                                .weight(1.1f)
-                                .height(44.dp)
+                                .fillMaxWidth()
+                                .height(46.dp)
                                 .testTag("report_export_cloud_button")
                         ) {
-                            Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Color.Black, modifier = Modifier.size(15.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Export Report", fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                            Icon(Icons.Default.CloudUpload, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Export Report / Cloud Backup", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
 

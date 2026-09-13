@@ -127,7 +127,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                                 0 -> "InsideMe"
                                 1 -> "Assessments Vault"
                                 2 -> "Astrology & Oracle"
-                                3 -> "Premium & Gems"
+                                3 -> "Psyche+ & Reports"
                                 else -> "InsideMe"
                             },
                             fontWeight = FontWeight.Bold,
@@ -222,13 +222,13 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selectedTab = 2
                         viewModel.generateSynthesisReport(
                             onSuccess = {},
-                            onNeedAdOrGems = { selectedTab = 3 }
+                            onNeedPurchase = { selectedTab = 3 }
                         )
                     },
                     onPurchaseSingleReport = {
                         viewModel.exitTest()
                         selectedTab = 2
-                        viewModel.purchaseSingleReportAndGenerate(onSuccess = {})
+                        viewModel.purchaseSynthesisAndGenerateAndReturn(onSuccess = {})
                     },
                     onSubscribeClicked = { tier ->
                         viewModel.exitTest()
@@ -251,7 +251,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                             selectedTab = 2
                             viewModel.generateSynthesisReport(
                                 onSuccess = {},
-                                onNeedAdOrGems = { selectedTab = 3 }
+                                onNeedPurchase = { selectedTab = 3 }
                             )
                         },
                         onUpgradeClicked = { selectedTab = 3 },
@@ -277,12 +277,12 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         astrologyProfile = astroProfile,
                         isGenerating = isGenerating,
                         isPremium = userSub.isPremium,
-                        gemsBalance = userSub.gemsBalance,
+                        hasUnlockedSynthesis = userSub.hasUnlockedSynthesis,
                         onStartTest = { viewModel.startTest(it) },
                         onGenerateMetaReportClicked = {
                             viewModel.generateMasterMetaReport(
                                 onSuccess = {},
-                                onNeedAdOrGems = { selectedTab = 3 }
+                                onNeedPurchase = { selectedTab = 3 }
                             )
                         },
                         onSelectReport = { viewModel.selectReport(it) },
@@ -309,7 +309,8 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         selectedReport = selectedReport,
                         testResults = testResults,
                         isGeneratingReport = isGenerating,
-                        gemsBalance = userSub.gemsBalance,
+                        hasUnlockedSynthesis = userSub.hasUnlockedSynthesis,
+                        hasUnlockedSynastry = userSub.hasUnlockedSynastry,
                         isPremium = userSub.isPremium,
                         onUpdateSigns = { sun, moon, rising ->
                             viewModel.updateAstrologySignsDirectly(sun, moon, rising)
@@ -329,7 +330,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         onGenerateReportClicked = {
                             viewModel.generateSynthesisReport(
                                 onSuccess = {},
-                                onNeedAdOrGems = { selectedTab = 3 }
+                                onNeedPurchase = { selectedTab = 3 }
                             )
                         },
                         onSelectReport = { viewModel.selectReport(it) },
@@ -342,7 +343,18 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     3 -> PremiumScreen(
                         userSubscription = userSub,
                         onSetSubscriptionTier = { tier -> viewModel.setSubscriptionTier(tier) },
-                        onPurchaseSingleReport = { viewModel.purchaseSingleReportOnly() },
+                        onPurchaseSynastryReport = {
+                            viewModel.purchaseSynastryAndReturn {
+                                selectedTab = 2
+                                Toast.makeText(context, "Synastry Match Unlocked & Returned!", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        onPurchaseSynthesisReport = {
+                            viewModel.purchaseSynthesisAndGenerateAndReturn {
+                                selectedTab = 2
+                                Toast.makeText(context, "Synthesis Report Unlocked & Returned!", Toast.LENGTH_SHORT).show()
+                            }
+                        },
                         onOpenReview = { viewModel.openReviewModal() },
                         onNavigateToSynastry = { selectedTab = 2 },
                         onNavigateToSynthesis = { selectedTab = 2 }

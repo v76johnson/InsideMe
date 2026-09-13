@@ -809,7 +809,7 @@ fun TestTakingScreen(
 
                 // Generate Report Button
                 Spacer(modifier = Modifier.height(16.dp))
-                val canGenerate = userSubscription.isPremium || userSubscription.gemsBalance >= 10
+                val canGenerate = userSubscription.isPremium || userSubscription.hasUnlockedSynthesis
                 Button(
                     onClick = {
                         if (canGenerate) {
@@ -819,8 +819,8 @@ fun TestTakingScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (canGenerate) CelestialGold else NebulaTeal,
-                        contentColor = if (canGenerate) DeepSpace else Color.Black
+                        containerColor = CelestialGold,
+                        contentColor = DeepSpace
                     ),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
@@ -831,11 +831,7 @@ fun TestTakingScreen(
                     Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = when {
-                            userSubscription.isPremium -> "Synthesize Full Report (Psyche+ Included)"
-                            userSubscription.gemsBalance >= 10 -> "Synthesize Full Report (1 Credit Ready)"
-                            else -> "Order Report ($1.00 or Psyche+ Sub)"
-                        },
+                        text = if (canGenerate) "Synthesize Full Report (Unlocked)" else "Order Report ($4.99 or Sub)",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )

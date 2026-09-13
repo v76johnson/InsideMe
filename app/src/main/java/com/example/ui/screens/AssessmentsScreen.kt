@@ -87,7 +87,7 @@ fun AssessmentsScreen(
     astrologyProfile: AstrologyProfile? = null,
     isGenerating: Boolean = false,
     isPremium: Boolean = false,
-    gemsBalance: Int = 0,
+    hasUnlockedSynthesis: Boolean = false,
     onStartTest: (PsychologyTest) -> Unit,
     onGenerateMetaReportClicked: () -> Unit = {},
     onSelectReport: (DeepSynthesisReport?) -> Unit = {},
@@ -679,11 +679,7 @@ fun AssessmentsScreen(
                                 Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = when {
-                                        isPremium -> "Analyze All Reports (Psyche+ Included)"
-                                        gemsBalance >= 10 -> "Analyze All Reports (1 Credit Ready)"
-                                        else -> "Analyze All Reports ($1.00 or Sub)"
-                                    },
+                                    text = if (isPremium || hasUnlockedSynthesis) "Analyze All Reports (Unlocked)" else "Analyze All Reports ($4.99 or Sub)",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold
                                 )

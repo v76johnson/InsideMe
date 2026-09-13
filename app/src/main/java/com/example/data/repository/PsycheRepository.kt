@@ -20,6 +20,7 @@ import com.example.data.model.UserSubscription
 import com.example.data.model.ZodiacSign
 import com.example.data.remote.GeminiReportGenerator
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import org.json.JSONArray
 import org.json.JSONObject
@@ -150,7 +151,8 @@ class PsycheRepository(private val database: AppDatabase) {
             UserSubscription(
                 isPremium = entity.isPremium,
                 tier = SubscriptionTier.valueOf(entity.tierName),
-                gemsBalance = entity.gemsBalance,
+                hasUnlockedSynastry = entity.hasUnlockedSynastry,
+                hasUnlockedSynthesis = entity.hasUnlockedSynthesis,
                 adsWatchedCount = entity.adsWatchedCount,
                 adFreeUntilMillis = entity.adFreeUntilMillis,
                 hasClaimedReviewBonus = entity.hasClaimedReviewBonus
@@ -242,6 +244,33 @@ class PsycheRepository(private val database: AppDatabase) {
 
             val rootObj = JSONObject(trimmed)
 
+            // Handle user object if present (e.g. {"user": {"name": "virginia Johnson"}})
+            if (rootObj.has("user")) {
+                val uObj = rootObj.getJSONObject("user")
+                val userName = uObj.optString("name", "")
+                if (userName.isNotEmpty()) {
+                    val existing = database.astrologyProfileDao().getProfileSync()
+                    if (existing != null) {
+                        val updated = existing.copy(userName = userName, isProfileConfigured = true)
+                        database.astrologyProfileDao().saveAstrologyProfile(updated)
+                    } else {
+                        val newProfile = com.example.data.local.AstrologyProfileEntity(
+                            birthDateMillis = System.currentTimeMillis(),
+                            birthTime = "12:00",
+                            birthCity = "",
+                            sunSignName = ZodiacSign.SCORPIO.name,
+                            moonSignName = ZodiacSign.PISCES.name,
+                            risingSignName = ZodiacSign.CANCER.name,
+                            userName = userName,
+                            savedNameAdditionsJson = "",
+                            isProfileConfigured = true
+                        )
+                        database.astrologyProfileDao().saveAstrologyProfile(newProfile)
+                    }
+                    profileConfigured = true
+                }
+            }
+
             if (rootObj.has("astrologyProfile")) {
                 val pObj = rootObj.getJSONObject("astrologyProfile")
                 val sunStr = pObj.optString("sunSign", "SCORPIO")
@@ -270,7 +299,7 @@ class PsycheRepository(private val database: AppDatabase) {
                 profileConfigured = true
             }
 
-            val assessmentKeys = listOf("completedAssessmentResults", "testResults", "assessmentResults", "results", "answers", "questionAnswers")
+            val assessmentKeys = listOf("completedAssessmentResults", "testResults", "assessmentResults", "results", "answers", "questionAnswers", "assessments")
             var foundArray: JSONArray? = null
             for (key in assessmentKeys) {
                 if (rootObj.has(key)) {
@@ -285,29 +314,72 @@ class PsycheRepository(private val database: AppDatabase) {
             if (foundArray != null) {
                 for (i in 0 until foundArray.length()) {
                     val itemObj = foundArray.optJSONObject(i) ?: continue
-                    val testId = itemObj.optString("testId", "test_$i")
-                    val testTitle = itemObj.optString("testTitle", "Imported Assessment")
-                    val completedAt = itemObj.optLong("completedAtMillis", System.currentTimeMillis())
-                    val dominant = itemObj.optString("dominantArchetype", "Seeker")
-                    val summary = itemObj.optString("summaryText", "Imported assessment result.")
+                    
+                    // Check if itemObj contains structured sub-test keys (e.g. dark_triad, big_five, hexaco, attachment, parts, etc.)
+                    val subTestKeys = listOf("dark_triad", "big_five", "hexaco", "attachment", "parts", "adhd", "autism", "sleep", "relationship")
+                    var matchedSubTest = false
 
-                    val scoresObj = itemObj.optJSONObject("traitScores")
-                    val scoresJson = scoresObj?.toString() ?: "{}"
+                    for (subKey in subTestKeys) {
+                        if (itemObj.has(subKey)) {
+                            matchedSubTest = true
+                            val subObj = itemObj.optJSONObject(subKey)
+                            val testId = subKey
+                            val testTitle = when(subKey) {
+                                "dark_triad" -> "Dark Triad Assessment"
+                                "big_five" -> "Big Five Personality"
+                                "hexaco" -> "HEXACO-60 Personality"
+                                "attachment" -> "Attachment Style"
+                                "parts" -> "Inner System (IFS)"
+                                "adhd" -> "ADHD Attention Traits"
+                                "autism" -> "Autism Screening"
+                                "sleep" -> "Sleep Quality"
+                                "relationship" -> "Relationship Satisfaction"
+                                else -> subKey
+                            }
+                            val completedAt = System.currentTimeMillis()
+                            val scoresJson = subObj?.toString() ?: "{}"
+                            val summaryText = "Imported assessment result for $testTitle from uploaded document."
+                            val answersJson = itemObj.toString()
 
-                    val answersArr = itemObj.optJSONArray("questionAnswers") ?: itemObj.optJSONArray("answers")
-                    val answersJson = answersArr?.toString() ?: "[]"
+                            val testEntity = TestResultEntity(
+                                testId = testId,
+                                testTitle = testTitle,
+                                completedAtMillis = completedAt,
+                                dominantArchetype = "Integrated Seeker",
+                                scoresJson = scoresJson,
+                                summaryText = summaryText,
+                                answersJson = answersJson
+                            )
+                            database.testResultDao().insertTestResult(testEntity)
+                            importedCount++
+                        }
+                    }
 
-                    val testEntity = TestResultEntity(
-                        testId = testId,
-                        testTitle = testTitle,
-                        completedAtMillis = completedAt,
-                        dominantArchetype = dominant,
-                        scoresJson = scoresJson,
-                        summaryText = summary,
-                        answersJson = answersJson
-                    )
-                    database.testResultDao().insertTestResult(testEntity)
-                    importedCount++
+                    if (!matchedSubTest) {
+                        val testId = itemObj.optString("testId", "test_$i")
+                        val testTitle = itemObj.optString("testTitle", "Imported Assessment")
+                        val completedAt = itemObj.optLong("completedAtMillis", System.currentTimeMillis())
+                        val dominant = itemObj.optString("dominantArchetype", "Seeker")
+                        val summary = itemObj.optString("summaryText", "Imported assessment result.")
+
+                        val scoresObj = itemObj.optJSONObject("traitScores")
+                        val scoresJson = scoresObj?.toString() ?: itemObj.toString()
+
+                        val answersArr = itemObj.optJSONArray("questionAnswers") ?: itemObj.optJSONArray("answers")
+                        val answersJson = answersArr?.toString() ?: itemObj.toString()
+
+                        val testEntity = TestResultEntity(
+                            testId = testId,
+                            testTitle = testTitle,
+                            completedAtMillis = completedAt,
+                            dominantArchetype = dominant,
+                            scoresJson = scoresJson,
+                            summaryText = summary,
+                            answersJson = answersJson
+                        )
+                        database.testResultDao().insertTestResult(testEntity)
+                        importedCount++
+                    }
                 }
             } else if (rootObj.has("testId") || rootObj.has("testTitle") || rootObj.has("dominantArchetype")) {
                 val testId = rootObj.optString("testId", "imported_single")
@@ -339,7 +411,7 @@ class PsycheRepository(private val database: AppDatabase) {
                     dominantArchetype = "Seeker",
                     scoresJson = "{\"Uploaded\": 100}",
                     summaryText = trimmed.take(1500),
-                    answersJson = "[]"
+                    answersJson = trimmed
                 )
                 database.testResultDao().insertTestResult(testEntity)
                 importedCount++
@@ -353,7 +425,7 @@ class PsycheRepository(private val database: AppDatabase) {
                 dominantArchetype = "Seeker",
                 scoresJson = "{\"Uploaded\": 100}",
                 summaryText = trimmed.take(1500),
-                answersJson = "[]"
+                answersJson = trimmed
             )
             database.testResultDao().insertTestResult(testEntity)
             importedCount++
@@ -413,25 +485,27 @@ class PsycheRepository(private val database: AppDatabase) {
         astroProfile: AstrologyProfile?,
         nameMeaningReport: NameMeaningReport? = null
     ): DeepSynthesisReport {
-        val report = GeminiReportGenerator.generateMasterMetaAnalysisReport(savedReports, testResults, astroProfile, nameMeaningReport)
+        val reportsList = GeminiReportGenerator.generateMultiDocumentSynthesisLibrary(savedReports, testResults, astroProfile, nameMeaningReport)
 
-        val entity = SavedReportEntity(
-            id = report.id,
-            createdAtMillis = report.createdAtMillis,
-            title = report.title,
-            archetypeSummary = report.archetypeSummary,
-            coreTraitsJson = listToJsonArray(report.coreTraits),
-            psychologicalBreakdown = report.psychologicalBreakdown,
-            astrologicalSynthesis = report.astrologicalSynthesis,
-            shadowWorkJson = listToJsonArray(report.shadowWorkInsights),
-            careerAndPurposeAdvice = report.careerAndPurposeAdvice,
-            relationshipPlaybook = report.relationshipPlaybook,
-            dailyActionPlanJson = habitsToJsonArray(report.dailyActionPlan),
-            isBookmarked = true,
-            isGeneratedByAi = report.isGeneratedByAi
-        )
-        database.savedReportDao().saveReport(entity)
-        return report
+        for (report in reportsList) {
+            val entity = SavedReportEntity(
+                id = report.id,
+                createdAtMillis = report.createdAtMillis,
+                title = report.title,
+                archetypeSummary = report.archetypeSummary,
+                coreTraitsJson = listToJsonArray(report.coreTraits),
+                psychologicalBreakdown = report.psychologicalBreakdown,
+                astrologicalSynthesis = report.astrologicalSynthesis,
+                shadowWorkJson = listToJsonArray(report.shadowWorkInsights),
+                careerAndPurposeAdvice = report.careerAndPurposeAdvice,
+                relationshipPlaybook = report.relationshipPlaybook,
+                dailyActionPlanJson = habitsToJsonArray(report.dailyActionPlan),
+                isBookmarked = true,
+                isGeneratedByAi = report.isGeneratedByAi
+            )
+            database.savedReportDao().saveReport(entity)
+        }
+        return reportsList.first()
     }
 
     suspend fun toggleBookmarkReport(reportId: String, currentStatus: Boolean) {
@@ -461,19 +535,27 @@ class PsycheRepository(private val database: AppDatabase) {
         database.savedReportDao().deleteReport(reportId)
     }
 
-    suspend fun grantVoluntaryAdReward(currentSub: UserSubscription) {
-        val newAdsCount = currentSub.adsWatchedCount + 1
-        val newGems = currentSub.gemsBalance + 2 // +2 gems per 30s ad (5 ads = 10 gems = 1 report)
-        val extraAdFree = 12 * 60 * 60 * 1000L
-        val now = System.currentTimeMillis()
-        val newAdFreeUntil = if (currentSub.adFreeUntilMillis > now) currentSub.adFreeUntilMillis + extraAdFree else now + extraAdFree
-
+    suspend fun grantSynastryPurchase(currentSub: UserSubscription) {
         val entity = UserSubscriptionEntity(
             isPremium = currentSub.isPremium,
             tierName = currentSub.tier.name,
-            gemsBalance = newGems,
-            adsWatchedCount = newAdsCount,
-            adFreeUntilMillis = newAdFreeUntil,
+            hasUnlockedSynastry = true,
+            hasUnlockedSynthesis = currentSub.hasUnlockedSynthesis,
+            adsWatchedCount = currentSub.adsWatchedCount,
+            adFreeUntilMillis = currentSub.adFreeUntilMillis,
+            hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus
+        )
+        database.userSubscriptionDao().saveSubscription(entity)
+    }
+
+    suspend fun grantSynthesisPurchase(currentSub: UserSubscription) {
+        val entity = UserSubscriptionEntity(
+            isPremium = currentSub.isPremium,
+            tierName = currentSub.tier.name,
+            hasUnlockedSynastry = currentSub.hasUnlockedSynastry,
+            hasUnlockedSynthesis = true,
+            adsWatchedCount = currentSub.adsWatchedCount,
+            adFreeUntilMillis = currentSub.adFreeUntilMillis,
             hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus
         )
         database.userSubscriptionDao().saveSubscription(entity)
@@ -481,11 +563,11 @@ class PsycheRepository(private val database: AppDatabase) {
 
     suspend fun grantReviewReward(currentSub: UserSubscription) {
         if (currentSub.hasClaimedReviewBonus) return
-        val newGems = currentSub.gemsBalance + 10 // 10 gems bonus = 1 free AI report
         val entity = UserSubscriptionEntity(
             isPremium = currentSub.isPremium,
             tierName = currentSub.tier.name,
-            gemsBalance = newGems,
+            hasUnlockedSynastry = true,
+            hasUnlockedSynthesis = true,
             adsWatchedCount = currentSub.adsWatchedCount,
             adFreeUntilMillis = currentSub.adFreeUntilMillis,
             hasClaimedReviewBonus = true
@@ -493,58 +575,12 @@ class PsycheRepository(private val database: AppDatabase) {
         database.userSubscriptionDao().saveSubscription(entity)
     }
 
-    suspend fun grantSingleReportPurchase(currentSub: UserSubscription) {
-        val newGems = currentSub.gemsBalance + 10 // 10 gems = 1 full report unlock
-        val entity = UserSubscriptionEntity(
-            isPremium = currentSub.isPremium,
-            tierName = currentSub.tier.name,
-            gemsBalance = newGems,
-            adsWatchedCount = currentSub.adsWatchedCount,
-            adFreeUntilMillis = currentSub.adFreeUntilMillis,
-            hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus
-        )
-        database.userSubscriptionDao().saveSubscription(entity)
-    }
-
-    suspend fun consumeGemForReport(currentSub: UserSubscription): Boolean {
-        if (currentSub.isPremium) return true
-        if (currentSub.gemsBalance >= 10) {
-            val entity = UserSubscriptionEntity(
-                isPremium = currentSub.isPremium,
-                tierName = currentSub.tier.name,
-                gemsBalance = currentSub.gemsBalance - 10, // 10 gems per $1 AI report
-                adsWatchedCount = currentSub.adsWatchedCount,
-                adFreeUntilMillis = currentSub.adFreeUntilMillis,
-                hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus
-            )
-            database.userSubscriptionDao().saveSubscription(entity)
-            return true
-        }
-        return false
-    }
-
-    suspend fun consumeGemsForSynthesis(currentSub: UserSubscription): Boolean {
-        if (currentSub.isPremium) return true
-        if (currentSub.gemsBalance >= 50) { // 50 gems = $4.99 synthesis report
-            val entity = UserSubscriptionEntity(
-                isPremium = currentSub.isPremium,
-                tierName = currentSub.tier.name,
-                gemsBalance = currentSub.gemsBalance - 50,
-                adsWatchedCount = currentSub.adsWatchedCount,
-                adFreeUntilMillis = currentSub.adFreeUntilMillis,
-                hasClaimedReviewBonus = currentSub.hasClaimedReviewBonus
-            )
-            database.userSubscriptionDao().saveSubscription(entity)
-            return true
-        }
-        return false
-    }
-
     suspend fun updateSubscriptionTier(tier: SubscriptionTier, isPremium: Boolean) {
         val entity = UserSubscriptionEntity(
             isPremium = isPremium,
             tierName = tier.name,
-            gemsBalance = if (isPremium) 99 else 3,
+            hasUnlockedSynastry = true,
+            hasUnlockedSynthesis = true,
             adsWatchedCount = 0,
             adFreeUntilMillis = if (isPremium) System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000) else 0L,
             hasClaimedReviewBonus = true

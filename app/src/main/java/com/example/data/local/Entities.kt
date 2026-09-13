@@ -50,7 +50,8 @@ data class UserSubscriptionEntity(
     @PrimaryKey val id: Int = 1,
     val isPremium: Boolean,
     val tierName: String,
-    val gemsBalance: Int,
+    val hasUnlockedSynastry: Boolean = false,
+    val hasUnlockedSynthesis: Boolean = false,
     val adsWatchedCount: Int,
     val adFreeUntilMillis: Long,
     val hasClaimedReviewBonus: Boolean = false

@@ -256,7 +256,7 @@ fun SettingsDialog(
                         ) {
                             Text("Select Color Scheme", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = CelestialGold)
 
-                            val schemes = listOf("Cosmic Velvet", "Emerald Forest", "Solar Amber")
+                            val schemes = listOf("Cosmic Velvet", "Royal Violet", "Solar Amber")
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)

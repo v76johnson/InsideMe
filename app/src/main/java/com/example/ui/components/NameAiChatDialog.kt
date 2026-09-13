@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -122,6 +124,7 @@ fun NameAiChatDialog(
                     .fillMaxSize()
                     .border(1.5.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
                     .padding(14.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 // Header
                 Row(

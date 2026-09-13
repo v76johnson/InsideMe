@@ -47,74 +47,74 @@ private val CosmicLight = lightColorScheme(
     error = EditorialAccentCrimson
 )
 
-// 1: Nebula Emerald
-private val EmeraldDark = darkColorScheme(
-    primary = Color(0xFF81C784),
+// 1: Royal Violet
+private val RoyalVioletDark = darkColorScheme(
+    primary = Color(0xFFCE93D8),
     onPrimary = Color.Black,
-    primaryContainer = Color(0xFF163832),
-    onPrimaryContainer = Color(0xFFE8F5E9),
-    secondary = Color(0xFF4DB6AC),
-    onSecondary = Color.Black,
-    tertiary = Color(0xFFA5D6A7),
-    background = Color(0xFF0F201C),
-    onBackground = Color(0xFFE8F5E9),
-    surface = Color(0xFF152A25),
-    onSurface = Color(0xFFE8F5E9),
-    surfaceVariant = Color(0xFF1D3B34),
-    outline = Color(0xFF2E7D6A),
+    primaryContainer = Color(0xFF4A148C),
+    onPrimaryContainer = Color(0xFFF3E5F5),
+    secondary = Color(0xFFAB47BC),
+    onSecondary = Color.White,
+    tertiary = Color(0xFFBA68C8),
+    background = Color(0xFF12081C),
+    onBackground = Color(0xFFF3E5F5),
+    surface = Color(0xFF1B0F28),
+    onSurface = Color(0xFFF3E5F5),
+    surfaceVariant = Color(0xFF28143C),
+    outline = Color(0xFF7B1FA2),
     error = Color(0xFFEF5350)
 )
 
-private val EmeraldLight = lightColorScheme(
-    primary = Color(0xFF2E7D6A),
+private val RoyalVioletLight = lightColorScheme(
+    primary = Color(0xFF6A1B9A),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFE0F2F1),
-    onPrimaryContainer = Color(0xFF004D40),
-    secondary = Color(0xFF00897B),
+    primaryContainer = Color(0xFFF3E5F5),
+    onPrimaryContainer = Color(0xFF38006B),
+    secondary = Color(0xFF8E24AA),
     onSecondary = Color.White,
-    tertiary = Color(0xFF43A047),
-    background = Color(0xFFF1F8F6),
-    onBackground = Color(0xFF00251A),
+    tertiary = Color(0xFFAB47BC),
+    background = Color(0xFFFAF5FC),
+    onBackground = Color(0xFF38006B),
     surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF00251A),
-    surfaceVariant = Color(0xFFE0F2F1),
-    outline = Color(0xFF80CBC4),
+    onSurface = Color(0xFF38006B),
+    surfaceVariant = Color(0xFFEDE7F6),
+    outline = Color(0xFFD1C4E9),
     error = Color(0xFFD32F2F)
 )
 
 // 2: Solar Amber
 private val AmberDark = darkColorScheme(
-    primary = Color(0xFFF39C12),
+    primary = Color(0xFFFFB300),
     onPrimary = Color.Black,
-    primaryContainer = Color(0xFF3E2723),
-    onPrimaryContainer = Color(0xFFFFE0B2),
-    secondary = Color(0xFFD76D38),
-    onSecondary = Color.White,
-    tertiary = Color(0xFFFFB74D),
-    background = Color(0xFF1A120B),
-    onBackground = Color(0xFFFFE0B2),
-    surface = Color(0xFF261C14),
-    onSurface = Color(0xFFFFE0B2),
-    surfaceVariant = Color(0xFF33231A),
-    outline = Color(0xFF8D6E63),
-    error = Color(0xFFE53935)
+    primaryContainer = Color(0xFF4E2C00),
+    onPrimaryContainer = Color(0xFFFFECB3),
+    secondary = Color(0xFFFF7043),
+    onSecondary = Color.Black,
+    tertiary = Color(0xFFFFCA28),
+    background = Color(0xFF140D07),
+    onBackground = Color(0xFFFFECB3),
+    surface = Color(0xFF22160C),
+    onSurface = Color(0xFFFFECB3),
+    surfaceVariant = Color(0xFF332112),
+    outline = Color(0xFFFFB300),
+    error = Color(0xFFEF5350)
 )
 
 private val AmberLight = lightColorScheme(
-    primary = Color(0xFFD35400),
+    primary = Color(0xFFC65102),
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFFDEBD0),
-    onPrimaryContainer = Color(0xFF6E2C00),
-    secondary = Color(0xFFE67E22),
+    primaryContainer = Color(0xFFFFE0B2),
+    onPrimaryContainer = Color(0xFF3E1A00),
+    secondary = Color(0xFFE65100),
     onSecondary = Color.White,
-    tertiary = Color(0xFFD4AC0D),
-    background = Color(0xFFFBFAF8),
-    onBackground = Color(0xFF4A2306),
+    tertiary = Color(0xFFF57F17),
+    background = Color(0xFFFFF8F0),
+    onBackground = Color(0xFF3E1A00),
     surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF4A2306),
-    surfaceVariant = Color(0xFFFAD7A0),
-    outline = Color(0xFFEDBB99),
-    error = Color(0xFFC0392B)
+    onSurface = Color(0xFF3E1A00),
+    surfaceVariant = Color(0xFFFFECB3),
+    outline = Color(0xFFD7CCC8),
+    error = Color(0xFFD32F2F)
 )
 
 data class AppColors(
@@ -167,52 +167,52 @@ private val CosmicLightAppColors = AppColors(
     textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
-private val EmeraldDarkAppColors = AppColors(
-    deepSpace = Color(0xFF0F201C),
-    cosmicPurple = Color(0xFF152A25),
-    mysticViolet = Color(0xFF2E7D6A),
-    celestialGold = Color(0xFF81C784),
-    starlightAmber = Color(0xFF4DB6AC),
-    nebulaTeal = Color(0xFFA5D6A7),
+private val RoyalVioletDarkAppColors = AppColors(
+    deepSpace = Color(0xFF12081C),
+    cosmicPurple = Color(0xFF1B0F28),
+    mysticViolet = Color(0xFF6A1B9A),
+    celestialGold = Color(0xFFCE93D8),
+    starlightAmber = Color(0xFFAB47BC),
+    nebulaTeal = Color(0xFFBA68C8),
     shadowRose = Color(0xFFEF5350),
     textColor = Color.White,
     textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
-private val EmeraldLightAppColors = AppColors(
-    deepSpace = Color(0xFFF1F8F6),
-    cosmicPurple = Color(0xFF152A25),
-    mysticViolet = Color(0xFF2E7D6A),
-    celestialGold = Color(0xFF81C784),
-    starlightAmber = Color(0xFF4DB6AC),
-    nebulaTeal = Color(0xFFA5D6A7),
+private val RoyalVioletLightAppColors = AppColors(
+    deepSpace = Color(0xFFFAF5FC),
+    cosmicPurple = Color(0xFF1B0F28),
+    mysticViolet = Color(0xFF6A1B9A),
+    celestialGold = Color(0xFFCE93D8),
+    starlightAmber = Color(0xFFAB47BC),
+    nebulaTeal = Color(0xFFBA68C8),
     shadowRose = Color(0xFFEF5350),
     textColor = Color.White,
     textSecondaryColor = Color.White.copy(alpha = 0.7f)
 )
 
 private val AmberDarkAppColors = AppColors(
-    deepSpace = Color(0xFF1A120B),
-    cosmicPurple = Color(0xFF261C14),
-    mysticViolet = Color(0xFF8D6E63),
-    celestialGold = Color(0xFFF39C12),
-    starlightAmber = Color(0xFFD76D38),
-    nebulaTeal = Color(0xFFFFB74D),
-    shadowRose = Color(0xFFE53935),
+    deepSpace = Color(0xFF140D07),
+    cosmicPurple = Color(0xFF22160C),
+    mysticViolet = Color(0xFFC65102),
+    celestialGold = Color(0xFFFFB300),
+    starlightAmber = Color(0xFFFF7043),
+    nebulaTeal = Color(0xFFFFCA28),
+    shadowRose = Color(0xFFEF5350),
     textColor = Color.White,
-    textSecondaryColor = Color.White.copy(alpha = 0.7f)
+    textSecondaryColor = Color.White.copy(alpha = 0.8f)
 )
 
 private val AmberLightAppColors = AppColors(
-    deepSpace = Color(0xFFFBFAF8),
-    cosmicPurple = Color(0xFF261C14),
-    mysticViolet = Color(0xFF8D6E63),
-    celestialGold = Color(0xFFF39C12),
-    starlightAmber = Color(0xFFD76D38),
-    nebulaTeal = Color(0xFFFFB74D),
-    shadowRose = Color(0xFFE53935),
-    textColor = Color.White,
-    textSecondaryColor = Color.White.copy(alpha = 0.7f)
+    deepSpace = Color(0xFFFFF8F0),
+    cosmicPurple = Color(0xFF22160C),
+    mysticViolet = Color(0xFFC65102),
+    celestialGold = Color(0xFFC65102),
+    starlightAmber = Color(0xFFE65100),
+    nebulaTeal = Color(0xFFF57F17),
+    shadowRose = Color(0xFFD32F2F),
+    textColor = Color(0xFF3E1A00),
+    textSecondaryColor = Color(0xFF3E1A00).copy(alpha = 0.8f)
 )
 
 @Composable
@@ -222,13 +222,13 @@ fun MyApplicationTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when (colorSchemeIndex) {
-        1 -> if (darkTheme) EmeraldDark else EmeraldLight
+        1 -> if (darkTheme) RoyalVioletDark else RoyalVioletLight
         2 -> if (darkTheme) AmberDark else AmberLight
         else -> if (darkTheme) CosmicDark else CosmicLight
     }
 
     val appColors = when (colorSchemeIndex) {
-        1 -> if (darkTheme) EmeraldDarkAppColors else EmeraldLightAppColors
+        1 -> if (darkTheme) RoyalVioletDarkAppColors else RoyalVioletLightAppColors
         2 -> if (darkTheme) AmberDarkAppColors else AmberLightAppColors
         else -> if (darkTheme) CosmicDarkAppColors else CosmicLightAppColors
     }

@@ -7,15 +7,16 @@ enum class SubscriptionTier(
     val regularPriceDisplay: String? = null
 ) {
     FREE("Free Explorer", "$0", "Forever"),
-    MONTHLY_PRO("Psyche+ Monthly", "$4.99", "per month", regularPriceDisplay = "$9.99"),
-    ANNUAL_PRO("Psyche+ Celestial Annual", "$29.99", "per year ($2.49/mo)"),
+    MONTHLY_PRO("Psyche+ Monthly", "$4.99", "for first month ($9.99/mo after)", regularPriceDisplay = "$9.99"),
+    ANNUAL_PRO("Psyche+ Celestial Annual", "$29.99", "per year ($2.50/mo)"),
     LIFETIME_FULL_ACCESS("One-Time Full Access", "$4.99", "one-time payment", regularPriceDisplay = "$9.99")
 }
 
 data class UserSubscription(
     val isPremium: Boolean = false,
     val tier: SubscriptionTier = SubscriptionTier.FREE,
-    val gemsBalance: Int = 10, // 10 Celestial Gems = 1 full AI report credit
+    val hasUnlockedSynastry: Boolean = false,
+    val hasUnlockedSynthesis: Boolean = false,
     val adsWatchedCount: Int = 0,
     val adFreeUntilMillis: Long = 0L,
     val hasClaimedReviewBonus: Boolean = false
@@ -26,4 +27,3 @@ data class UserSubscription(
     val isMonthlyOrYearly: Boolean
         get() = tier == SubscriptionTier.MONTHLY_PRO || tier == SubscriptionTier.ANNUAL_PRO
 }
-

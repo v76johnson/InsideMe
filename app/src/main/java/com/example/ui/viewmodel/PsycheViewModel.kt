@@ -300,65 +300,64 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun generateSynthesisReport(onSuccess: (DeepSynthesisReport) -> Unit, onNeedAdOrGems: () -> Unit) {
+    fun generateSynthesisReport(onSuccess: (DeepSynthesisReport) -> Unit, onNeedPurchase: () -> Unit) {
         val sub = userSubscription.value
         viewModelScope.launch {
-            if (!sub.isPremium && sub.gemsBalance < 10) {
-                onNeedAdOrGems()
+            if (!sub.isPremium && !sub.hasUnlockedSynthesis) {
+                onNeedPurchase()
                 return@launch
             }
 
             _isGeneratingReport.value = true
-            val successConsume = repository.consumeGemForReport(sub)
-            if (successConsume) {
-                val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value, nameMeaningReport.value)
-                _selectedReport.value = report
-                onSuccess(report)
-            } else {
-                onNeedAdOrGems()
-            }
+            val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value, nameMeaningReport.value)
+            _selectedReport.value = report
+            onSuccess(report)
             _isGeneratingReport.value = false
         }
     }
 
-    fun generateMasterMetaReport(onSuccess: (DeepSynthesisReport) -> Unit, onNeedAdOrGems: () -> Unit) {
+    fun generateMasterMetaReport(onSuccess: (DeepSynthesisReport) -> Unit, onNeedPurchase: () -> Unit) {
         val sub = userSubscription.value
         viewModelScope.launch {
-            if (!sub.isPremium && sub.gemsBalance < 50) {
-                onNeedAdOrGems()
+            if (!sub.isPremium && !sub.hasUnlockedSynthesis) {
+                onNeedPurchase()
                 return@launch
             }
 
             _isGeneratingReport.value = true
-            val successConsume = repository.consumeGemsForSynthesis(sub)
-            if (successConsume) {
-                val report = repository.generateAndSaveMasterMetaReport(
-                    savedReports.value,
-                    testResults.value,
-                    astrologyProfile.value,
-                    nameMeaningReport.value
-                )
-                _selectedReport.value = report
-                onSuccess(report)
-            } else {
-                onNeedAdOrGems()
-            }
+            val report = repository.generateAndSaveMasterMetaReport(
+                savedReports.value,
+                testResults.value,
+                astrologyProfile.value,
+                nameMeaningReport.value
+            )
+            _selectedReport.value = report
+            onSuccess(report)
             _isGeneratingReport.value = false
         }
     }
 
-    fun purchaseSingleReportAndGenerate(onSuccess: (DeepSynthesisReport) -> Unit) {
+    fun purchaseSynastryAndReturn(onSuccess: () -> Unit) {
         val sub = userSubscription.value
         viewModelScope.launch {
-            repository.grantSingleReportPurchase(sub)
+            repository.grantSynastryPurchase(sub)
+            onSuccess()
+        }
+    }
+
+    fun purchaseSynthesisAndGenerateAndReturn(onSuccess: (DeepSynthesisReport) -> Unit) {
+        val sub = userSubscription.value
+        viewModelScope.launch {
+            repository.grantSynthesisPurchase(sub)
             _isGeneratingReport.value = true
-            val newSub = userSubscription.value
-            val successConsume = repository.consumeGemForReport(newSub)
-            if (successConsume) {
-                val report = repository.generateAndSaveReport(testResults.value, astrologyProfile.value, nameMeaningReport.value)
-                _selectedReport.value = report
-                onSuccess(report)
-            }
+            val report = repository.generateAndSaveMasterMetaReport(
+                savedReports.value,
+                testResults.value,
+                astrologyProfile.value,
+                nameMeaningReport.value
+            )
+            _selectedReport.value = report
+            onSuccess(report)
             _isGeneratingReport.value = false
         }
     }
@@ -415,7 +414,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
 
     fun purchaseSingleReportOnly() {
         viewModelScope.launch {
-            repository.grantSingleReportPurchase(userSubscription.value)
+            repository.grantSynthesisPurchase(userSubscription.value)
         }
     }
 
@@ -554,7 +553,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
             return true
         } else if (trimmed.equals("onefree", ignoreCase = true)) {
             viewModelScope.launch {
-                repository.grantSingleReportPurchase(userSubscription.value)
+                repository.grantSynthesisPurchase(userSubscription.value)
             }
             return true
         }

@@ -4,8 +4,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color as AndroidColor
+import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.widget.Toast
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.FileOutputStream
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -266,6 +272,129 @@ fun ReportExportDialog(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    Button(
+                        onClick = {
+                            val sendIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_TEXT, exportedContent)
+                                type = if (exportFormat == "JSON") "application/json" else "text/plain"
+                                putExtra(Intent.EXTRA_SUBJECT, if (exportAllMode) "InsideMe Portfolio Reports - Get Full Report" else selectedReport?.title ?: "InsideMe Full Report")
+                            }
+                            val shareIntent = Intent.createChooser(sendIntent, "Get Full Report / Download")
+                            context.startActivity(shareIntent)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = Color.Black),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .testTag("get_full_report_export_dialog_button")
+                    ) {
+                        Icon(Icons.Default.FileDownload, contentDescription = null, tint = Color.Black, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Get Full Report", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
+
+                    // Direct PDF & DOCX Download Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                try {
+                                    val pdfDocument = PdfDocument()
+                                    val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+                                    val page = pdfDocument.startPage(pageInfo)
+                                    val canvas = page.canvas
+                                    val paint = Paint().apply {
+                                        color = AndroidColor.BLACK
+                                        textSize = 10f
+                                        isAntiAlias = true
+                                    }
+                                    val titlePaint = Paint().apply {
+                                        color = AndroidColor.BLACK
+                                        textSize = 14f
+                                        isFakeBoldText = true
+                                        isAntiAlias = true
+                                    }
+
+                                    var y = 40f
+                                    val docTitle = if (exportAllMode) "InsideMe - Full Report Portfolio (${reports.size} Reports)" else (selectedReport?.title ?: "InsideMe Synthesis Report")
+                                    canvas.drawText(docTitle, 40f, y, titlePaint)
+                                    y += 25f
+
+                                    val lines = exportedContent.split("\n")
+                                    for (line in lines) {
+                                        if (y > 800f) break
+                                        canvas.drawText(line.take(90), 40f, y, paint)
+                                        y += 16f
+                                    }
+
+                                    pdfDocument.finishPage(page)
+                                    val fileName = if (exportAllMode) "InsideMe_Full_Report_Portfolio.pdf" else "InsideMe_Report_${selectedReport?.id ?: 1}.pdf"
+                                    val file = File(context.cacheDir, fileName)
+                                    val outputStream = FileOutputStream(file)
+                                    pdfDocument.writeTo(outputStream)
+                                    pdfDocument.close()
+                                    outputStream.close()
+
+                                    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                                    val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/pdf").apply {
+                                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    try {
+                                        context.startActivity(intent)
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, "PDF saved: ${file.name}", Toast.LENGTH_LONG).show()
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    Toast.makeText(context, "Failed to generate PDF: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp)
+                                .testTag("download_pdf_button"),
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold)
+                        ) {
+                            Text("📥 Download PDF", color = CelestialGold, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        OutlinedButton(
+                            onClick = {
+                                try {
+                                    val fileName = if (exportAllMode) "InsideMe_Full_Report_Portfolio.docx" else "InsideMe_Report_${selectedReport?.id ?: 1}.docx"
+                                    val file = File(context.cacheDir, fileName)
+                                    file.writeText(exportedContent)
+
+                                    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                                    val intent = Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/vnd.openxmlformats-officedocument.wordprocessingml.document").apply {
+                                        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    }
+                                    try {
+                                        context.startActivity(intent)
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, "DOCX generated: ${file.name}", Toast.LENGTH_LONG).show()
+                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    Toast.makeText(context, "Failed to generate DOCX: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(42.dp)
+                                .testTag("download_docx_button"),
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, NebulaTeal)
+                        ) {
+                            Text("📝 Download DOCX", color = NebulaTeal, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)

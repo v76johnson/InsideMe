@@ -70,7 +70,8 @@ import com.example.ui.theme.NebulaTeal
 fun PremiumScreen(
     userSubscription: UserSubscription,
     onSetSubscriptionTier: (SubscriptionTier) -> Unit,
-    onPurchaseSingleReport: () -> Unit = {},
+    onPurchaseSynastryReport: () -> Unit = {},
+    onPurchaseSynthesisReport: () -> Unit = {},
     onOpenReview: () -> Unit = {},
     onNavigateToSynastry: () -> Unit = {},
     onNavigateToSynthesis: () -> Unit = {},
@@ -228,88 +229,176 @@ fun PremiumScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        // Single Report Purchase Option ($1.00)
+        // Single Report Purchase Options ($1.00 Synastry & $4.99 Synthesis All-in-One)
         item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.5.dp, NebulaTeal, RoundedCornerShape(20.dp))
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(NebulaTeal.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Synastry Match Single Report ($1.00)
+                Card(
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.5.dp, NebulaTeal, RoundedCornerShape(20.dp))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                tint = NebulaTeal,
-                                modifier = Modifier.size(20.dp)
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(NebulaTeal.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.Favorite,
+                                    contentDescription = null,
+                                    tint = Color(0xFFFF5252),
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(NebulaTeal)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "$1.00 (MARKET $1.99)",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            }
                         }
 
-                        Box(
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = "Synastry Match Report",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(
+                            text = "Unlock individual birthdate synastry & compatibility matching for $1.00.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.85f),
+                            lineHeight = 18.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        Button(
+                            onClick = {
+                                onPurchaseSynastryReport()
+                                Toast.makeText(context, "Synastry Match Unlocked ($1.00)!", Toast.LENGTH_SHORT).show()
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = Color.Black),
+                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(NebulaTeal)
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .fillMaxWidth()
+                                .height(46.dp)
+                                .testTag("buy_synastry_report_button")
                         ) {
-                            Text(
-                                text = "$1.00 / REPORT",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                maxLines = 1,
-                                softWrap = false
-                            )
+                            Icon(Icons.Default.Favorite, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Unlock Synastry Report ($1.00)", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
+                }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                // Synthesis All-in-One Report ($4.99)
+                Card(
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = CosmicPurple),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(1.5.dp, CelestialGold, RoundedCornerShape(20.dp))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(CelestialGold.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.AutoAwesome,
+                                    contentDescription = null,
+                                    tint = CelestialGold,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
 
-                    Text(
-                        text = "Single Premium Report",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(CelestialGold)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "$4.99 (MARKET $9.99)",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            }
+                        }
 
-                    Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                    Text(
-                        text = "Don't want a recurring subscription? Purchase a single full AI synthesis report for just $1.00.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.85f),
-                        lineHeight = 18.sp
-                    )
+                        Text(
+                            text = "Synthesis All-in-One Report",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
 
-                    Button(
-                        onClick = {
-                            onPurchaseSingleReport()
-                            Toast.makeText(context, "1 Report Credit Purchased ($1.00)!", Toast.LENGTH_SHORT).show()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = Color.Black),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(46.dp)
-                            .testTag("buy_single_report_button")
-                    ) {
-                        Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Buy 1 Report ($1.00)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(
+                            text = "Unlock the complete master meta-analysis and multi-test synthesis report for $4.99.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.85f),
+                            lineHeight = 18.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        Button(
+                            onClick = {
+                                onPurchaseSynthesisReport()
+                                Toast.makeText(context, "Synthesis All-in-One Report Unlocked ($4.99)!", Toast.LENGTH_SHORT).show()
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(46.dp)
+                                .testTag("buy_synthesis_report_button")
+                        ) {
+                            Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Unlock Synthesis All-in-One ($4.99)", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                        }
                     }
                 }
             }

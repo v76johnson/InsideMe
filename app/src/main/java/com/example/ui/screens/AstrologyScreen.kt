@@ -149,7 +149,8 @@ fun AstrologyScreen(
     selectedReport: DeepSynthesisReport? = null,
     testResults: List<TestResultEntity> = emptyList(),
     isGeneratingReport: Boolean = false,
-    gemsBalance: Int = 0,
+    hasUnlockedSynthesis: Boolean = false,
+    hasUnlockedSynastry: Boolean = false,
     isPremium: Boolean = false,
     initialSubTab: Int = 0,
     onUpdateSigns: (ZodiacSign, ZodiacSign, ZodiacSign) -> Unit,
@@ -334,7 +335,7 @@ fun AstrologyScreen(
             5 -> MindAndCosmosReportTab(
                 savedReports = savedReports,
                 isGenerating = isGeneratingReport,
-                gemsBalance = gemsBalance,
+                hasUnlockedSynthesis = hasUnlockedSynthesis,
                 isPremium = isPremium,
                 onGenerateReportClicked = onGenerateReportClicked,
                 onSelectReport = onSelectReport,
@@ -2550,7 +2551,7 @@ fun AstroServiceOptionCard(
 fun MindAndCosmosReportTab(
     savedReports: List<DeepSynthesisReport>,
     isGenerating: Boolean,
-    gemsBalance: Int,
+    hasUnlockedSynthesis: Boolean,
     isPremium: Boolean,
     onGenerateReportClicked: () -> Unit,
     onSelectReport: (DeepSynthesisReport?) -> Unit,
@@ -2591,7 +2592,7 @@ fun MindAndCosmosReportTab(
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = if (isPremium) "✨ Psyche+ Unlimited" else if (gemsBalance >= 10) "1 Report Credit" else "$1.00 / Report",
+                        text = if (isPremium || hasUnlockedSynthesis) "✨ Unlocked" else "$4.99 / Report",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = CelestialGold
@@ -2702,12 +2703,12 @@ fun MindAndCosmosReportTab(
                             Text("Synthesizing Report with Gemini...", color = CelestialGold, fontWeight = FontWeight.Bold)
                         }
                     } else {
-                        val canGenerate = isPremium || gemsBalance >= 10
+                        val canGenerate = isPremium || hasUnlockedSynthesis
                         Button(
                             onClick = onGenerateReportClicked,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (canGenerate) CelestialGold else MysticViolet,
-                                contentColor = if (canGenerate) DeepSpace else Color.White
+                                containerColor = CelestialGold,
+                                contentColor = DeepSpace
                             ),
                             shape = RoundedCornerShape(14.dp),
                             modifier = Modifier
@@ -2718,11 +2719,7 @@ fun MindAndCosmosReportTab(
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = when {
-                                    isPremium -> "Synthesize Report (Included with Psyche+)"
-                                    gemsBalance >= 10 -> "Synthesize Report (1 Credit Ready)"
-                                    else -> "Order AI Synthesis Report ($1.00 / Psyche+ Sub)"
-                                },
+                                text = if (canGenerate) "Synthesize Report (Unlocked)" else "Order AI Synthesis Report ($4.99)",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
