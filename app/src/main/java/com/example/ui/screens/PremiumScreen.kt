@@ -353,7 +353,7 @@ fun PremiumScreen(
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             ) {
                                 Text(
-                                    text = "$4.99 (MARKET $9.99)",
+                                    text = "$1.99 (MARKET $4.99)",
                                     style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black,
@@ -375,7 +375,7 @@ fun PremiumScreen(
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
-                            text = "Unlock the complete master meta-analysis and multi-test synthesis report for $4.99.",
+                            text = "Unlock the complete master meta-analysis and multi-test synthesis report for $1.99.",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.White.copy(alpha = 0.85f),
                             lineHeight = 18.sp
@@ -386,7 +386,7 @@ fun PremiumScreen(
                         Button(
                             onClick = {
                                 onPurchaseSynthesisReport()
-                                Toast.makeText(context, "Synthesis All-in-One Report Unlocked ($4.99)!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Synthesis All-in-One Report Unlocked ($1.99)!", Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
                             shape = RoundedCornerShape(12.dp),
@@ -397,7 +397,7 @@ fun PremiumScreen(
                         ) {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Unlock Synthesis All-in-One ($4.99)", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text("Unlock Synthesis All-in-One ($1.99)", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
                     }
                 }

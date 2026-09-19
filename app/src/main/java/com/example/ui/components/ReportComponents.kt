@@ -424,7 +424,7 @@ fun ReportReaderView(
                         ) {
                             Icon(Icons.Default.MedicalServices, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Care AI / Professional Care", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text("Ask CLARA", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
 
                         androidx.compose.material3.OutlinedButton(

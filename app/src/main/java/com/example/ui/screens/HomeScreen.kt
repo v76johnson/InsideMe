@@ -83,6 +83,7 @@ fun HomeScreen(
     onOpenFreeMindChat: () -> Unit = {},
     onOpenProfileSetup: () -> Unit = {},
     onOpenNameMeaning: (String) -> Unit = {},
+    onOpenNameAiChat: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val totalTestsCount = TestCatalog.allTests.size
@@ -241,7 +242,7 @@ fun HomeScreen(
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
-                                androidx.compose.material3.OutlinedButton(
+                                 androidx.compose.material3.OutlinedButton(
                                     onClick = { onOpenNameMeaning(userName) },
                                     colors = ButtonDefaults.outlinedButtonColors(contentColor = CelestialGold),
                                     border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold.copy(alpha = 0.6f)),
@@ -254,6 +255,22 @@ fun HomeScreen(
                                     Icon(Icons.Default.HistoryEdu, contentDescription = null, modifier = Modifier.size(14.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text("✨ Detailed AI Search (Origins, Meanings & Famous Bearers)", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                }
+
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                androidx.compose.material3.Button(
+                                    onClick = { onOpenNameAiChat(userName) },
+                                    colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = Color.Black),
+                                    shape = RoundedCornerShape(10.dp),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("home_name_ai_chat_btn")
+                                ) {
+                                    Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("💬 Open Name AI Chat Companion", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }

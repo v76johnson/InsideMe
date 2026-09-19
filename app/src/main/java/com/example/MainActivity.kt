@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WorkspacePremium
+import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -41,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.model.SubscriptionTier
 import com.example.data.viewmodel.PsycheViewModel
 import com.example.ui.components.FreeAiChatDialog
+import com.example.ui.components.ProfessionalLocatorDialog
 import com.example.ui.components.ReviewDialog
 import com.example.ui.screens.AssessmentsScreen
 import com.example.ui.screens.AstrologyScreen
@@ -87,9 +90,12 @@ class MainActivity : ComponentActivity() {
 fun MainAppContent(viewModel: PsycheViewModel) {
     val context = LocalContext.current
     var selectedTab by remember { mutableIntStateOf(0) }
+    var astrologyInitialSubTab by remember { mutableIntStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showFreeMindChatDialog by remember { mutableStateOf(false) }
+    var showCareLocatorDialog by remember { mutableStateOf(false) }
     var showProfileSetupDialog by remember { mutableStateOf(false) }
+    var showNameMeaningReportDialog by remember { mutableStateOf(false) }
     var showNameAiChatDialog by remember { mutableStateOf(false) }
     var hasDismissedFirstInstallOnboarding by remember { mutableStateOf(false) }
 
@@ -136,10 +142,31 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                     },
                     actions = {
                         IconButton(
+                            onClick = {
+                                viewModel.startNameAiChat(astroProfile?.userName ?: "Seeker")
+                                showNameAiChatDialog = true
+                            },
+                            modifier = Modifier.testTag("open_name_ai_chat_top_bar")
+                        ) {
+                            Icon(Icons.Default.Badge, contentDescription = "Name AI Chat", tint = CelestialGold)
+                        }
+                        IconButton(
                             onClick = { showFreeMindChatDialog = true },
                             modifier = Modifier.testTag("open_free_ai_chat_top_bar")
                         ) {
                             Icon(Icons.Default.Psychology, contentDescription = "Free AI Chat", tint = NebulaTeal)
+                        }
+                        IconButton(
+                            onClick = { showCareLocatorDialog = true },
+                            modifier = Modifier.testTag("open_help_ai_top_bar")
+                        ) {
+                            Icon(Icons.Default.MedicalServices, contentDescription = "Help AI / CLARA", tint = CelestialGold)
+                        }
+                        IconButton(
+                            onClick = { selectedTab = 2; astrologyInitialSubTab = 3 },
+                            modifier = Modifier.testTag("open_oracle_top_bar")
+                        ) {
+                            Icon(Icons.Default.AutoAwesome, contentDescription = "AI Oracle", tint = CelestialGold)
                         }
                         IconButton(
                             onClick = { showSettingsDialog = true },
@@ -183,7 +210,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
 
                     NavigationBarItem(
                         selected = (selectedTab == 2),
-                        onClick = { selectedTab = 2 },
+                        onClick = { selectedTab = 2; astrologyInitialSubTab = 0 },
                         icon = { Icon(Icons.Default.Star, contentDescription = "Astrology") },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = CelestialGold,
@@ -265,6 +292,10 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         },
                         onOpenProfileSetup = { showProfileSetupDialog = true },
                         onOpenNameMeaning = { targetName ->
+                            viewModel.generateNameMeaningReport(targetName)
+                            showNameMeaningReportDialog = true
+                        },
+                        onOpenNameAiChat = { targetName ->
                             viewModel.startNameAiChat(targetName)
                             showNameAiChatDialog = true
                         }
@@ -312,6 +343,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         hasUnlockedSynthesis = userSub.hasUnlockedSynthesis,
                         hasUnlockedSynastry = userSub.hasUnlockedSynastry,
                         isPremium = userSub.isPremium,
+                        initialSubTab = astrologyInitialSubTab,
                         onUpdateSigns = { sun, moon, rising ->
                             viewModel.updateAstrologySignsDirectly(sun, moon, rising)
                         },
@@ -383,6 +415,13 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                 )
             }
 
+            // CLARA Care Locator Dialog overlay
+            if (showCareLocatorDialog) {
+                ProfessionalLocatorDialog(
+                    onDismiss = { showCareLocatorDialog = false }
+                )
+            }
+
             // First Install / Profile Setup Modal overlay
             val isFirstInstallPrompt = (astroProfile != null && !astroProfile!!.isConfigured && !hasDismissedFirstInstallOnboarding)
             if (isFirstInstallPrompt || showProfileSetupDialog) {
@@ -434,6 +473,27 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                                 android.widget.Toast.makeText(context, "Import failed: $err", android.widget.Toast.LENGTH_LONG).show()
                             }
                         )
+                    }
+                )
+            }
+
+            // Name Meaning Report Dialog overlay
+            if (showNameMeaningReportDialog) {
+                NameMeaningReportDialog(
+                    report = nameMeaningReport,
+                    isGenerating = isGeneratingNameReport,
+                    currentMainName = astroProfile?.userName ?: "",
+                    savedNames = emptyList(),
+                    onAnalyzeName = { name -> viewModel.generateNameMeaningReport(name) },
+                    onSetMainName = { name -> viewModel.updateUserName(name) },
+                    onOpenAiChat = {
+                        showNameMeaningReportDialog = false
+                        viewModel.startNameAiChat(nameMeaningReport?.name ?: astroProfile?.userName ?: "")
+                        showNameAiChatDialog = true
+                    },
+                    onDismiss = {
+                        showNameMeaningReportDialog = false
+                        viewModel.dismissNameMeaningReport()
                     }
                 )
             }

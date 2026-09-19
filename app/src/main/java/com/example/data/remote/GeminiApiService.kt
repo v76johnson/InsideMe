@@ -418,7 +418,8 @@ object GeminiReportGenerator {
             } else {
                 append("- User Name: ${astroProfile?.userName ?: "Seeker"}\n")
             }
-            append("\nSTRICT REQUIREMENT: Ensure all sections are deeply detailed, comprehensive, and exhaustive with multi-paragraph explanations.\n")
+            append("\nCRITICAL INSTRUCTION FOR MAXIMUM DEPTH & VOLUME:\n")
+            append("Do NOT summarize. Provide exhaustive, multi-paragraph, book-length detail for every single section. Every psychological trait, natal placement (Sun, Moon, Rising), and name meaning must be explained with deep psychological mechanics and CONCRETE, REAL-LIFE BEHAVIORAL EXAMPLES (e.g., 'In a professional negotiation, high-stress crisis, or romantic conflict, this manifests as...').\n\n")
             append("Format your response as structured sections separated by '---SECTION---':\n")
             append("SECTION 1: Title & Core Archetype Fusion\n")
             append("SECTION 2: Psychometric Dimensions & Cognitive Drivers (4 detailed bullet points linking tests to behavior)\n")
@@ -431,6 +432,10 @@ object GeminiReportGenerator {
 
         try {
             val rootObj = JSONObject().apply {
+                put("generationConfig", JSONObject().apply {
+                    put("maxOutputTokens", 8192)
+                    put("temperature", 0.7)
+                })
                 val contentsArr = JSONArray().apply {
                     val contentObj = JSONObject().apply {
                         val partsArr = JSONArray().apply {
@@ -709,7 +714,8 @@ object GeminiReportGenerator {
                 append("- User Name: ${astroProfile?.userName ?: "Seeker"}\n")
             }
 
-            append("\nTask: Perform a deep, highly exhaustive meta-synthesis ensuring no less than 1 full page of equivalent detailed analysis for each test result, natal chart trait, name meaning element, and synastry combination, written in understandable common English.\n")
+            append("\nCRITICAL INSTRUCTION FOR MAXIMUM DEPTH & VOLUME:\n")
+            append("Do NOT summarize. Provide exhaustive, multi-paragraph, book-length detail for every single section. Every psychological test result, astrological natal placement (Sun, Moon, Rising), and name meaning element must be unpacked with deep psychological mechanics and CONCRETE, REAL-LIFE BEHAVIORAL EXAMPLES (e.g., 'When facing a professional setback or relationship conflict, this combination manifests specifically as...').\n\n")
             append("Format response into sections separated by '---SECTION---':\n")
             append("SECTION 1: Master Title, Meta-Archetype Fusion & Exhaustive Profile Overview\n")
             append("SECTION 2: Detailed Test-by-Test Deep Dive (Full breakdown for every completed assessment score)\n")
@@ -723,6 +729,10 @@ object GeminiReportGenerator {
 
         try {
             val rootObj = JSONObject().apply {
+                put("generationConfig", JSONObject().apply {
+                    put("maxOutputTokens", 8192)
+                    put("temperature", 0.7)
+                })
                 put("contents", JSONArray().apply {
                     put(JSONObject().apply {
                         put("parts", JSONArray().apply {

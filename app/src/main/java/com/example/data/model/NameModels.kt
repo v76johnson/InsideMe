@@ -35,4 +35,17 @@ data class NameMeaningReport(
         sb.append("$shadowIntegrationAdvice")
         return sb.toString()
     }
+
+    fun toAiCompanionGreetingMessage(): String {
+        val sb = StringBuilder()
+        sb.append("👋 I am Ono, your onomastic companion. I know all about names. Like your name, \"$name\", which has a fascinating background!\n\n")
+        sb.append("What would you like to dive into? You can ask me about:\n")
+        sb.append("• Origins (cultural roots and history)\n")
+        sb.append("• Meaning (literal definitions and etymology)\n")
+        sb.append("• Personality (behavioral tendencies and traits)\n")
+        sb.append("• Numerology (vibrational numbers)\n")
+        sb.append("• Shadow Work (serious growth considerations)\n\n")
+        sb.append("Just let me know what topic catches your eye, and let's chat!")
+        return sb.toString()
+    }
 }

@@ -150,6 +150,30 @@ fun ReportExportDialog(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
+                // Paid Reports Catalog Access Banner
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = MysticViolet.copy(alpha = 0.8f)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, CelestialGold)
+                ) {
+                    Column(modifier = Modifier.padding(10.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("👑 All Available Paid Reports Access", color = CelestialGold, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        }
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            "Includes Master All-In-One Meta-Analysis, Astrological Natal Deep Dive, Synastry Match, and Onomastic Name Profile Reports.",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 11.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
                 // Selector: Single Report vs All Reports (if multiple exist)
                 if (reports.size > 1) {
                     Row(

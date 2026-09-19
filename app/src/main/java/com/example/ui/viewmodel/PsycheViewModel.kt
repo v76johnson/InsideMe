@@ -69,7 +69,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         listOf(
             MindChatMessage(
                 sender = "companion",
-                text = "Welcome to your **Free AI Mind & Wellbeing Companion**! 💚\n\nI am here to listen, support your emotional wellbeing, answer questions about your assessment scores, and discuss ways to improve your mental health.\n\n*Feel free to ask how to interpret your scores, share how you are feeling, or discuss when to seek professional care.*"
+                text = "Welcome to your InsideMe Ai. Always free, Always here 24/7...\n\nI am here to listen, support your emotional wellbeing, answer questions about your assessment scores, and discuss ways to improve your mental health.\n\n*Feel free to ask how to interpret your scores, share how you are feeling, or discuss when to seek professional care.*"
             )
         )
     )
@@ -491,7 +491,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
 
             val reportMsg = MindChatMessage(
                 sender = "companion",
-                text = report.toAiCompanionChatMessage()
+                text = report.toAiCompanionGreetingMessage()
             )
             _nameAiChatMessages.value = listOf(reportMsg)
             _isGeneratingNameReport.value = false

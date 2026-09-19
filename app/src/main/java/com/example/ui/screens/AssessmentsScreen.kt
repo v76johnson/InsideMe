@@ -291,7 +291,7 @@ fun AssessmentsScreen(
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Column {
                                         Text(
-                                            text = "Find Care AI & Therapist Locator",
+                                            text = "CLARA: Care Location And Resource Assistant",
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 13.sp,
                                             color = Color.White
@@ -632,13 +632,13 @@ fun AssessmentsScreen(
                                     )
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
-                                            text = "$9.99",
+                                            text = "$4.99",
                                             style = MaterialTheme.typography.bodySmall.copy(textDecoration = androidx.compose.ui.text.style.TextDecoration.LineThrough),
                                             color = Color.White.copy(alpha = 0.5f)
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
-                                            text = "$4.99 Sale",
+                                            text = "$1.99 Sale",
                                             style = MaterialTheme.typography.bodySmall,
                                             fontWeight = FontWeight.Bold,
                                             color = CelestialGold
@@ -647,7 +647,7 @@ fun AssessmentsScreen(
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "💡 Advisory: Review or share free bonus reports (10 gems) apply to standard reports and do NOT cover synthesis reports ($4.99). For best results, complete all core assessments and Name Meaning prior to generating your synthesis report.",
+                                    text = "💡 Advisory: Review or share free bonus reports (10 gems) apply to standard reports and do NOT cover synthesis reports ($1.99). For best results, complete all core assessments and Name Meaning prior to generating your synthesis report.",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = Color.White.copy(alpha = 0.9f),
                                     lineHeight = 16.sp
@@ -679,7 +679,7 @@ fun AssessmentsScreen(
                                 Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (isPremium || hasUnlockedSynthesis) "Analyze All Reports (Unlocked)" else "Analyze All Reports ($4.99 or Sub)",
+                                    text = if (isPremium || hasUnlockedSynthesis) "Analyze All Reports (Unlocked)" else "Analyze All Reports ($1.99 or Sub)",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold
                                 )

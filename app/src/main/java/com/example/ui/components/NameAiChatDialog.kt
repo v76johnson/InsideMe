@@ -124,7 +124,6 @@ fun NameAiChatDialog(
                     .fillMaxSize()
                     .border(1.5.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
                     .padding(14.dp)
-                    .verticalScroll(rememberScrollState())
             ) {
                 // Header
                 Row(

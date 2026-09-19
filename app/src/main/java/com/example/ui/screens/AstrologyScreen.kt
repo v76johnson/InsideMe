@@ -2592,7 +2592,7 @@ fun MindAndCosmosReportTab(
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = if (isPremium || hasUnlockedSynthesis) "✨ Unlocked" else "$4.99 / Report",
+                        text = if (isPremium || hasUnlockedSynthesis) "✨ Unlocked" else "$1.99 / Report",
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = CelestialGold
@@ -2675,13 +2675,13 @@ fun MindAndCosmosReportTab(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "$9.99",
+                            text = "$4.99",
                             style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
                             color = Color.White.copy(alpha = 0.5f)
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "$4.99 Sale",
+                            text = "$1.99 Sale",
                             style = MaterialTheme.typography.titleMedium,
                             color = CelestialGold,
                             fontWeight = FontWeight.Bold
@@ -2719,7 +2719,7 @@ fun MindAndCosmosReportTab(
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (canGenerate) "Synthesize Report (Unlocked)" else "Order AI Synthesis Report ($4.99)",
+                                text = if (canGenerate) "Synthesize Report (Unlocked)" else "Order AI Synthesis Report ($1.99)",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )

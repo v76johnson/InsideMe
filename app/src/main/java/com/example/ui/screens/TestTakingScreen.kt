@@ -593,7 +593,7 @@ fun TestTakingScreen(
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "$9.99",
+                                    text = "$4.99",
                                     style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
                                     color = Color.White.copy(alpha = 0.5f),
                                     maxLines = 1,
@@ -601,7 +601,7 @@ fun TestTakingScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "$4.99",
+                                    text = "$1.99",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = NebulaTeal,
@@ -629,7 +629,7 @@ fun TestTakingScreen(
                                 .padding(horizontal = 8.dp, vertical = 2.dp)
                         ) {
                             Text(
-                                text = "🔥 50% OFF HALF-PRICE SALE",
+                                text = "🔥 50% OFF SPECIAL SALE",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = NebulaTeal
@@ -658,7 +658,7 @@ fun TestTakingScreen(
                         ) {
                             Icon(Icons.Default.ShoppingCart, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Buy Full Access ($4.99)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text("Buy Full Access ($1.99)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                     }
                 }
@@ -692,7 +692,7 @@ fun TestTakingScreen(
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
-                                    text = "$9.99",
+                                    text = "$4.99",
                                     style = MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
                                     color = Color.White.copy(alpha = 0.5f),
                                     maxLines = 1,
@@ -700,7 +700,7 @@ fun TestTakingScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "$4.99/mo",
+                                    text = "$2.99/mo",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = CelestialGold,
@@ -738,7 +738,7 @@ fun TestTakingScreen(
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
-                            text = "Unlimited report access across all assessments and full Psyche+ access ($4.99/mo, reg. $9.99/mo).",
+                            text = "Unlimited report access across all assessments and full Psyche+ access ($2.99/mo, reg. $4.99/mo).",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.White.copy(alpha = 0.85f)
                         )
@@ -756,7 +756,7 @@ fun TestTakingScreen(
                         ) {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Unlock Psyche+ ($4.99/mo)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text("Unlock Psyche+ ($2.99/mo)", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                         }
                     }
                 }
@@ -831,7 +831,7 @@ fun TestTakingScreen(
                     Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (canGenerate) "Synthesize Full Report (Unlocked)" else "Order Report ($4.99 or Sub)",
+                        text = if (canGenerate) "Synthesize Full Report (Unlocked)" else "Order Report ($1.99 or Sub)",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )

@@ -92,7 +92,7 @@ fun ProfessionalLocatorDialog(
     var isLoading by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
-    val initialAiGreeting = "Hello! I am your AI Care & Professional Locator Assistant. " +
+    val initialAiGreeting = "Hello! I am Clara the Care Location And Resource Assistant.\n\n" +
             "To help locate qualified mental health professionals, therapists, or support services near you, " +
             "could you please tell me where you are located (City, State, or Zip Code) and what specific services or support you are seeking today (e.g., individual therapy, psychiatric evaluation, couples/family counseling, anxiety management, trauma care)?"
 
@@ -144,7 +144,7 @@ fun ProfessionalLocatorDialog(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
-                                text = "Locate a Professional",
+                                text = "CLARA: Care Location And Resource Assistant",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = CelestialGold

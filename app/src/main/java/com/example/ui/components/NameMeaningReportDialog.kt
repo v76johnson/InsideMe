@@ -84,6 +84,7 @@ fun NameMeaningReportDialog(
     onAnalyzeName: (String) -> Unit,
     onSetMainName: (String) -> Unit = {},
     onSaveNameAddition: (String) -> Unit = {},
+    onOpenAiChat: () -> Unit = {},
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -114,6 +115,7 @@ fun NameMeaningReportDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(20.dp)
             ) {
                 // Top Header Row
@@ -285,7 +287,7 @@ fun NameMeaningReportDialog(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f),
+                            .height(250.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -301,9 +303,7 @@ fun NameMeaningReportDialog(
                     }
                 } else if (report != null) {
                     Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         // Title Banner for analyzed name
                         Card(
@@ -619,6 +619,23 @@ fun NameMeaningReportDialog(
                                     lineHeight = 17.sp
                                 )
                             }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Open AI Chat Companion Button
+                        Button(
+                            onClick = onOpenAiChat,
+                            colors = ButtonDefaults.buttonColors(containerColor = NebulaTeal, contentColor = Color.Black),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp)
+                                .testTag("open_name_ai_chat_button")
+                        ) {
+                            Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("💬 Open Name AI Chat Companion", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
