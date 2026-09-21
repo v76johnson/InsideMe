@@ -86,7 +86,7 @@ fun NameAiChatDialog(
     var inputText by remember { mutableStateOf("") }
     var editNameInput by remember { mutableStateOf(report?.name ?: currentMainName) }
     var showEditField by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(report?.name) {
         if (!report?.name.isNullOrBlank()) {
@@ -94,10 +94,8 @@ fun NameAiChatDialog(
         }
     }
 
-    LaunchedEffect(messages.size, isThinking) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
-        }
+    LaunchedEffect(messages.size, isThinking, isGenerating) {
+        scrollState.animateScrollTo(scrollState.maxValue)
     }
 
     val suggestionChips = listOf(
@@ -123,61 +121,11 @@ fun NameAiChatDialog(
                 modifier = Modifier
                     .fillMaxSize()
                     .border(1.5.dp, CelestialGold.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
+                    .verticalScroll(scrollState)
                     .padding(14.dp)
             ) {
-                // Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(CelestialGold.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.HistoryEdu,
-                                contentDescription = null,
-                                tint = CelestialGold,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = "Name AI Onomastic Companion",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Surface(
-                                    color = CelestialGold,
-                                    shape = RoundedCornerShape(4.dp)
-                                ) {
-                                    Text(
-                                        text = report?.name ?: "NAME",
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 10.sp,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                            Text(
-                                text = "Etymologies, psychology & interactive AI exploration",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontSize = 11.sp
-                            )
-                        }
-                    }
-
+                // Header (Removed)
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                     IconButton(
                         onClick = onDismiss,
                         modifier = Modifier.testTag("close_name_ai_chat")
@@ -185,7 +133,6 @@ fun NameAiChatDialog(
                         Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
                     }
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Action Banner: Set As App Name / Change Name
@@ -313,53 +260,45 @@ fun NameAiChatDialog(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Chat Messages List
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(vertical = 6.dp)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     if (isGenerating) {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(30.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    CircularProgressIndicator(color = CelestialGold, modifier = Modifier.size(36.dp))
-                                    Spacer(modifier = Modifier.height(10.dp))
-                                    Text("Synthesizing exhaustive name etymologies & psychology...", color = CelestialGold, fontSize = 12.sp)
-                                }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(30.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(color = CelestialGold, modifier = Modifier.size(36.dp))
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text("Synthesizing exhaustive name etymologies & psychology...", color = CelestialGold, fontSize = 12.sp)
                             }
                         }
                     } else {
-                        items(messages, key = { it.id }) { msg ->
+                        messages.forEach { msg ->
                             MindChatMessageBubble(message = msg)
                         }
 
                         if (isThinking) {
-                            item {
-                                Row(
-                                    modifier = Modifier.padding(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(18.dp),
-                                        color = CelestialGold,
-                                        strokeWidth = 2.dp
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Onomastic AI is pondering...",
-                                        color = CelestialGold,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
+                            Row(
+                                modifier = Modifier.padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    color = CelestialGold,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Onomastic AI is pondering...",
+                                    color = CelestialGold,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
                             }
                         }
                     }

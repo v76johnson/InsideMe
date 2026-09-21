@@ -56,7 +56,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         listOf(
             AstrologyChatMessage(
                 sender = "oracle",
-                text = "Greetings, Seeker. I am your Cosmic AI Oracle. Ask me anything about your natal chart, planetary transits, love compatibility, or life purpose."
+                text = "Hello! I am your Cosmic AI Oracle, here to explore your natal chart, transits, and path.\n\nWhat’s on your cosmic mind today? Are you interested in a chart reading, understanding a transit, or exploring compatibility?"
             )
         )
     )
@@ -69,7 +69,7 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
         listOf(
             MindChatMessage(
                 sender = "companion",
-                text = "Welcome to your InsideMe Ai. Always free, Always here 24/7...\n\nI am here to listen, support your emotional wellbeing, answer questions about your assessment scores, and discuss ways to improve your mental health.\n\n*Feel free to ask how to interpret your scores, share how you are feeling, or discuss when to seek professional care.*"
+                text = "Hello! I'm your InsideMe AI companion, here to support your mental wellbeing 24/7.\n\nHow are you feeling today, and what’s on your mind? We can discuss your assessment scores, work through feelings, or talk about ways to improve your wellbeing."
             )
         )
     )
@@ -507,15 +507,10 @@ class PsycheViewModel(application: Application) : AndroidViewModel(application) 
 
         viewModelScope.launch {
             val currentReportName = _nameMeaningReport.value?.name ?: "User Name"
-            val prompt = "You are an expert onomastic and astrological name analyst. We are discussing the name \"$currentReportName\".\n" +
-                    "Conversation history:\n" + currentHistory.takeLast(6).joinToString("\n") { "${it.sender}: ${it.text}" } + "\n\n" +
-                    "User Question: $text\n" +
-                    "Provide a warm, insightful, etymologically and psychologically rich response (150-300 words) using markdown."
-
-            val answer = repository.askFreeMindCompanion(
-                userMessage = prompt,
+            val answer = repository.askNameAiChat(
+                userMessage = text,
                 history = currentHistory,
-                testResults = testResults.value,
+                reportName = currentReportName,
                 astroProfile = astrologyProfile.value
             )
             val aiMsg = MindChatMessage(sender = "companion", text = answer)

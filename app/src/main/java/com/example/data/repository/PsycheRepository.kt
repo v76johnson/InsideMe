@@ -70,6 +70,15 @@ class PsycheRepository(private val database: AppDatabase) {
         return GeminiReportGenerator.askAstrologyOracle(question, profile, isPremium)
     }
 
+    suspend fun askNameAiChat(
+        userMessage: String,
+        history: List<MindChatMessage>,
+        reportName: String,
+        astroProfile: AstrologyProfile?
+    ): String {
+        return GeminiReportGenerator.askNameAiChat(userMessage, history, reportName, astroProfile)
+    }
+
     suspend fun askFreeMindCompanion(
         userMessage: String,
         history: List<MindChatMessage>,

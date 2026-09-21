@@ -67,6 +67,8 @@ import com.example.ui.theme.NebulaTeal
 fun DailyHoroscopeWidget(
     astrologyProfile: AstrologyProfile?,
     onNavigateToAstrology: () -> Unit,
+    onAskOracleClicked: () -> Unit = onNavigateToAstrology,
+    buttonText: String = "More Astrology",
     modifier: Modifier = Modifier
 ) {
     val defaultSign = astrologyProfile?.sunSign ?: ZodiacSign.SCORPIO
@@ -118,7 +120,7 @@ fun DailyHoroscopeWidget(
 
                     Column {
                         Text(
-                            text = "DAILY HOROSCOPE 🔮",
+                            text = "DAILY HOROSCOPE",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = CelestialGold
@@ -439,10 +441,10 @@ fun DailyHoroscopeWidget(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Action Row: Toggle Details & Navigate to Astrology
+            // Action Row: Toggle Details
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Surface(
@@ -468,16 +470,23 @@ fun DailyHoroscopeWidget(
                         )
                     }
                 }
+            }
 
-                Button(
-                    onClick = onNavigateToAstrology,
-                    colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = CelestialGold),
-                    shape = RoundedCornerShape(10.dp),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                    modifier = Modifier.testTag("daily_horoscope_astrology_hub_btn")
-                ) {
-                    Text("Full Charts →", fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Very bottom button: Ask AI Oracle
+            Button(
+                onClick = onAskOracleClicked,
+                colors = ButtonDefaults.buttonColors(containerColor = CelestialGold, contentColor = DeepSpace),
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("daily_horoscope_ask_oracle_btn")
+            ) {
+                Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(16.dp), tint = DeepSpace)
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(buttonText, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

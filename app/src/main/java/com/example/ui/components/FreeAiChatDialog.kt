@@ -17,10 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -80,13 +80,11 @@ fun FreeAiChatDialog(
     modifier: Modifier = Modifier
 ) {
     var inputText by remember { mutableStateOf("") }
-    val listState = rememberLazyListState()
+    val scrollState = rememberScrollState()
 
     // Scroll to bottom when new messages arrive
     LaunchedEffect(messages.size, isThinking) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
-        }
+        scrollState.animateScrollTo(scrollState.maxValue)
     }
 
     val suggestionChips = listOf(
@@ -113,77 +111,18 @@ fun FreeAiChatDialog(
                 modifier = Modifier
                     .fillMaxSize()
                     .border(1.dp, NebulaTeal.copy(alpha = 0.4f), RoundedCornerShape(20.dp))
+                    .verticalScroll(scrollState)
                     .padding(16.dp)
             ) {
-                // Header
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(NebulaTeal.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.Psychology,
-                                contentDescription = null,
-                                tint = NebulaTeal,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = "Mind AI Companion",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Surface(
-                                    color = NebulaTeal,
-                                    shape = RoundedCornerShape(4.dp)
-                                ) {
-                                    Text(
-                                        text = "FREE",
-                                        color = Color.Black,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        fontSize = 10.sp,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                            Text(
-                                text = "Discuss scores, feelings & mental health guidance",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontSize = 11.sp
-                            )
-                        }
-                    }
-
-                    Row {
-                        IconButton(
-                            onClick = onClearChat,
-                            modifier = Modifier.testTag("free_ai_chat_clear_button")
-                        ) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Clear Chat", tint = Color.White.copy(alpha = 0.7f))
-                        }
-                        IconButton(
-                            onClick = onDismiss,
-                            modifier = Modifier.testTag("free_ai_chat_close_button")
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
-                        }
+                // Header (Removed)
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.testTag("free_ai_chat_close_button")
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
                     }
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Crisis Support & Mental Health Resources Banner (from screenshots)
@@ -275,37 +214,31 @@ fun FreeAiChatDialog(
                 }
 
                 // Messages List
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(vertical = 8.dp)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(messages, key = { it.id }) { msg ->
+                    messages.forEach { msg ->
                         MindChatMessageBubble(message = msg)
                     }
 
                     if (isThinking) {
-                        item {
-                            Row(
-                                modifier = Modifier.padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(18.dp),
-                                    color = NebulaTeal,
-                                    strokeWidth = 2.dp
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Mind AI Companion is reflecting...",
-                                    color = NebulaTeal,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                color = NebulaTeal,
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Mind AI Companion is reflecting...",
+                                color = NebulaTeal,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
+                            )
                         }
                     }
                 }

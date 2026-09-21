@@ -116,6 +116,100 @@ object GeminiReportGenerator {
                 "3. **Integration Ritual:** Write down the core obstacle you are facing, meditate on what it is trying to teach your soul, and consciously release the burden of trying to control every outcome."
     }
 
+    suspend fun askNameAiChat(
+        userMessage: String,
+        history: List<MindChatMessage>,
+        reportName: String,
+        astroProfile: AstrologyProfile? = null
+    ): String = withContext(Dispatchers.IO) {
+        val apiKey = BuildConfig.GEMINI_API_KEY
+
+        val promptSb = StringBuilder()
+        promptSb.append("You are Oro / Onomastic AI Companion—an expert onomastic scholar, depth psychologist, and etymological historian. You are discussing the name \"$reportName\".\n\n")
+        if (astroProfile != null) {
+            promptSb.append("User Astrological Sun Sign: ${astroProfile.sunSign.displayName}, Moon: ${astroProfile.moonSign.displayName}, Rising: ${astroProfile.risingSign.displayName}\n\n")
+        }
+
+        promptSb.append("STRICT OPERATIONAL MANDATES:\n")
+        promptSb.append("1. ONOMASTIC EXPERTISE: Provide warm, insightful, etymologically and psychologically rich responses (150-300 words) using markdown, focusing specifically on name meanings, historical origins, cultural variants, numerology, and psychological resonance of the name \"$reportName\".\n")
+        promptSb.append("2. FORMATTING: Use Markdown formatting with clear structure.\n\n")
+
+        promptSb.append("CONVERSATION HISTORY:\n")
+        history.takeLast(6).forEach { msg ->
+            val senderLabel = if (msg.sender == "user") "User" else "Companion"
+            promptSb.append("$senderLabel: ${msg.text}\n")
+        }
+        promptSb.append("\nUser: $userMessage\nCompanion:")
+
+        if (apiKey.isEmpty() || apiKey == "MY_GEMINI_API_KEY") {
+            return@withContext generateFallbackNameChatResponse(userMessage, reportName)
+        }
+
+        try {
+            val rootObj = JSONObject().apply {
+                put("contents", JSONArray().apply {
+                    put(JSONObject().apply {
+                        put("parts", JSONArray().apply {
+                            put(JSONObject().apply { put("text", promptSb.toString()) })
+                        })
+                    })
+                })
+            }
+
+            val requestBody = RequestBody.create("application/json".toMediaType(), rootObj.toString())
+            val request = Request.Builder()
+                .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=$apiKey")
+                .post(requestBody)
+                .build()
+
+            val response = okHttpClient.newCall(request).execute()
+            val responseString = response.body?.string() ?: ""
+
+            if (response.isSuccessful && responseString.isNotEmpty()) {
+                val respJson = JSONObject(responseString)
+                val candidates = respJson.optJSONArray("candidates")
+                if (candidates != null && candidates.length() > 0) {
+                    val firstCandidate = candidates.getJSONObject(0)
+                    val content = firstCandidate.optJSONObject("content")
+                    val parts = content?.optJSONArray("parts")
+                    if (parts != null && parts.length() > 0) {
+                        val text = parts.getJSONObject(0).optString("text", "")
+                        if (text.isNotEmpty()) return@withContext text
+                    }
+                }
+            }
+            return@withContext generateFallbackNameChatResponse(userMessage, reportName)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext generateFallbackNameChatResponse(userMessage, reportName)
+        }
+    }
+
+    private fun generateFallbackNameChatResponse(userMessage: String, name: String): String {
+        val lower = userMessage.lowercase()
+        return when {
+            lower.contains("nickname") || lower.contains("variant") || lower.contains("history") ->
+                "### 📜 Historical Variants & Nicknames for $name\n\n" +
+                        "The name **$name** carries a rich historical and cultural footprint. Across different eras and languages, names like $name often evolve affectionate diminutives or stately historic variants:\n\n" +
+                        "• **Classic Diminutives:** Familiar short forms often used by family and close friends.\n" +
+                        "• **Etymological Relatives:** Cognates found in Romance, Germanic, and Semitic linguistic branches.\n" +
+                        "• **Historical Evolution:** How the pronunciation and spelling transitioned from ancient roots into modern usage.\n\n" +
+                        "Would you like to explore the numerological vibration or psychological shadow work associated with $name?"
+            lower.contains("numerology") || lower.contains("number") ->
+                "### ✨ Numerological Resonance of $name\n\n" +
+                        "In Pythagorean numerology, every name vibrates at a specific numerical frequency that reflects expressive qualities and life path alignment:\n\n" +
+                        "• **Expression Number:** Encodes your outward talents, communication style, and how you present yourself to the world.\n" +
+                        "• **Vibrational Sound:** The phonetic harmony of $name emphasizes inner resolve, creativity, and purposeful leadership.\n\n" +
+                        "What other aspect of $name would you like to unpack?"
+            else ->
+                "### 🏛️ Exploring the Depth of $name\n\n" +
+                        "That is a wonderful question about **$name**. Names carry profound psychological architecture and cultural heritage that shape our subconscious self-concept and social presence.\n\n" +
+                        "• **Etymological Roots:** Every syllable connects back to ancient linguistic traditions.\n" +
+                        "• **Psychological Presence:** Carrying $name encourages a unique blend of personal sovereignty and relational warmth.\n\n" +
+                        "Let me know if you would like to explore its historical origins, personality traits, or shadow integration further!"
+        }
+    }
+
     suspend fun askFreeMindCompanion(
         userMessage: String,
         history: List<MindChatMessage>,

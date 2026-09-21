@@ -101,12 +101,11 @@ object NameAnalysisEngine {
             else -> {
                 // Dynamic multi-source extraction for any unique/custom name
                 val length = name.length
-                val firstChar = name.first().uppercaseChar()
                 listOf(
                     NameEtymologySource(
-                        "Ancient Indo-European Root ($firstChar-Phoneme)",
-                        "Luminous Vanguard of Character",
-                        "The opening '$firstChar' acoustic resonance carries historical root frequencies associated with clarity, personal agency, and distinctive selfhood."
+                        "Common Meaning",
+                        "Bearer of Purpose, Clarity & Inner Strength",
+                        "The name '$name' carries a distinctive acoustic resonance associated with personal agency, authenticity, and steadfast character."
                     ),
                     NameEtymologySource(
                         "Cultural & Symbolic Synthesis",

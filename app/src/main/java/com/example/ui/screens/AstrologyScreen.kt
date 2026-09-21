@@ -108,6 +108,7 @@ import com.example.data.model.InDepthMatchReport
 import com.example.data.model.ZodiacSign
 import com.example.data.repository.AstrologyEngine
 import com.example.ui.components.ChartWheelView
+import com.example.ui.components.DailyHoroscopeWidget
 import com.example.ui.theme.CelestialGold
 import com.example.ui.theme.CosmicPurple
 import com.example.ui.theme.DeepSpace
@@ -237,11 +238,11 @@ fun AstrologyScreen(
 
             if (activeTab != 0) {
                 val currentTabTitle = when (activeTab) {
-                    1 -> "🪐 Natal Charts"
-                    2 -> "🃏 Tarot Generator"
-                    3 -> "🔮 AI Oracle"
-                    4 -> "💖 Synastry"
-                    5 -> "✨ Mind & Cosmos"
+                    1 -> "Natal Charts"
+                    2 -> "Tarot Generator"
+                    3 -> "AI Oracle"
+                    4 -> "Synastry"
+                    5 -> "Mind & Cosmos"
                     else -> ""
                 }
                 Box(
@@ -1990,6 +1991,16 @@ fun AstroHomepageTab(
         contentPadding = PaddingValues(top = 12.dp, bottom = 90.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // 0. Daily Horoscope Widget (Horoscope Box)
+        item {
+            DailyHoroscopeWidget(
+                astrologyProfile = profile,
+                onNavigateToAstrology = { onNavigateToTab(3) },
+                onAskOracleClicked = { onNavigateToTab(3) },
+                buttonText = "Ask the AI Oricle"
+            )
+        }
+
         // 1. Personal Cosmic Identity & Transit Summary Card
         item {
             Card(
@@ -2004,17 +2015,7 @@ fun AstroHomepageTab(
                         .fillMaxWidth()
                         .padding(20.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .clip(CircleShape)
-                            .background(CelestialGold.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.Star, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(24.dp))
-                    }
 
-                    Spacer(modifier = Modifier.height(10.dp))
 
                     Text(
                         text = "MY PERSONAL NATAL CHART",
@@ -2336,7 +2337,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Nightlight,
-                title = "🪐 Natal Charts & Placements",
+                title = "Natal Charts & Placements",
                 subtitle = "View your interactive birth chart wheel, house positions, and manage natal charts for family & friends.",
                 tagText = "Chart Vault",
                 buttonText = "View Natal Charts",
@@ -2349,7 +2350,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Casino,
-                title = "🃏 Tarot Card Reading Generator",
+                title = "Tarot Card Reading Generator",
                 subtitle = "Draw 1-card daily guidance, 3-card past/present/future spreads, and psychological reflections with archetypal wisdom.",
                 tagText = "78-Card Deck",
                 buttonText = "Open Tarot Generator",
@@ -2362,7 +2363,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.AutoAwesome,
-                title = "🔮 AI Cosmic Oracle",
+                title = "AI Cosmic Oracle",
                 subtitle = "Ask Gemini AI personalized astrological questions, real-time transit insights, and daily predictions.",
                 tagText = "AI Powered",
                 buttonText = "Consult AI Oracle",
@@ -2375,7 +2376,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Favorite,
-                title = "💖 Birthdate Synastry Match",
+                title = "Birthdate Synastry Match",
                 subtitle = "Calculate precise planetary compatibility and love chemistry scores between two birthdates, times & cities.",
                 tagText = "Psyche+ Premium",
                 buttonText = "Check Synastry Match",
@@ -2388,7 +2389,7 @@ fun AstroHomepageTab(
         item {
             AstroServiceOptionCard(
                 icon = Icons.Default.Psychology,
-                title = "✨ Mind & Cosmos Synthesis",
+                title = "Mind & Cosmos Synthesis",
                 subtitle = "Synthesize psychological test scores (MBTI, Enneagram) with natal astrology charts into a 7-section deep report.",
                 tagText = "Deep AI Report",
                 buttonText = "Generate Deep AI Report",
@@ -2479,15 +2480,7 @@ fun AstroServiceOptionCard(
                 .fillMaxWidth()
                 .padding(18.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(CircleShape)
-                    .background(CelestialGold.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(icon, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(22.dp))
-            }
+
 
             if (tagText.isNotBlank()) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -2614,17 +2607,7 @@ fun MindAndCosmosReportTab(
                     modifier = Modifier.padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(CelestialGold.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(28.dp))
-                    }
 
-                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = "Generate Unified Mind & Cosmos Report",

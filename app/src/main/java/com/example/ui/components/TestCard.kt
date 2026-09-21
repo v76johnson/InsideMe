@@ -75,22 +75,7 @@ fun TestCard(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(38.dp)
-                            .clip(CircleShape)
-                            .background(MysticViolet.copy(alpha = 0.25f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (test.category.displayName == "Astrology") Icons.Default.Star else Icons.Default.Psychology,
-                            contentDescription = null,
-                            tint = CelestialGold,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
 
-                    Spacer(modifier = Modifier.width(12.dp))
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(

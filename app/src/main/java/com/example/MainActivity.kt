@@ -283,12 +283,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         },
                         onUpgradeClicked = { selectedTab = 3 },
                         onOpenFreeMindChat = {
-                            if (userSub.isMonthlyOrYearly) {
-                                showFreeMindChatDialog = true
-                            } else {
-                                selectedTab = 3
-                                Toast.makeText(context, "AI discussion and chat about reports are restricted to Monthly or Yearly Psyche+ access.", Toast.LENGTH_LONG).show()
-                            }
+                            showFreeMindChatDialog = true
                         },
                         onOpenProfileSetup = { showProfileSetupDialog = true },
                         onOpenNameMeaning = { targetName ->
@@ -320,12 +315,7 @@ fun MainAppContent(viewModel: PsycheViewModel) {
                         onToggleBookmark = { id, current -> viewModel.toggleBookmark(id, current) },
                         onToggleHabit = { report, idx -> viewModel.toggleHabitCompletion(report, idx) },
                         onOpenFreeMindChat = {
-                            if (userSub.isMonthlyOrYearly) {
-                                showFreeMindChatDialog = true
-                            } else {
-                                selectedTab = 3
-                                Toast.makeText(context, "AI discussion and chat about reports are restricted to Monthly or Yearly Psyche+ access.", Toast.LENGTH_LONG).show()
-                            }
+                            showFreeMindChatDialog = true
                         }
                     )
 

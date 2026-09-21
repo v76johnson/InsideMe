@@ -592,50 +592,7 @@ fun SettingsDialog(
                                 }
                             }
 
-                            // Quick Access Feature Buttons in Subscription Box
-                            Text(
-                                text = "PREMIUM SERVICES ACCESS",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = CelestialGold,
-                                letterSpacing = 1.sp
-                            )
 
-                            Button(
-                                onClick = {
-                                    onDismiss()
-                                    onNavigateToSynastry()
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(44.dp)
-                                    .testTag("settings_access_synastry_button")
-                            ) {
-                                Icon(Icons.Default.Favorite, contentDescription = null, modifier = Modifier.size(16.dp), tint = CelestialGold)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("💖 Open Birthdate Synastry Match", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            }
-
-                            Button(
-                                onClick = {
-                                    onDismiss()
-                                    onNavigateToSynthesis()
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(44.dp)
-                                    .testTag("settings_access_synthesis_button")
-                            ) {
-                                Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(16.dp), tint = CelestialGold)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("✨ Open Mind & Cosmos Synthesis", fontWeight = FontWeight.Bold, fontSize = 12.sp)
-                            }
-
-                            Spacer(modifier = Modifier.height(4.dp))
 
                             // Promo Code Section - Stacked
                             Text(

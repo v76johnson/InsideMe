@@ -129,7 +129,7 @@ fun HomeScreen(
                                 .padding(18.dp)
                         ) {
                             Text(
-                                text = "WELCOME TO INSIDEME ✨",
+                                text = "WELCOME TO INSIDEME",
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = CelestialGold,
@@ -181,7 +181,7 @@ fun HomeScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = "DAILY INSIGHTS ✨",
+                                    text = "DAILY INSIGHTS",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = CelestialGold,
@@ -270,7 +270,7 @@ fun HomeScreen(
                                 ) {
                                     Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(14.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("💬 Open Name AI Chat Companion", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                    Text("💬 Ask Oro the AI", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }

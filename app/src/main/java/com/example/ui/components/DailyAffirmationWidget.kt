@@ -344,23 +344,6 @@ fun DailyAffirmationWidget(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(34.dp)
-                            .clip(CircleShape)
-                            .background(CelestialGold.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Default.AutoAwesome,
-                            contentDescription = "Affirmation Icon",
-                            tint = CelestialGold,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
                     Column {
                         Text(
                             text = "DAILY PSYCHOLOGY AFFIRMATION",
@@ -376,29 +359,6 @@ fun DailyAffirmationWidget(
                             fontSize = 11.sp
                         )
                     }
-                }
-
-                // Personalization Pill Badge
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            if (currentItem.isPersonalized) NebulaTeal.copy(alpha = 0.25f) else MysticViolet.copy(alpha = 0.4f)
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = if (currentItem.isPersonalized) NebulaTeal else MysticViolet,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = if (currentItem.isPersonalized) "✨ Tailored" else "💡 Baseline",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = if (currentItem.isPersonalized) NebulaTeal else Color.White,
-                        fontSize = 10.sp
-                    )
                 }
             }
 

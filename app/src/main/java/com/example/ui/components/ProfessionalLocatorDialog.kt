@@ -13,9 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import android.content.Intent
@@ -90,11 +89,9 @@ fun ProfessionalLocatorDialog(
     val coroutineScope = rememberCoroutineScope()
     var inputText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
+    val scrollState = rememberScrollState()
 
-    val initialAiGreeting = "Hello! I am Clara the Care Location And Resource Assistant.\n\n" +
-            "To help locate qualified mental health professionals, therapists, or support services near you, " +
-            "could you please tell me where you are located (City, State, or Zip Code) and what specific services or support you are seeking today (e.g., individual therapy, psychiatric evaluation, couples/family counseling, anxiety management, trauma care)?"
+    val initialAiGreeting = "Hello! I am Clara, your mental health resource assistant.\n\nI can help you find therapists and local support services. To get started, could you let me know your City, State, or Zip Code and the type of support you're looking for?"
 
     val messages = remember {
         mutableStateListOf(
@@ -102,10 +99,8 @@ fun ProfessionalLocatorDialog(
         )
     }
 
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
-        }
+    LaunchedEffect(messages.size, isLoading) {
+        scrollState.animateScrollTo(scrollState.maxValue)
     }
 
     Dialog(
@@ -123,46 +118,15 @@ fun ProfessionalLocatorDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(scrollState)
                     .padding(18.dp)
             ) {
-                // Header Bar
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(NebulaTeal.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(Icons.Default.MedicalServices, contentDescription = null, tint = NebulaTeal)
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = "CLARA: Care Location And Resource Assistant",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = CelestialGold
-                            )
-                            Text(
-                                text = "AI Mental Health Directory Assistant",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.7f),
-                                fontSize = 11.sp
-                            )
-                        }
-                    }
-
+                // Header Bar (Removed)
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                     IconButton(onClick = onDismiss) {
                         Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
                     }
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
 
                 // Crisis Support & Mental Health Directory Resources Banner (from screenshots)
@@ -261,39 +225,35 @@ fun ProfessionalLocatorDialog(
                 // Chat Messages List
                 Box(
                     modifier = Modifier
-                        .weight(1f)
                         .fillMaxWidth()
                         .border(1.dp, MysticViolet.copy(alpha = 0.4f), RoundedCornerShape(16.dp))
                         .background(CosmicPurple.copy(alpha = 0.6f))
                         .padding(10.dp)
                 ) {
-                    LazyColumn(
-                        state = listState,
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        items(messages, key = { it.id }) { msg ->
+                        messages.forEach { msg ->
                             CareMessageBubble(msg)
                         }
 
                         if (isLoading) {
-                            item {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(8.dp)
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(16.dp),
-                                        color = CelestialGold,
-                                        strokeWidth = 2.dp
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = "Finding local professional resources...",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = Color.White.copy(alpha = 0.7f)
-                                    )
-                                }
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(16.dp),
+                                    color = CelestialGold,
+                                    strokeWidth = 2.dp
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = "Finding local professional resources...",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(alpha = 0.7f)
+                                )
                             }
                         }
                     }

@@ -604,7 +604,7 @@ fun NameMeaningReportDialog(
                                     Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "✨ ASK THE NAME ORACLE",
+                                        text = "ASK THE NAME ORACLE",
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = CelestialGold,
@@ -635,7 +635,7 @@ fun NameMeaningReportDialog(
                         ) {
                             Icon(Icons.Default.Psychology, contentDescription = null, modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("💬 Open Name AI Chat Companion", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                            Text("💬 Ask Oro the AI", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))

@@ -97,17 +97,7 @@ fun PremiumScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape)
-                        .background(CelestialGold.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Default.Star, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(36.dp))
-                }
 
-                Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
                     text = "Psyche+ Celestial Premium",
@@ -140,41 +130,22 @@ fun PremiumScreen(
                     .border(1.5.dp, CelestialGold, RoundedCornerShape(22.dp))
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(CelestialGold.copy(alpha = 0.2f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.RateReview,
-                                contentDescription = null,
-                                tint = CelestialGold,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
 
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(CelestialGold)
-                                .padding(horizontal = 8.dp, vertical = 3.dp)
-                        ) {
-                            Text(
-                                text = if (userSubscription.hasClaimedReviewBonus) "CLAIMED" else "+1 FREE REPORT",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = DeepSpace,
-                                maxLines = 1,
-                                softWrap = false
-                            )
-                        }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(CelestialGold)
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
+                    ) {
+                        Text(
+                            text = if (userSubscription.hasClaimedReviewBonus) "CLAIMED" else "+1 FREE REPORT",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = DeepSpace,
+                            maxLines = 1,
+                            softWrap = false
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -241,42 +212,23 @@ fun PremiumScreen(
                         .border(1.5.dp, NebulaTeal, RoundedCornerShape(20.dp))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(NebulaTeal.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.Favorite,
-                                    contentDescription = null,
-                                    tint = Color(0xFFFF5252),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
 
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(NebulaTeal)
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    text = "$1.00 (MARKET $1.99)",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    maxLines = 1,
-                                    softWrap = false
-                                )
-                            }
-                        }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(NebulaTeal)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "$1.00 (MARKET $1.99)",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
@@ -326,42 +278,23 @@ fun PremiumScreen(
                         .border(1.5.dp, CelestialGold, RoundedCornerShape(20.dp))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(CelestialGold.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.AutoAwesome,
-                                    contentDescription = null,
-                                    tint = CelestialGold,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
 
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(CelestialGold)
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    text = "$1.99 (MARKET $4.99)",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    maxLines = 1,
-                                    softWrap = false
-                                )
-                            }
-                        }
+
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(CelestialGold)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = "$1.99 (MARKET $4.99)",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
@@ -406,55 +339,7 @@ fun PremiumScreen(
             Spacer(modifier = Modifier.height(20.dp))
         }
 
-        // Quick Access Features: Synastry & Synthesis Access Buttons
-        item {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = CosmicPurple),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, NebulaTeal.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Quick Access Features",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = CelestialGold
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        onClick = { onNavigateToSynastry() },
-                        colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp)
-                            .testTag("premium_access_synastry_btn")
-                    ) {
-                        Icon(Icons.Default.Favorite, contentDescription = null, tint = Color(0xFFFF5252), modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Open Birthdate Synastry Match", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Button(
-                        onClick = { onNavigateToSynthesis() },
-                        colors = ButtonDefaults.buttonColors(containerColor = MysticViolet, contentColor = Color.White),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(44.dp)
-                            .testTag("premium_access_synthesis_btn")
-                    ) {
-                        Icon(Icons.Default.Psychology, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Open Mind & Cosmos Synthesis", fontWeight = FontWeight.Bold, fontSize = 13.sp)
-                    }
-                }
-            }
 
-            Spacer(modifier = Modifier.height(20.dp))
-        }
 
         // COMBINED: Unlimited Subscriptions & Features of Unlimited (Single Box with Buttons at Bottom)
         item {
@@ -477,17 +362,7 @@ fun PremiumScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.weight(1f)
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .clip(CircleShape)
-                                    .background(CelestialGold.copy(alpha = 0.2f)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.Star, contentDescription = null, tint = CelestialGold, modifier = Modifier.size(22.dp))
-                            }
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
+                             Column {
                                 Text(
                                     text = "Psyche+ Unlimited Membership",
                                     style = MaterialTheme.typography.titleMedium,
