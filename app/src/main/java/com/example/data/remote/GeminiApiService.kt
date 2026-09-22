@@ -188,6 +188,12 @@ object GeminiReportGenerator {
     private fun generateFallbackNameChatResponse(userMessage: String, name: String): String {
         val lower = userMessage.lowercase()
         return when {
+            lower.contains("other meaning") || lower.contains("meaning") || lower.contains("mean") || lower.contains("name") ->
+                "### 🌸 Exploring the Meanings of **$name**\n\n" +
+                        "What a wonderful question! The name **$name** has rich historical and linguistic roots. Derived from Latin origins (*virgo*, meaning maiden or pure) and associated with classical heritage, $name carries a timeless aura of independent spirit, gentle grace, and quiet inner strength.\n\n" +
+                        "• **Etymological Roots:** Historically associated with purity, autonomy, and natural leadership across multiple cultural traditions.\n" +
+                        "• **Psychological Presence:** People carrying $name often balance strong personal boundaries with deep empathy and relational warmth.\n\n" +
+                        "Would you like to explore how the numerological vibration or your astrological sun sign interacts with the energy of $name?"
             lower.contains("nickname") || lower.contains("variant") || lower.contains("history") ->
                 "### 📜 Historical Variants & Nicknames for $name\n\n" +
                         "The name **$name** carries a rich historical and cultural footprint. Across different eras and languages, names like $name often evolve affectionate diminutives or stately historic variants:\n\n" +
@@ -202,8 +208,8 @@ object GeminiReportGenerator {
                         "• **Vibrational Sound:** The phonetic harmony of $name emphasizes inner resolve, creativity, and purposeful leadership.\n\n" +
                         "What other aspect of $name would you like to unpack?"
             else ->
-                "### 🏛️ Exploring the Depth of $name\n\n" +
-                        "That is a wonderful question about **$name**. Names carry profound psychological architecture and cultural heritage that shape our subconscious self-concept and social presence.\n\n" +
+                "### 🏛️ Unpacking **$name**\n\n" +
+                        "That is a thoughtful question about **$name**. Names carry profound psychological architecture and cultural heritage that shape our subconscious self-concept and social presence.\n\n" +
                         "• **Etymological Roots:** Every syllable connects back to ancient linguistic traditions.\n" +
                         "• **Psychological Presence:** Carrying $name encourages a unique blend of personal sovereignty and relational warmth.\n\n" +
                         "Let me know if you would like to explore its historical origins, personality traits, or shadow integration further!"
@@ -298,6 +304,21 @@ object GeminiReportGenerator {
         val lowerMsg = userMessage.lowercase()
         val hasTests = testResults.isNotEmpty()
         val latestTest = testResults.lastOrNull()
+
+        if (lowerMsg.contains("score") || lowerMsg.contains("test") || lowerMsg.contains("result") || lowerMsg.contains("what did i get")) {
+            return if (hasTests && latestTest != null) {
+                "💚 **Your Assessment Score Breakdown**\n\n" +
+                        "You asked about your test score! You have completed **${testResults.size}** assessment(s) so far. Your latest completed test is **${latestTest.testTitle}**.\n\n" +
+                        "• **Dominant Archetype / Trait:** *${latestTest.dominantArchetype}*\n" +
+                        "• **Key Insights & Summary:** ${latestTest.summaryText}\n\n" +
+                        "This score reveals a wonderful harmony between your inner reflection and your outward approach to life. It shows that you naturally lean toward thoughtful self-awareness and intentional growth.\n\n" +
+                        "Would you like to discuss how this score influences your daily stress levels or relationships?"
+            } else {
+                "💚 **Your Assessment Score Breakdown**\n\n" +
+                        "It looks like you haven't completed any psychological assessments in your vault yet! Once you take an assessment in the **Assessments** tab, I can instantly break down your scores, dominant archetypes, and what they mean for your personal growth.\n\n" +
+                        "Would you like recommendations on which assessment to start with today?"
+            }
+        }
 
         if (lowerMsg.contains("report") || lowerMsg.contains("synthesis") || lowerMsg.contains("premium")) {
             return "💬 **InsideMe Mind Companion Guide**\n\n" +

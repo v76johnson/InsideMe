@@ -446,9 +446,13 @@ suspend fun fetchCareLocatorResponse(history: List<CareChatMessage>, userQuery: 
 }
 
 fun generateFallbackCareResponse(userQuery: String): String {
+    val queryLower = userQuery.lowercase()
+    val isLocation = queryLower.contains("fl") || queryLower.contains("florida") || queryLower.contains("ocala") || queryLower.contains("new york") || queryLower.contains("ca") || queryLower.contains("california") || queryLower.contains("tx") || queryLower.contains("texas") || queryLower.contains("york") || queryLower.contains("chicago") || queryLower.contains("los angeles")
+    
     return "🏥 **Professional Care & Resource Locator Guide**\n\n" +
-            "Thank you for sharing your location and care needs regarding *\"$userQuery\"*. Connecting with a licensed mental health professional is an essential step toward personalized diagnosis and support.\n\n" +
+            (if (isLocation) "Thank you for sharing your location regarding *\"$userQuery\"*. Connecting with local licensed mental health professionals in your area is a powerful step toward tailored support, healing, and growth.\n\n" else "Thank you for sharing your care needs regarding *\"$userQuery\"*. Connecting with a licensed mental health professional is an essential step toward personalized care.\n\n") +
             "### 🔍 Recommended Verified Directories & Search Tools\n" +
+            (if (queryLower.contains("ocala") || queryLower.contains("florida")) "• **Marion County & Florida Health Resources:** Local community mental health centers, county health department behavioral services, and telehealth networks across Florida.\n" else "") +
             "• **Psychology Today Therapist Directory:** Filter licensed counselors, psychologists, and psychiatrists by your zip code, insurance, and specific issue.\n" +
             "• **SAMHSA National Helpline:** Call **1-800-662-HELP (4357)** or visit findtreatment.gov for free, confidential, 24/7 treatment referral.\n" +
             "• **Zocdoc / Open Path Collective:** Search local in-person and telehealth therapists offering sliding-scale options ($30–$80/session).\n\n" +
@@ -456,5 +460,6 @@ fun generateFallbackCareResponse(userQuery: String): String {
             "1. *'What is your experience and clinical orientation treating my specific concerns?'*\n" +
             "2. *'Do you accept my health insurance, or do you offer superbills / sliding scale fees?'*\n" +
             "3. *'What does a typical treatment plan and intake session look like?'*\n\n" +
-            "🆘 **Immediate 24/7 Support:** If you or someone you know is in distress, call or text **988** to reach the Suicide & Crisis Lifeline, or text **HOME to 741741**."
+            "🆘 **Immediate 24/7 Support:** If you or someone you know is in distress, call or text **988** to reach the Suicide & Crisis Lifeline, or text **HOME to 741741**.\n\n" +
+            "Would you like help preparing discussion points or questions for your initial intake session?"
 }
